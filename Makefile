@@ -15,7 +15,7 @@ $(LIB): $(OBJS)
 	ar rcs $@ $(OBJS)
 
 %.o: %.cpp string.h
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@ $(OBJS)
 
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -f $(OBJS) $(TARGET) $(LIB)
