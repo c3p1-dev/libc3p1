@@ -2,23 +2,34 @@
 
 namespace c3p1
 {
+	// typedef
+	typedef unsigned long long size_t;
+	typedef long long ssize_t;
+
 	class string
 	{
 	public:
+		// public members
+		// constructors and destructor
 		string();
 		string(const char* str);
 		string(string& str);
 		~string();
 
-		size_t length() const;
+		// public functions and operators
+		ssize_t length() const;
 		string& operator = (const char* str);
-	public:
+
+	protected:
+		// protected members
 		char* m_str;
 		size_t m_memsize;
 
+	private:
 		// local implementation of string.h libc
-		static int _strcpy(char* dest, const char* src);
-		static int _strlen(const char* str);
-		static char* _strcat(char* first, const char* second);
+		static void* memcpy(void* dest, const void* src, size_t n);
+		static char* strcpy(char* dest, const char* src);
+		static char* strcat(char* first, const char* second);
+		static ssize_t strlen(const char* str);
 	};
 }

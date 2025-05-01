@@ -1,7 +1,7 @@
 #include "string.h"
 
 // local implementation of string.h libc
-int c3p1::string::_strcpy(char* dest, const char* src)
+char* c3p1::string::strcpy(char* dest, const char* src)
 { 
 	int len = 0;
 
@@ -14,16 +14,18 @@ int c3p1::string::_strcpy(char* dest, const char* src)
 		}
 		// Null-terminate the destination string
 		*dest = '\0';
-		return len;
+		
+		// Return the adress of the start of the string
+		return dest - len;
 	}
 	else
 	{
-		return -1; // Error code -1 for null source
+		return nullptr; // Error code nullptr for null source
 	}
 }
-int c3p1::string::_strlen(const char* str)
+c3p1::ssize_t c3p1::string::strlen(const char* str)
 {
-	int len = 0;
+	ssize_t len = 0;
 	if (str != nullptr)
 	{
 		while (*str != '\0')
@@ -38,7 +40,7 @@ int c3p1::string::_strlen(const char* str)
 		return -1; // Error code -1 for null str
 	}
 }
-char* c3p1::string::_strcat(char* dest, const char* append)
+char* c3p1::string::strcat(char* dest, const char* append)
 {
 	int len = 0;
 	if (dest != nullptr && append != nullptr)
@@ -68,6 +70,19 @@ char* c3p1::string::_strcat(char* dest, const char* append)
 		return nullptr; // Error code for null destination or append args
 	}
 }
+void* c3p1::string::memcpy(void* dest, const void* src, size_t n)
+{
+	// Cast raw pointers to unsigned char pointers and process copying byte a byte
+	unsigned char* byte = static_cast<unsigned char*>(dest);
+	const unsigned char* bytesrc = static_cast<const unsigned char*>(src);
+
+	for (size_t i = 0; i < n; i++)
+	{
+		byte[i] = bytesrc[i];
+	}
+
+	return dest;
+}
 
 // Implementation of string class
 c3p1::string::string()
@@ -82,8 +97,9 @@ c3p1::string::string(const char* str)
 {
 	if (str != nullptr)
 	{
-		m_str = new char[_strlen(str) + 1];
-		m_memsize = _strcpy(m_str, str) + 1;
+		m_memsize = strlen(str) + 1;
+		m_str = new char[m_memsize];
+		strcpy(m_str, str);
 	}
 	else
 	{
@@ -100,7 +116,7 @@ c3p1::string::string(string& str)
 	{
 		m_memsize = str.m_memsize;
 		m_str = new char[m_memsize];
-		_strcpy(m_str, str.m_str);
+		strcpy(m_str, str.m_str);
 	}
 	else // initialize to empty string
 	{
@@ -119,18 +135,18 @@ c3p1::string::~string()
 	}
 }
 
-size_t c3p1::string::length() const
+c3p1::ssize_t c3p1::string::length() const
 {
-	return _strlen(m_str);
+	return strlen(m_str);
 }
 
 c3p1::string& c3p1::string::operator=(const char* str)
 {
 	if (str != nullptr)
 	{
-		size_t len = _strlen(str);
+		ssize_t len = strlen(str);
 		// check if memsize is enough
-		if (m_memsize < len + 1)
+		if (m_memsize < static_cast<unsigned>(len + 1))
 		{
 			// realloc memory
 			delete[] m_str;
@@ -139,7 +155,7 @@ c3p1::string& c3p1::string::operator=(const char* str)
 		}
 
 		// copy the string
-		_strcpy(m_str, str);
+		strcpy(m_str, str);
 		return *this;
 	}
 	else
