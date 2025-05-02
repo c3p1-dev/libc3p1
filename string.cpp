@@ -20,7 +20,7 @@ char* c3p1::string::strcpy(char* dest, const char* src)
 	}
 
 	// copy src string to dest
-	int len = 0;
+    size_t len = 0;
 	while (*src != '\0')
 	{
 		*(dest++) = *src++;
@@ -31,6 +31,47 @@ char* c3p1::string::strcpy(char* dest, const char* src)
 		
 	// return the adress of the start of the string
 	return dest - len;
+}
+
+char* c3p1::string::strncpy(char* dest, const char* src, c3p1::size_t count)
+{
+	// check that dest and src are not null
+	if (src == nullptr && dest == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strcpy(dest, src) : dest and src are nullptr.");
+	}
+	if (dest == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strcpy(dest, src) : dest is nullptr.");
+	}
+	if (src == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strcpy(dest, src) : src is nullptr.");
+	}
+
+	// check count
+	if (count == 0)
+	{
+		return dest;
+	}
+
+	// copy byte to byte
+	size_t len = 0;
+	while (len < count)
+	{
+		if (*(src + len) != '\0')
+		{
+			*(dest + len) = *(src + len);
+			len++;
+		}
+		else
+		{
+			*(dest + len) = '\0';
+			len++;
+		}
+	}
+
+	return dest;
 }
 
 c3p1::size_t c3p1::string::strlen(const char* str)
@@ -89,7 +130,7 @@ char* c3p1::string::strcat(char* dest, const char* append)
 
 	return dest;
 }
-void* c3p1::string::memcpy(void* dest, const void* src, size_t count)
+void* c3p1::string::memcpy(void* dest, const void* src, c3p1::size_t count)
 {
 	// check if dest and src are not nullptr
 	if (dest == nullptr && src == nullptr)
@@ -110,7 +151,7 @@ void* c3p1::string::memcpy(void* dest, const void* src, size_t count)
 	const unsigned char* bytesrc = static_cast<const unsigned char*>(src);
 
 	// copy byte a byte src to dest
-	for (size_t i = 0; i < count; i++)
+	for (c3p1::size_t i = 0; i < count; i++)
 	{
 		byte[i] = bytesrc[i];
 	}
@@ -118,7 +159,7 @@ void* c3p1::string::memcpy(void* dest, const void* src, size_t count)
 	return dest;
 }
 
-void* c3p1::string::memmove(void* dest, const void* src, size_t count)
+void* c3p1::string::memmove(void* dest, const void* src, c3p1::size_t count)
 {
 	// check if dest and src are not nullptr
 	if (dest == nullptr && src == nullptr)
@@ -144,7 +185,7 @@ void* c3p1::string::memmove(void* dest, const void* src, size_t count)
 
 	return dest;
 }
-void* c3p1::string::memset(void* dest, unsigned char byte, size_t count)
+void* c3p1::string::memset(void* dest, unsigned char byte, c3p1::size_t count)
 {
 	// check dest
 	if (dest == nullptr)
@@ -154,7 +195,7 @@ void* c3p1::string::memset(void* dest, unsigned char byte, size_t count)
 
 	// copy n byte from dest to dest+n
 	unsigned char* p = static_cast<unsigned char*>(dest);
-	for (size_t i = 0; i < count; i++)
+	for (c3p1::size_t i = 0; i < count; i++)
 	{
 		p[i] = byte;
 	}

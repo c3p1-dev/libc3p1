@@ -64,11 +64,22 @@ namespace c3p1
 
 		// strcpy(dest, const src) copies src to dest,
 		// +manages exceptions for nullptr value for dest and/or src,
-		// -does not manage overlap between dest and src by copying first dest to a buffer
+		// -does not manage overlap between dest and src,
 		// +return dest adress,
 		// !could lead to undefined behavior if src is not a null-terminated string!
 		// !could lead to undefined behavior by buffer overflow!
 		static char* strcpy(char* dest, const char* src);
+
+		// strncpy(dest, const src, n) copies n characters from src to dest,
+		// +manages exceptions for nullptr value for dest and/or src,
+		// -does not manage overlap between dest and src,
+		// -does nothing if n is 0
+		// +return dest adress,
+		// !if n < strlen(str), a null-terminal is NOT added at the end of string!
+		// +if n > strlen(str), '\0' are added after the end of string!
+		// !could lead to undefined behavior if src is not a null-terminated string!
+		// !could lead to undefined behavior by buffer overflow!
+		static char* strncpy(char* dest, const char* src, c3p1::size_t count);
 
 		// strcat(dest, const append) adds append at the end of dest,
 		// +manages exceptions for nullptr value for dest and/or append,
