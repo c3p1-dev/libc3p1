@@ -111,6 +111,54 @@ char* c3p1::string::strcat(char* dest, const char* append)
 	return dest;
 }
 
+char* c3p1::string::strncat(char* dest, const char* append, size_t count)
+{
+	// check dest and append pointers
+	if (dest == nullptr && append == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strncat(dest, append) : dest and append are nullptr.");
+	}
+	if (dest == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strncat(dest, append) : dest is nullptr.");
+	}
+	if (append == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strncat(dest, append) : dest and append are nullptr.");
+	}
+
+	// move to the end of test
+	c3p1::size_t len = 0;
+	while (*dest != '\0')
+	{
+		dest++;
+		len++;
+	}
+
+	// copy byte to byte the n first characters of append
+	for (c3p1::size_t i = 0; i < count; i++)
+	{
+		len++;
+
+		if (*append != '\0')
+		{
+			*(dest++) = *(append++);
+		}
+		else
+		{
+			*(dest++) = '\0';
+		}
+	}
+
+	// add the null-terminal if needed
+	if (*(dest - 1) != '\0')
+	{
+		*dest = '\0';
+	}
+
+	return dest - len;
+}
+
 c3p1::size_t c3p1::string::strlen(const char* str)
 {
 	// check if str is not nullptr

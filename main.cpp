@@ -5,18 +5,26 @@ using namespace c3p1;
 
 int main()
 {
-    char* p = new char[10];
-    *p = '\0';
-    string::strcat(p, "test");
-    string::strcat(p, "test");
+    std::cout << "Program begins" << std::endl;
 
-    std::cout << "p = " << p << std::endl << "p len = " << string::strlen(p) << std::endl << std::endl;
-    for (c3p1::size_t i = 0; i < string::strlen(p); i++)
-    {
-        char* t = p + i;
-        std::cout << "p[" << i << "] = " << *t << std::endl;
-    }
+    char* n = string::strdup("(chaine A)");
+    char* m = string::strdup("(chaine B)");
+    char* o = new char[string::strlen(n) + string::strlen(m) + 5];
+    *o = '\0';
 
-    std::cout << "End of program\n";
+    std::cout << "n = " << n << std::endl << "m = " << m << std::endl << "o = " << o << std::endl;
 
+    std::cout << "copy '" << n << "' to a new string o ..." << std::endl;
+    string::strcpy(o, n);
+    std::cout << "o = '" << o << "'" << std::endl;
+
+    
+    std::cout << "concatening '" << o << "', '" << m << "' ..." << std::endl;
+    string::strncat(o, m, string::strlen(m));
+    std::cout << "o = '" << o << "'" << std::endl;
+    
+    // 
+    delete[] o;
+    delete n, m;
+    std::cout << "End of program";
 }

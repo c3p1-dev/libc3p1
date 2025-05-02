@@ -100,6 +100,14 @@ namespace c3p1
 		// !could lead to undefined behavior by buffer overflow!
 		static char* strcat(char* dest, const char* append);
 
+		// strncat(dest, const append, n) adds the n first bytes of append at the end of dest,
+		// +manages exceptions for nullptr value for dest and/or append,
+		// +return dest adress,
+		// +returned string is guaranted to be null-terminated,
+		// !could lead to undefined behavior if dest or append are not a null-terminated string!
+		// !could lead to undefined behavior by buffer overflow!
+		static char* strncat(char* dest, const char* append, size_t count);
+
 		// strlen(const str) return str length,
 		// +manages exceptions fur nullptr value for str,
 		// !could lead to undefined behavior if append is not a null-terminated string!
@@ -141,14 +149,13 @@ namespace c3p1
 		// !pointer returned must be deleted at the end of its scope
 		static char* strndup(const char* src, size_t count);
 
-		// TODO :
+		// TODO to fully implemente libc string.h :
 		// static void* memccpy(void* dest, const void* src, unsigned char byte, size_t count);
 		// static void* memchr(const void* memoryblock, unsigned char byte, size_t size);
 		// static char* strchr (const char* str, char c);
  		// static char* strrchr(const char* str, char c);
 		// static int strcoll (const char* first, const char* second);
 		// static size_t strcspn (const char* str, const char* rejected_chars);
-		// static char* strndup(const char* src, size_t size);
 		// static const char* strpbrk(const char* str, const char* searched_chars);
 		// static size_t strspn(const char* str, const char* accepted_chars);
 		// static const char* strstr(const char* fullstring, const char* substring);
