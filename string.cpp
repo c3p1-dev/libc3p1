@@ -225,6 +225,7 @@ c3p1::string::~string()
 		delete[] m_str;
 		m_str = nullptr;
 	}
+	m_memsize = 0;
 }
 
 c3p1::size_t c3p1::string::length() const

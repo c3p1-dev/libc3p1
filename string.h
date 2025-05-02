@@ -23,8 +23,11 @@ namespace c3p1
 		string(const char* str);
 
 		// copy constructor(&copy)
-		// create a new string and copies the value from copy
+		// +create a new string and copies the value from copy
+		// +manages exceptions for nullptr copy.m_str 
 		string(string& copy);
+
+		// destructor
 		~string();
 
 		// public functions and operators
@@ -55,14 +58,13 @@ namespace c3p1
 
 		// memmove(dest, const src, n) copies n bytes from src to dest,
 		// +manages exceptions for nullptr value for dest and/or src,
-		// +manages overlap betweetn dest and src,
 		// +return dest adress,
 		// !could lead to undefined behavior by buffer overflow!
 		static void* memset(void* dest, unsigned char byte, c3p1::size_t count);
 
 		// strcpy(dest, const src) copies src to dest,
 		// +manages exceptions for nullptr value for dest and/or src,
-		// +manages overlap between dest and src by copying first dest to a buffer
+		// -does not manage overlap between dest and src by copying first dest to a buffer
 		// +return dest adress,
 		// !could lead to undefined behavior if src is not a null-terminated string!
 		// !could lead to undefined behavior by buffer overflow!
