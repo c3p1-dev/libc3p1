@@ -1,5 +1,7 @@
-// string.h correspond to my local libc implementation and a class string interfacing it in c++
+// string.h
 // c3p1-dev
+// my libc/string.h implementation encapsulated in a string class
+
 #pragma once
 
 namespace c3p1
