@@ -28,7 +28,5 @@ int main()
     delete[] n; n = nullptr;
     delete[] m; m = nullptr;
 
-    string::strncpy(o, n, 4);
-
     std::cout << "End of program" << std::endl;
 }
