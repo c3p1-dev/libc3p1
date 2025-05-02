@@ -13,7 +13,7 @@ OBJS=$(SRCS:.cpp=.o)
 
 # Manage separate targets for test binary and library archive
 MAIN_OBJ=main.o
-	LIB_OBJS=$(filter-out $(MAIN_OBJ), $(OBJS))
+LIB_OBJS=$(filter-out $(MAIN_OBJ), $(OBJS))
 
 # Default rule
 all: $(OUT) $(LIB)
