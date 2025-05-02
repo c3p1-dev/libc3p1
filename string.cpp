@@ -74,26 +74,6 @@ char* c3p1::string::strncpy(char* dest, const char* src, c3p1::size_t count)
 	return dest;
 }
 
-c3p1::size_t c3p1::string::strlen(const char* str)
-{
-	// check if str is not nullptr
-	if (str != nullptr)
-	{
-		size_t len = 0;
-		while (*str != '\0')
-		{
-			len++;
-			str++;
-		}
-		return len;
-	}
-	else
-	{
-		// throw exception
-		throw exception("Exception @c3p1::strlen(str) : str is nullptr.");
-	}
-}
-
 char* c3p1::string::strcat(char* dest, const char* append)
 {
 	// check dest and append pointers
@@ -130,6 +110,155 @@ char* c3p1::string::strcat(char* dest, const char* append)
 
 	return dest;
 }
+
+c3p1::size_t c3p1::string::strlen(const char* str)
+{
+	// check if str is not nullptr
+	if (str != nullptr)
+	{
+		c3p1::size_t len = 0;
+		while (*str != '\0')
+		{
+			len++;
+			str++;
+		}
+		return len;
+	}
+	else
+	{
+		// throw exception
+		throw exception("Exception @c3p1::strlen(str) : str is nullptr.");
+	}
+}
+
+int c3p1::string::strcmp(const char* first, const char* second)
+{
+	// check if first and second are not nullptr
+	if (first == nullptr && second == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strcmp(first, second) : first and second are nullptr.");
+	}
+	if (first == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strcmp(first, secondt) : first is nullptr.");
+	}
+	if (second == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strcmp(first, second) : second is nullptr.");
+	}
+
+	// compare character to character
+	while (*second != '\0')
+	{
+		if (*first == *second)
+		{
+			// same character, reading the next one
+			first++;
+			second++;
+		}
+		else if (*first < *second)
+		{
+			return -1;
+		}
+		else
+		{
+			return +1;
+		}
+	}
+
+	// return 0 for equals string
+	return 0;
+}
+
+int c3p1::string::strncmp(const char* first, const char* second, size_t count)
+{
+	// check if first and second are not nullptr
+	if (first == nullptr && second == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strcmp(first, second) : first and second are nullptr.");
+	}
+	if (first == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strcmp(first, secondt) : first is nullptr.");
+	}
+	if (second == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strcmp(first, second) : second is nullptr.");
+	}
+
+	// compare the n first characters
+	for (c3p1::size_t i = 0; i < count; i++)
+	{
+		if (*first == *second)
+		{
+			// same character, reading the next one
+			first++;
+			second++;
+		}
+		else if (*first < *second)
+		{
+			return -1;
+		}
+		else
+		{
+			return +1;
+		}
+	}
+
+	// n first characters are equals
+	return 0;
+}
+
+char* c3p1::string::strdup(const char* src)
+{
+	// check src value	
+	if (src == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strdup(src) : src is nullptr.");
+	}
+
+	// allocate memory and copy src
+	char* p = new char[strlen(src) + 1];
+
+	if (p != nullptr)
+	{
+		strcpy(p, src);
+		return p;
+	}
+	else
+	{
+		throw exception("Exception @c3p1::string::strdup(src) : memory allocation for the new string has failed.");
+	}
+}
+
+char* c3p1::string::strndup(const char* src, size_t count)
+{
+	// check src value
+	if (src == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strdup(src) : src is nullptr.");
+	}
+
+	char* p = new char[count+1];
+	size_t len = strlen(src);
+
+	if (p == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strndup(src) : memory allocation for the new string has failed.");
+	}
+
+	// if count is equal to strlen(src), copy the string
+	strncpy(p, src, count);
+
+	// add the null terminal if src was longer than count, because strncpy does not
+	if (strlen(src) > count)
+	{
+		p[count] = '\0';
+	}
+
+	return p;
+}
+
 void* c3p1::string::memcpy(void* dest, const void* src, c3p1::size_t count)
 {
 	// check if dest and src are not nullptr
@@ -175,22 +304,30 @@ void* c3p1::string::memmove(void* dest, const void* src, c3p1::size_t count)
 		throw exception("Exception @c3p1::string::memmove(dest, src, count) : src is nullptr.");
 	}
 
-	// create a n bytes buffer
+	// create a n bytes buffer and manage allocation failure
 	unsigned char* buffer = new unsigned char[count];
-	memcpy(static_cast<void*>(buffer), src, count);
+	if (buffer != nullptr)
+	{
+		// copy src to buffer
+		memcpy(static_cast<void*>(buffer), src, count);
 
-	// copy buffer to dest
-	memcpy(dest, buffer, count);
-	delete[] buffer;
+		// copy buffer to dest
+		memcpy(dest, buffer, count);
+		delete[] buffer;
 
-	return dest;
+		return dest;
+	}
+	else
+	{
+		throw exception("Exception @c3p1::string::memmove(dest, src, count) : memory allocation for the buffer has failed.");
+	}
 }
 void* c3p1::string::memset(void* dest, unsigned char byte, c3p1::size_t count)
 {
 	// check dest
 	if (dest == nullptr)
 	{
-		throw exception("Exception @c3p1::string::memcpy(dest, byte, count) : dest and byte are nullptr.");
+		throw exception("Exception @c3p1::string::memset(dest, byte, count) : dest is nullptr.");
 	}
 
 	// copy n byte from dest to dest+n
@@ -204,13 +341,19 @@ void* c3p1::string::memset(void* dest, unsigned char byte, c3p1::size_t count)
 
 }
 
-
 // class string implementation
 
 c3p1::string::string()
 {
 	// Initialise to empty string
 	m_str = new char;
+
+	// check allocation result
+	if (m_str == nullptr)
+	{
+		throw exception("Exception @c3p1::string::string(void) : memory allocation for the string has failed.");
+	}
+
 	m_memsize = 1;
 	*m_str = '\0';
 }
@@ -223,6 +366,12 @@ c3p1::string::string(const char* str)
 		// allocate enough memory
 		m_memsize = strlen(str) + 1;
 		m_str = new char[m_memsize];
+		
+		// check allocation result
+		if (m_str == nullptr)
+		{
+			throw exception("Exception @c3p1::string::string(str) : memory allocation for the string has failed.");
+		}
 
 		// copy str
 		strcpy(m_str, str);
@@ -232,6 +381,13 @@ c3p1::string::string(const char* str)
 		// no-exceptions on string constructors
 		// initialise to empty string
 		m_str = new char;
+
+		// check allocation result
+		if (m_str == nullptr)
+		{
+			throw exception("Exception @c3p1::string::string(str) : memory allocation for the string has failed.");
+		}
+
 		m_memsize = 1;
 		*m_str = '\0';
 	}
@@ -249,11 +405,25 @@ c3p1::string::string(string& copy)
 	{
 		m_memsize = copy.m_memsize;
 		m_str = new char[m_memsize];
+
+		// check allocation result
+		if (m_str == nullptr)
+		{
+			throw exception("Exception @c3p1::string::string(&copy) : memory allocation for the string has failed.");
+		}
+
 		strcpy(m_str, copy.m_str);
 	}
 	else
 	{
 		m_str = new char;
+
+		// check allcation result
+		if (m_str == nullptr)
+		{
+			throw exception("Exception @c3p1::string::string(&copy) : memory allocation for the string has failed.");
+		}
+
 		m_memsize = 1;
 		*m_str = '\0';
 	}
@@ -280,12 +450,18 @@ c3p1::string& c3p1::string::operator=(const char* str)
 	{
 		size_t len = strlen(str);
 		// check if memsize is enough
-		if (m_memsize < static_cast<unsigned>(len + 1))
+		if (m_memsize < len + 1)
 		{
 			// realloc memory
 			delete[] m_str;
 			m_memsize = len + 1;
 			m_str = new char[m_memsize];
+
+			// check allocation result
+			if (m_str == nullptr)
+			{
+				throw exception("Exception @c3p1::string::string(&copy) : memory allocation for the string has failed.");
+			}
 		}
 
 		// copy the string
