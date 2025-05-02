@@ -19,16 +19,16 @@ all: $(OUT)
 
 # Compile .cpp to .o
 %.o: %.cpp
-        $(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Create library archive
 $(LIB): $(LIB_OBJS)
-        ar rcs $@ $^
+	ar rcs $@ $^
 
 # Create test binary
 $(OUT): $(MAIN_OBJ) $(LIB)
-        $(CXX) $(CXXFLAGS) -o $@ $(MAIN_OBJ) -L. -lc3p1
+	$(CXX) $(CXXFLAGS) -o $@ $(MAIN_OBJ) -L. -lc3p1
 
 # Cleaning
 clean:
-        rm -f $(OBJS) $(LIB) $(OUT)
+	rm -f $(OBJS) $(LIB) $(OUT)
