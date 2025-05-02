@@ -321,6 +321,7 @@ void* c3p1::string::memmove(void* dest, const void* src, c3p1::size_t count)
 		throw exception("Exception @c3p1::string::memmove(dest, src, count) : memory allocation for the buffer has failed.");
 	}
 }
+
 void* c3p1::string::memset(void* dest, unsigned char byte, c3p1::size_t count)
 {
 	// check dest
@@ -338,6 +339,51 @@ void* c3p1::string::memset(void* dest, unsigned char byte, c3p1::size_t count)
 
 	return dest;
 
+}
+
+int c3p1::string::memcmp(const void* first, const void* second, c3p1::size_t count)
+{
+	// check first and second
+	if (first == nullptr && second == nullptr)
+	{
+		throw exception("Exception @c3p1::string::memcmp(first, second, n) : first and second are nullptr.");
+	}
+	if (first == nullptr)
+	{
+		throw exception("Exception @c3p1::string::memcmp(first, second, n) : first is nullptr.");
+	}
+	if (second == nullptr)
+	{
+		throw exception("Exception @c3p1::string::memcmp(first, second, n) : second is nullptr.");
+	}
+
+	// cast pointers to unsigned char* to work with bytes
+	const unsigned char* f = static_cast<const unsigned char*>(first);
+	const unsigned char* s = static_cast<const unsigned char*>(second);
+
+	// compare byte to byte the n first bytes
+	for (c3p1::size_t i = 0; i < count; i++)
+	{
+		if (f[i] == s[i])
+		{
+			// bytes are equals, reading the next ones
+			f++;
+			s++;
+		}
+		else if (f[i] < s[i])
+		{
+			// first is inferior to second
+			return -1;
+		}
+		else
+		{
+			// first is superior to second
+			return +1;
+		}
+	}
+
+	// memblocs are equals
+	return 0;
 }
 
 // class string implementation

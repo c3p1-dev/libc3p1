@@ -63,6 +63,15 @@ namespace c3p1
 		// !could lead to undefined behavior by buffer overflow!
 		static void* memset(void* dest, unsigned char byte, c3p1::size_t count);
 
+		// memcmp(first, second, n) compares the n first bytes of first and second,
+		// +manage exceptions for nullptr value for first and/or second,
+		// -does not manage overlap between first and second,
+		// +returns 0 if first and second are equals,
+		// +returns -1 if first is inferior to second,
+		// +returns +1 if first is superior to second,
+		// !could lead unidentified behavior if n is superior to first and/or second size!
+		static int memcmp(const void* first, const void* second, size_t count);
+
 		// strcpy(dest, const src) copies src to dest,
 		// +manages exceptions for nullptr value for dest and/or src,
 		// -does not manage overlap between dest and src,
@@ -133,7 +142,6 @@ namespace c3p1
 		// TODO :
 		// static void* memccpy(void* dest, const void* src, unsigned char byte, size_t count);
 		// static void* memchr(const void* memoryblock, unsigned char byte, size_t size);
-		// static int memcmp(const void* first, const void* second, size_t count);
 		// static char* strchr (const char* str, char c);
  		// static char* strrchr(const char* str, char c);
 		// static int strcoll (const char* first, const char* second);
