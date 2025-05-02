@@ -24,7 +24,6 @@ int main()
     std::cout << "o = '" << o << "'" << std::endl;
     
     // 
-    delete[] o;
-    delete n, m;
+    delete[] o, n, m;
     std::cout << "End of program";
 }
