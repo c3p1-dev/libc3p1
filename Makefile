@@ -1,5 +1,5 @@
 # Compiler and options
-CXX = g++
+CXX = c++
 CXXFLAGS = -O2 -Wall -std=c++17
 
 # Output filenames
