@@ -24,8 +24,11 @@ int main()
     std::cout << "o = '" << o << "'" << std::endl;
     
     // 
-    delete[] o;
-    delete[] n;
-    delete[] m;
+    delete[] o; o = nullptr;
+    delete[] n; n = nullptr;
+    delete[] m; m = nullptr;
+
+    string::strncpy(o, n, 4);
+
     std::cout << "End of program" << std::endl;
 }

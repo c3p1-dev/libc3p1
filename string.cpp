@@ -38,15 +38,15 @@ char* c3p1::string::strncpy(char* dest, const char* src, c3p1::size_t count)
 	// check that dest and src are not null
 	if (src == nullptr && dest == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strcpy(dest, src) : dest and src are nullptr.");
+		throw exception("Exception @c3p1::string::strncpy(dest, src, n) : dest and src are nullptr.");
 	}
 	if (dest == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strcpy(dest, src) : dest is nullptr.");
+		throw exception("Exception @c3p1::string::strncpy(dest, src, n) : dest is nullptr.");
 	}
 	if (src == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strcpy(dest, src) : src is nullptr.");
+		throw exception("Exception @c3p1::string::strncpy(dest, src, n) : src is nullptr.");
 	}
 
 	// check count
@@ -116,15 +116,15 @@ char* c3p1::string::strncat(char* dest, const char* append, size_t count)
 	// check dest and append pointers
 	if (dest == nullptr && append == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strncat(dest, append) : dest and append are nullptr.");
+		throw exception("Exception @c3p1::string::strncat(dest, append, n) : dest and append are nullptr.");
 	}
 	if (dest == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strncat(dest, append) : dest is nullptr.");
+		throw exception("Exception @c3p1::string::strncat(dest, append, n) : dest is nullptr.");
 	}
 	if (append == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strncat(dest, append) : dest and append are nullptr.");
+		throw exception("Exception @c3p1::string::strncat(dest, append, n) : dest and append are nullptr.");
 	}
 
 	// move to the end of test
@@ -188,7 +188,7 @@ int c3p1::string::strcmp(const char* first, const char* second)
 	}
 	if (first == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strcmp(first, secondt) : first is nullptr.");
+		throw exception("Exception @c3p1::string::strcmp(first, second) : first is nullptr.");
 	}
 	if (second == nullptr)
 	{
@@ -223,15 +223,15 @@ int c3p1::string::strncmp(const char* first, const char* second, size_t count)
 	// check if first and second are not nullptr
 	if (first == nullptr && second == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strcmp(first, second) : first and second are nullptr.");
+		throw exception("Exception @c3p1::string::strncmp(first, second, n) : first and second are nullptr.");
 	}
 	if (first == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strcmp(first, secondt) : first is nullptr.");
+		throw exception("Exception @c3p1::string::strncmp(first, second, n) : first is nullptr.");
 	}
 	if (second == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strcmp(first, second) : second is nullptr.");
+		throw exception("Exception @c3p1::string::strncmp(first, second, n) : second is nullptr.");
 	}
 
 	// compare the n first characters
@@ -284,14 +284,14 @@ char* c3p1::string::strndup(const char* src, size_t count)
 	// check src value
 	if (src == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strdup(src) : src is nullptr.");
+		throw exception("Exception @c3p1::string::strndup(src, n) : src is nullptr.");
 	}
 
 	char* p = new char[count+1];
 
 	if (p == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strndup(src) : memory allocation for the new string has failed.");
+		throw exception("Exception @c3p1::string::strndup(src, n) : memory allocation for the new string has failed.");
 	}
 
 	// if count is equal to strlen(src), copy the string
