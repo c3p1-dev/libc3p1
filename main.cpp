@@ -27,5 +27,5 @@ int main()
     delete[] o;
     delete[] n;
     delete[] m;
-    std::cout << "End of program";
+    std::cout << "End of program" << std::endl;
 }
