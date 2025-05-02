@@ -130,10 +130,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="exception.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="string.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="exception.h" />
     <ClInclude Include="string.h" />
   </ItemGroup>
   <ItemGroup>
