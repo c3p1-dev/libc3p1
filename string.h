@@ -92,5 +92,21 @@ namespace c3p1
 		// +manages exceptions fur nullptr value for str,
 		// !could lead to undefined behavior if append is not a null-terminated string!
 		static c3p1::size_t strlen(const char* str);
+
+		// TODO :
+		// static void* memccpy(void* dest, const void* src, unsigned char byte, size_t count);
+		// static void* memchr(const void* memoryblock, unsigned char byte, size_t size);
+		// static int memcmp(const void* first, const void* second, size_t count);
+		// static char* strchr (const char* str, char c);
+ 		// static char* strrchr(const char* str, char c);
+		// static int strcmp (const char* first, const char* second);
+		// static int strcoll (const char* first, const char* second);
+		// static size_t strcspn (const char* str, const char* rejected_chars);
+		// static char* strdup(const char* src);
+		// static const char* strpbrk(const char* str, const char* searched_chars);
+		// static size_t strspn(const char* str, const char* accepted_chars);
+		// static const char* strstr(const char* fullstring, const char* substring);
+		// static char* strtok(char* strc, const char* delimiters);
+		// static size_t strxfrm(char* dest, const char* src, size_t size);
 	};
 }
