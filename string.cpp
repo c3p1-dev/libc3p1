@@ -240,7 +240,6 @@ char* c3p1::string::strndup(const char* src, size_t count)
 	}
 
 	char* p = new char[count+1];
-	size_t len = strlen(src);
 
 	if (p == nullptr)
 	{
