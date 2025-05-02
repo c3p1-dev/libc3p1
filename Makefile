@@ -1,21 +1,34 @@
-CXX = c++
-CXXFLAGS = -Wall -Wextra -std=c++17
+# Compiler and options
+CXX = g++
+CXXFLAGS = -O2 -Wall -std=c++17
 
-TARGET = c3p1.out
+# Output filenames
 LIB = libc3p1.a
-SRCS = libc3p1.cpp string.cpp
-OBJS = libc3p1.o string.o
+OUT = c3p1.out
 
-all: $(LIB) $(TARGET) 
+# Lists src and obj files
+SRCS = $(wildcard *.cpp)
+OBJS = $(SRCS:.cpp=.o)
 
-$(TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $(LIB)
+# Manage separate targets for test binary and library archive
+MAIN_OBJ = main.o
+LIB_OBJS = $(filter-out $(MAIN_OBJ), $(OBJS))
 
-$(LIB): $(OBJS)
-	ar rcs $@ $(OBJS)
+# Default rule
+all: $(OUT)
 
-%.o: %.cpp string.h
-	$(CXX) $(CXXFLAGS) -c $< -o $@ $(OBJS)
+# Compile .cpp to .o
+%.o: %.cpp
+        $(CXX) $(CXXFLAGS) -c $< -o $@
 
+# Create library archive
+$(LIB): $(LIB_OBJS)
+        ar rcs $@ $^
+
+# Create test binary
+$(OUT): $(MAIN_OBJ) $(LIB)
+        $(CXX) $(CXXFLAGS) -o $@ $(MAIN_OBJ) -L. -lc3p1
+
+# Cleaning
 clean:
-	rm -f $(OBJS) $(TARGET) $(LIB)
+        rm -f $(OBJS) $(LIB) $(OUT)
