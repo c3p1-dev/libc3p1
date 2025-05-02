@@ -134,10 +134,6 @@ void* c3p1::string::memmove(void* dest, const void* src, size_t count)
 		throw exception("Exception @c3p1::string::memmove(dest, src, count) : src is nullptr.");
 	}
 
-	// cast raw pointers to unsigned char pointers and process copying byte a byte
-	unsigned char* byte = static_cast<unsigned char*>(dest);
-	const unsigned char* bytesrc = static_cast<const unsigned char*>(src);
-
 	// create a n bytes buffer
 	unsigned char* buffer = new unsigned char[count];
 	memcpy(static_cast<void*>(buffer), src, count);
