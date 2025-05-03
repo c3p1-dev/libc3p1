@@ -22,7 +22,6 @@ int main()
     {
         std::cout << "Aucune phrase n'a ete trouvee." << std::endl;
     }
-
     std::cout << text << std::endl;
  
     std::cout << "End of program" << std::endl;

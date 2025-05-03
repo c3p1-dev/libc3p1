@@ -287,7 +287,7 @@ char* c3p1::string::strndup(const char* src, size_t size)
 		throw exception("Exception @c3p1::string::strndup(const src, size) : src is nullptr.");
 	}
 
-	char* p = new char[size+1];
+	char* p = new char[size + 1];
 
 	if (p == nullptr)
 	{
@@ -304,6 +304,136 @@ char* c3p1::string::strndup(const char* src, size_t size)
 	}
 
 	return p;
+}
+
+char* c3p1::string::strchr(const char* str, char searchedchar)
+{
+	// check str value
+	if (str == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strchr(const str, searchedchar) : str is nullptr.");
+	}
+
+	c3p1::size_t l = strlen(str);
+
+	// reading character to character from the first to the last
+	for (c3p1::size_t i = 0; i < l; i++)
+	{
+		if (str[i] == searchedchar)
+		{
+			// return address of the found character
+			return const_cast<char*>(str + i);
+		}
+	}
+
+	// searched chararacter not found
+	return nullptr;
+}
+
+char* c3p1::string::strrchr(const char* str, char searchedchar)
+{
+	// check str value
+	if (str == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strrchr(const str, searchedchar) : str is nullptr.");
+	}
+
+	// pointing at the end
+	c3p1::size_t l = strlen(str);
+	char* wp = const_cast<char*>(str) + l;
+
+	// reading character to character from the last to the first
+	for (c3p1::size_t i = 0; i < l; i++)
+	{
+		if (*(wp) == searchedchar)
+		{
+			// return address of the found character
+			return wp;
+		}
+		else
+		{
+			wp--;
+		}
+	}
+
+	// searched character not found
+	return nullptr;
+}
+
+c3p1::size_t c3p1::string::strspn(const char* str, const char* accepted)
+{
+	// check str value
+	if (str == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strspn(const str, const accepted) : str is nullptr.");
+	}
+
+	// count length of the first substring only made with accepted characters
+	c3p1::size_t lstr = strlen(str);
+	c3p1::size_t lacc = strlen(accepted);
+	c3p1::size_t count = 0;
+
+	// read str from first character to the first unaccepted character or to the null-terminal and keep the count
+	for (c3p1::size_t i = 0; i < lstr; i++)
+	{
+		// track count variation
+		c3p1::size_t c = count;
+
+		for (c3p1::size_t j = 0; j < lacc; j++)
+		{
+			if (str[i] == accepted[j])
+			{
+				count++;
+			}
+		}
+
+		// if count has not been increased, end of accepted characters string
+		if (count != c + 1)
+		{
+			break;
+		}
+	}
+
+	// the whole string is made of accepted characters
+	return count;
+}
+
+c3p1::size_t c3p1::string::strcspn(const char* str, const char* rejected)
+{
+	// check str value
+	if (str == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strspn(const str, const accepted) : str is nullptr.");
+	}
+
+	// count length of the first substring only made with accepted characters
+	c3p1::size_t lstr = strlen(str);
+	c3p1::size_t lrej = strlen(rejected);
+	c3p1::size_t count = 0;
+
+	// read str from first character to the first unaccepted character or to the null-terminal and keep the count
+	for (c3p1::size_t i = 0; i < lstr; i++)
+	{
+		// track count variation
+		c3p1::size_t c = count;
+
+		for (c3p1::size_t j = 0; j < lrej; j++)
+		{
+			if (str[i] != rejected[j])
+			{
+				count++;
+			}
+		}
+
+		// if count has not been increased, end of accepted characters string
+		if (count != c + 1)
+		{
+			break;
+		}
+	}
+
+	// the whole string is made of accepted characters
+	return count;
 }
 
 void* c3p1::string::memcpy(void* dest, const void* src, c3p1::size_t size)
