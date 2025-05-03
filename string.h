@@ -196,7 +196,6 @@ namespace c3p1
 		
 		// static int strcoll (const char* first, const char* second);
 		// static const char* strpbrk(const char* str, const char* searched_chars);
-		// static size_t strspn(const char* str, const char* accepted_chars);
 		// static const char* strstr(const char* fullstring, const char* substring);
 		// static char* strtok(char* strc, const char* delimiters);
 		// static size_t strxfrm(char* dest, const char* src, size_t size);
