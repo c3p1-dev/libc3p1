@@ -171,8 +171,6 @@ void* c3p1::string::memmem(const void* big, c3p1::size_t big_size, const void* l
 	unsigned char* wb = const_cast<unsigned char*>(static_cast<const unsigned char*>(big));
 	unsigned char* wl = const_cast<unsigned char*>(static_cast<const unsigned char*>(little));
 
-	unsigned char* start_pos = nullptr;
-
 	// return big if little_size is zero
 	if (little_size == 0)
 	{
