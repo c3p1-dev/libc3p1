@@ -8,7 +8,7 @@ int main()
     std::cout << "Program begins" << std::endl;
 
     const char* text = "Ceci est ma premiere phrase. Et ceci est ma seconde.";
-    const size_t len = string::strlen(text);
+    const c3p1::size_t len = string::strlen(text);
 
     char* firstSentance = new char[len+1];
     char* res = static_cast<char*>(string::memccpy(firstSentance, text, static_cast<unsigned char>('.'), len));
