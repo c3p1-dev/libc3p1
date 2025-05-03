@@ -8,66 +8,66 @@ char* c3p1::string::strcpy(char* dest, const char* src)
 	// check that dest and src are not null
 	if (src == nullptr && dest == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strcpy(dest, src) : dest and src are nullptr.");
+		throw exception("Exception @c3p1::string::strcpy(dest, const src) : dest and src are nullptr.");
 	}
 	if (dest == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strcpy(dest, src) : dest is nullptr.");
+		throw exception("Exception @c3p1::string::strcpy(dest, const src) : dest is nullptr.");
 	}
 	if (src == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strcpy(dest, src) : src is nullptr.");
+		throw exception("Exception @c3p1::string::strcpy(dest, const src) : src is nullptr.");
 	}
 
 	// copy src string to dest
-    size_t len = 0;
+    size_t i = 0;
 	while (*src != '\0')
 	{
 		*(dest++) = *src++;
-		len++;
+		i++;
 	}
 	// null-terminate the destination string
 	*dest = '\0';
 		
-	// return the adress of the start of the string
-	return dest - len;
+	// return the address of the start of the string
+	return dest - i;
 }
 
-char* c3p1::string::strncpy(char* dest, const char* src, c3p1::size_t count)
+char* c3p1::string::strncpy(char* dest, const char* src, c3p1::size_t size)
 {
 	// check that dest and src are not null
 	if (src == nullptr && dest == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strncpy(dest, src, n) : dest and src are nullptr.");
+		throw exception("Exception @c3p1::string::strncpy(dest, const src, size) : dest and src are nullptr.");
 	}
 	if (dest == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strncpy(dest, src, n) : dest is nullptr.");
+		throw exception("Exception @c3p1::string::strncpy(dest, const src, size) : dest is nullptr.");
 	}
 	if (src == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strncpy(dest, src, n) : src is nullptr.");
+		throw exception("Exception @c3p1::string::strncpy(dest, const src, size) : src is nullptr.");
 	}
 
 	// check count
-	if (count == 0)
+	if (size == 0)
 	{
 		return dest;
 	}
 
 	// copy byte to byte
-	size_t len = 0;
-	while (len < count)
+	size_t i = 0;
+	while (i < size)
 	{
-		if (*(src + len) != '\0')
+		if (*(src + i) != '\0')
 		{
-			*(dest + len) = *(src + len);
-			len++;
+			*(dest + i) = *(src + i);
+			i++;
 		}
 		else
 		{
-			*(dest + len) = '\0';
-			len++;
+			*(dest + i) = '\0';
+			i++;
 		}
 	}
 
@@ -79,66 +79,66 @@ char* c3p1::string::strcat(char* dest, const char* append)
 	// check dest and append pointers
 	if (dest == nullptr && append == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strcat(dest, append) : dest and append are nullptr.");
+		throw exception("Exception @c3p1::string::strcat(dest, const append) : dest and append are nullptr.");
 	}
 	if (dest == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strcat(dest, append) : dest is nullptr.");
+		throw exception("Exception @c3p1::string::strcat(dest, const append) : dest is nullptr.");
 	}
 	if (append == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strcat(dest, append) : dest and append are nullptr.");
+		throw exception("Exception @c3p1::string::strcat(dest, const append) : dest and append are nullptr.");
 	}
-	int len = 0;
+	int i = 0;
 	// move to the end of the first string
 	while (*dest != '\0')
 	{
 		dest++;
-		len++;
+		i++;
 	}
 
 	// append the second string
 	while (*append != '\0')
 	{
 		*(dest++) = *append++;
-		len++;
+		i++;
 	}
 
 	// null-terminate and move to the beginning
 	*dest = '\0';
-	dest = dest - len;
+	dest = dest - i;
 
 	return dest;
 }
 
-char* c3p1::string::strncat(char* dest, const char* append, size_t count)
+char* c3p1::string::strncat(char* dest, const char* append, size_t size)
 {
 	// check dest and append pointers
 	if (dest == nullptr && append == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strncat(dest, append, n) : dest and append are nullptr.");
+		throw exception("Exception @c3p1::string::strncat(dest, const append, size) : dest and append are nullptr.");
 	}
 	if (dest == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strncat(dest, append, n) : dest is nullptr.");
+		throw exception("Exception @c3p1::string::strncat(dest, const append, size) : dest is nullptr.");
 	}
 	if (append == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strncat(dest, append, n) : dest and append are nullptr.");
+		throw exception("Exception @c3p1::string::strncat(dest, const append, size) : dest and append are nullptr.");
 	}
 
 	// move to the end of test
-	c3p1::size_t len = 0;
+	c3p1::size_t i = 0;
 	while (*dest != '\0')
 	{
 		dest++;
-		len++;
+		i++;
 	}
 
 	// copy byte to byte the n first characters of append
-	for (c3p1::size_t i = 0; i < count; i++)
+	for (c3p1::size_t j = 0; j < size; j++ && i++)
 	{
-		len++;
+		// i++;
 
 		if (*append != '\0')
 		{
@@ -156,7 +156,7 @@ char* c3p1::string::strncat(char* dest, const char* append, size_t count)
 		*dest = '\0';
 	}
 
-	return dest - len;
+	return dest - i;
 }
 
 c3p1::size_t c3p1::string::strlen(const char* str)
@@ -164,18 +164,18 @@ c3p1::size_t c3p1::string::strlen(const char* str)
 	// check if str is not nullptr
 	if (str != nullptr)
 	{
-		c3p1::size_t len = 0;
+		c3p1::size_t i = 0;
 		while (*str != '\0')
 		{
-			len++;
+			i++;
 			str++;
 		}
-		return len;
+		return i;
 	}
 	else
 	{
 		// throw exception
-		throw exception("Exception @c3p1::strlen(str) : str is nullptr.");
+		throw exception("Exception @c3p1::strlen(const str) : str is nullptr.");
 	}
 }
 
@@ -184,15 +184,15 @@ int c3p1::string::strcmp(const char* first, const char* second)
 	// check if first and second are not nullptr
 	if (first == nullptr && second == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strcmp(first, second) : first and second are nullptr.");
+		throw exception("Exception @c3p1::string::strcmp(first, const second) : first and second are nullptr.");
 	}
 	if (first == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strcmp(first, second) : first is nullptr.");
+		throw exception("Exception @c3p1::string::strcmp(first, const second) : first is nullptr.");
 	}
 	if (second == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strcmp(first, second) : second is nullptr.");
+		throw exception("Exception @c3p1::string::strcmp(first, const second) : second is nullptr.");
 	}
 
 	// compare character to character
@@ -218,24 +218,24 @@ int c3p1::string::strcmp(const char* first, const char* second)
 	return 0;
 }
 
-int c3p1::string::strncmp(const char* first, const char* second, size_t count)
+int c3p1::string::strncmp(const char* first, const char* second, size_t size)
 {
 	// check if first and second are not nullptr
 	if (first == nullptr && second == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strncmp(first, second, n) : first and second are nullptr.");
+		throw exception("Exception @c3p1::string::strncmp(first, const second, size) : first and second are nullptr.");
 	}
 	if (first == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strncmp(first, second, n) : first is nullptr.");
+		throw exception("Exception @c3p1::string::strncmp(first, const second, size) : first is nullptr.");
 	}
 	if (second == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strncmp(first, second, n) : second is nullptr.");
+		throw exception("Exception @c3p1::string::strncmp(first, const second, size) : second is nullptr.");
 	}
 
 	// compare the n first characters
-	for (c3p1::size_t i = 0; i < count; i++)
+	for (c3p1::size_t i = 0; i < size; i++)
 	{
 		if (*first == *second)
 		{
@@ -262,7 +262,7 @@ char* c3p1::string::strdup(const char* src)
 	// check src value	
 	if (src == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strdup(src) : src is nullptr.");
+		throw exception("Exception @c3p1::string::strdup(const src) : src is nullptr.");
 	}
 
 	// allocate memory and copy src
@@ -275,150 +275,186 @@ char* c3p1::string::strdup(const char* src)
 	}
 	else
 	{
-		throw exception("Exception @c3p1::string::strdup(src) : memory allocation for the new string has failed.");
+		throw exception("Exception @c3p1::string::strdup(const src) : memory allocation for the new string has failed.");
 	}
 }
 
-char* c3p1::string::strndup(const char* src, size_t count)
+char* c3p1::string::strndup(const char* src, size_t size)
 {
 	// check src value
 	if (src == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strndup(src, n) : src is nullptr.");
+		throw exception("Exception @c3p1::string::strndup(const src, size) : src is nullptr.");
 	}
 
-	char* p = new char[count+1];
+	char* p = new char[size+1];
 
 	if (p == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strndup(src, n) : memory allocation for the new string has failed.");
+		throw exception("Exception @c3p1::string::strndup(const src, size) : memory allocation for the new string has failed.");
 	}
 
 	// if count is equal to strlen(src), copy the string
-	strncpy(p, src, count);
+	strncpy(p, src, size);
 
 	// add the null terminal if src was longer than count, because strncpy does not
-	if (strlen(src) > count)
+	if (strlen(src) > size)
 	{
-		p[count] = '\0';
+		p[size] = '\0';
 	}
 
 	return p;
 }
 
-void* c3p1::string::memcpy(void* dest, const void* src, c3p1::size_t count)
+void* c3p1::string::memcpy(void* dest, const void* src, c3p1::size_t size)
 {
 	// check if dest and src are not nullptr
 	if (dest == nullptr && src == nullptr)
 	{
-		throw exception("Exception @c3p1::string::memcpy(dest, src, count) : dest and src are nullptr.");
+		throw exception("Exception @c3p1::string::memcpy(dest, const src, size) : dest and src are nullptr.");
 	}
 	if (dest == nullptr)
 	{
-		throw exception("Exception @c3p1::string::memcpy(dest, src, count) : dest is nullptr.");
+		throw exception("Exception @c3p1::string::memcpy(dest, const src, size) : dest is nullptr.");
 	}
 	if (src == nullptr)
 	{
-		throw exception("Exception @c3p1::string::memcpy(dest, src, count) : src is nullptr.");
+		throw exception("Exception @c3p1::string::memcpy(dest, const src, size) : src is nullptr.");
 	}
 
 	// cast raw pointers to unsigned char pointers and process copying byte a byte
-	unsigned char* byte = static_cast<unsigned char*>(dest);
-	const unsigned char* bytesrc = static_cast<const unsigned char*>(src);
+	unsigned char* currentbyte = static_cast<unsigned char*>(dest);
+	const unsigned char* bytes = static_cast<const unsigned char*>(src);
 
 	// copy byte a byte src to dest
-	for (c3p1::size_t i = 0; i < count; i++)
+	for (c3p1::size_t i = 0; i < size; i++)
 	{
-		byte[i] = bytesrc[i];
+		currentbyte[i] = bytes[i];
 	}
 
 	return dest;
 }
 
-void* c3p1::string::memmove(void* dest, const void* src, c3p1::size_t count)
+void* c3p1::string::memccpy(void* dest, const void* src, unsigned char searchedbyte, c3p1::size_t size)  
+{  
+	// check if dest and src are not nullptr  
+	if (dest == nullptr && src == nullptr)  
+	{  
+		throw exception("Exception @c3p1::string::memccpy(dest, const src, searchedbyte, size) : dest and src are nullptr.");  
+	}  
+	if (dest == nullptr)  
+	{  
+		throw exception("Exception @c3p1::string::memccpy(dest, const src, searchedbyte, size) : dest is nullptr.");  
+	}  
+	if (src == nullptr)  
+	{  
+		throw exception("Exception @c3p1::string::memccpy(dest, const src, searchedbyte, size) : src is nullptr.");  
+	}  
+
+	unsigned char* d = static_cast<unsigned char*>(dest);  
+	const unsigned char* s = static_cast<const unsigned char*>(src);  
+
+	// write byte to byte the bloc src to dest count times or after first occurrence of byte  
+	c3p1::size_t i = 0;  
+	do  
+	{  
+		d[i] = s[i];  
+
+		if (d[i] == searchedbyte)  
+		{  
+			// Fix: Return the correct pointer type by adding an offset to the destination pointer  
+			return static_cast<void*>(d + i + 1);  
+		}  
+
+	} while (++i < size);  
+
+	return nullptr;  
+}
+
+void* c3p1::string::memmove(void* dest, const void* src, c3p1::size_t size)
 {
 	// check if dest and src are not nullptr
 	if (dest == nullptr && src == nullptr)
 	{
-		throw exception("Exception @c3p1::string::memmove(dest, src, count) : dest and src are nullptr.");
+		throw exception("Exception @c3p1::string::memmove(dest, const src, size) : dest and src are nullptr.");
 	}
 	if (dest == nullptr)
 	{
-		throw exception("Exception @c3p1::string::memmove(dest, src, count) : dest is nullptr.");
+		throw exception("Exception @c3p1::string::memmove(dest, const src, size) : dest is nullptr.");
 	}
 	if (src == nullptr)
 	{
-		throw exception("Exception @c3p1::string::memmove(dest, src, count) : src is nullptr.");
+		throw exception("Exception @c3p1::string::memmove(dest, const src, size) : src is nullptr.");
 	}
 
 	// create a n bytes buffer and manage allocation failure
-	unsigned char* buffer = new unsigned char[count];
+	unsigned char* buffer = new unsigned char[size];
 	if (buffer != nullptr)
 	{
 		// copy src to buffer
-		memcpy(static_cast<void*>(buffer), src, count);
+		memcpy(static_cast<void*>(buffer), src, size);
 
 		// copy buffer to dest
-		memcpy(dest, buffer, count);
+		memcpy(dest, buffer, size);
 		delete[] buffer;
 
 		return dest;
 	}
 	else
 	{
-		throw exception("Exception @c3p1::string::memmove(dest, src, count) : memory allocation for the buffer has failed.");
+		throw exception("Exception @c3p1::string::memmove(dest, src, size) : memory allocation for the buffer has failed.");
 	}
 }
 
-void* c3p1::string::memset(void* dest, unsigned char byte, c3p1::size_t count)
+void* c3p1::string::memset(void* dest, unsigned char byteval, c3p1::size_t size)
 {
 	// check dest
 	if (dest == nullptr)
 	{
-		throw exception("Exception @c3p1::string::memset(dest, byte, count) : dest is nullptr.");
+		throw exception("Exception @c3p1::string::memset(dest, byte, size) : dest is nullptr.");
 	}
 
 	// copy n byte from dest to dest+n
 	unsigned char* p = static_cast<unsigned char*>(dest);
-	for (c3p1::size_t i = 0; i < count; i++)
+	for (c3p1::size_t i = 0; i < size; i++)
 	{
-		p[i] = byte;
+		p[i] = byteval;
 	}
 
 	return dest;
 
 }
 
-int c3p1::string::memcmp(const void* first, const void* second, c3p1::size_t count)
+int c3p1::string::memcmp(const void* first, const void* second, c3p1::size_t size)
 {
 	// check first and second
 	if (first == nullptr && second == nullptr)
 	{
-		throw exception("Exception @c3p1::string::memcmp(first, second, n) : first and second are nullptr.");
+		throw exception("Exception @c3p1::string::memcmp(first, const second, size) : first and second are nullptr.");
 	}
 	if (first == nullptr)
 	{
-		throw exception("Exception @c3p1::string::memcmp(first, second, n) : first is nullptr.");
+		throw exception("Exception @c3p1::string::memcmp(first, const second, size) : first is nullptr.");
 	}
 	if (second == nullptr)
 	{
-		throw exception("Exception @c3p1::string::memcmp(first, second, n) : second is nullptr.");
+		throw exception("Exception @c3p1::string::memcmp(first, const second, size) : second is nullptr.");
 	}
 
 	// cast pointers to unsigned char* to work with bytes
-	const unsigned char* f = static_cast<const unsigned char*>(first);
-	const unsigned char* s = static_cast<const unsigned char*>(second);
+	const unsigned char* pfirst = static_cast<const unsigned char*>(first);
+	const unsigned char* psecond = static_cast<const unsigned char*>(second);
 
 	// compare byte to byte the n first bytes
-	for (c3p1::size_t i = 0; i < count; i++)
+	for (c3p1::size_t i = 0; i < size; i++)
 	{
-		if (f[i] == s[i])
+		if (pfirst[i] == psecond[i])
 		{
 			// bytes are equals, reading the next ones
-			f++;
-			s++;
+			pfirst++;
+			psecond++;
 		}
-		else if (f[i] < s[i])
+		else if (pfirst[i] < psecond[i])
 		{
 			// first is inferior to second
 			return -1;
@@ -432,6 +468,30 @@ int c3p1::string::memcmp(const void* first, const void* second, c3p1::size_t cou
 
 	// memblocs are equals
 	return 0;
+}
+
+void* c3p1::string::memchr(const void* memoryblock, unsigned char searchedbyte, c3p1::size_t size)  
+{  
+	if (memoryblock == nullptr)  
+	{  
+		throw exception("Exception @c3p1::string::memchr(const memoryblock, searchedbyte, size) : memoryblock is nullptr.");  
+	}  
+
+	// cast raw pointer  
+	unsigned char* currentbyte = const_cast<unsigned char*>(static_cast<const unsigned char*>(memoryblock));
+
+	// search byteval
+	for (c3p1::size_t i = 0; i < size; i++)
+	{
+		if (*currentbyte == searchedbyte)
+		{
+			return static_cast<void*>(currentbyte);
+		}
+		currentbyte++;
+	}
+
+	// byteval not found
+	return nullptr;
 }
 
 // class string implementation

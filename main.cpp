@@ -7,26 +7,23 @@ int main()
 {
     std::cout << "Program begins" << std::endl;
 
-    char* n = string::strdup("(chaine A)");
-    char* m = string::strdup("(chaine B)");
-    char* o = new char[string::strlen(n) + string::strlen(m) + 5];
-    *o = '\0';
+    const char* text = "Ceci est ma premiere phrase. Et ceci est ma seconde.";
+    const size_t len = string::strlen(text);
 
-    std::cout << "n = " << n << std::endl << "m = " << m << std::endl << "o = " << o << std::endl;
+    char* firstSentance = new char[len+1];
+    char* res = static_cast<char*>(string::memccpy(firstSentance, text, static_cast<unsigned char>('.'), len));
+    *res = '\0';
 
-    std::cout << "copy '" << n << "' to a new string o ..." << std::endl;
-    string::strcpy(o, n);
-    std::cout << "o = '" << o << "'" << std::endl;
+    if (res != nullptr)
+    {
+        std::cout << "Une phrase a ete trouvee : '" << firstSentance << "'" << std::endl;
+    }
+    else
+    {
+        std::cout << "Aucune phrase n'a ete trouvee." << std::endl;
+    }
 
-    
-    std::cout << "concatening '" << o << "', '" << m << "' ..." << std::endl;
-    string::strncat(o, m, string::strlen(m));
-    std::cout << "o = '" << o << "'" << std::endl;
-    
-    // 
-    delete[] o; o = nullptr;
-    delete[] n; n = nullptr;
-    delete[] m; m = nullptr;
-
+    std::cout << text << std::endl;
+ 
     std::cout << "End of program" << std::endl;
 }
