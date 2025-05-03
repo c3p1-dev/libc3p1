@@ -120,29 +120,36 @@ void* c3p1::string::memchr(const void* memory_block, unsigned char searched_byte
 	return nullptr;
 }
 
-void* c3p1::string::memrchr(const void* memoryblock, unsigned char searchedbyte, c3p1::size_t size)
+void* c3p1::string::memrchr(const void* memory_block, unsigned char searched_byte, c3p1::size_t size)
 {
-	if (memoryblock == nullptr)
+	if (memory_block == nullptr)
 	{
 		throw exception("Exception @c3p1::string::memrchr(const memoryblock, searchedbyte, size) : memoryblock is nullptr.");
 	}
 
-	// cast raw pointer and move at the end 
-	unsigned char* currentbyte = const_cast<unsigned char*>(static_cast<const unsigned char*>(memoryblock));
-	currentbyte += size;
+	// cast raw pointer
+	unsigned char* wp = const_cast<unsigned char*>(static_cast<const unsigned char*>(memory_block));
+	// move at the end
+	unsigned char* wc = wp + size;
 
-	// search byteval from last to first byte
-	for (c3p1::size_t i = 0; i < size; i++)
+	c3p1::size_t i = 0;
+	while (*wc != searched_byte && i < size)
 	{
-		if (*(currentbyte-i) == searchedbyte)
-		{
-			return static_cast<void*>(currentbyte);
-		}
-		currentbyte--;
+		// read the next byte (from end to start)
+		i++;
+		wc--;
 	}
 
-	// searchedbyte not found
-	return nullptr;
+	if (*wc == searched_byte)
+	{
+		// return address of found byte
+		return wc;
+	}
+	else
+	{
+		// searched_byte not found
+		return nullptr;
+	}
 }
 void* c3p1::string::memmem(const void* big, c3p1::size_t big_size, const void* little, c3p1::size_t little_size)
 {
@@ -161,39 +168,37 @@ void* c3p1::string::memmem(const void* big, c3p1::size_t big_size, const void* l
 	}
 
 	// cast raw pointers
-	unsigned char* wbig = const_cast<unsigned char*>(static_cast<const unsigned char*>(big));
-	unsigned char* wlittle = const_cast<unsigned char*>(static_cast<const unsigned char*>(little));
+	unsigned char* wb = const_cast<unsigned char*>(static_cast<const unsigned char*>(big));
+	unsigned char* wl = const_cast<unsigned char*>(static_cast<const unsigned char*>(little));
 
 	unsigned char* start_pos = nullptr;
 	c3p1::size_t count = 0;
 
-	// search for little in big
+	// return big if little_size is zero
+	if (little_size == 0)
+	{
+		return const_cast<void*>(big);
+	}
+
+	// return nullptr if big_size < little_size
+	if (big_size < little_size)
+	{
+		return nullptr;
+	}
+
 	for (c3p1::size_t i = 0; i < big_size; i++)
 	{
-		// keep a count of successive bytes of little found in big
-		if (*(wbig + i) == wlittle[count])
+		c3p1::size_t j = 0;
+		while (j < little_size && wb[i + j] == wl[j])
 		{
-			// if its the first byte, keep its address
-			if (i == 0)
-			{
-				start_pos = wbig + i;
-			}
-
-			count++;
+			j++;
 		}
-		else
+		if (j == little_size)
 		{
-			// reset count and start_pos
-			start_pos = nullptr;
-			count = 0;
-		}
-
-		// stops the whole little string has been found
-		if (count == little_size)
-		{
-			return start_pos;
+			return static_cast<void*>(wb + i);
 		}
 	}
+
 	// little not found
 	return nullptr;
 }
