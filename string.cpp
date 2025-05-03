@@ -161,22 +161,41 @@ char* c3p1::string::strncat(char* dest, const char* append, size_t size)
 
 c3p1::size_t c3p1::string::strlen(const char* str)
 {
-	// check if str is not nullptr
-	if (str != nullptr)
+	if (str == nullptr)
 	{
-		c3p1::size_t i = 0;
-		while (*str != '\0')
+		throw exception("Exception @c3p1::string::strlen(const str) : str is nullptr.");
+	}
+
+	// count characters until the first null-terminal
+	c3p1::size_t i = 0;
+	while (*str != '\0')
+	{
+		i++;
+		str++;
+	}
+
+	return i;
+}
+
+c3p1::size_t c3p1::string::strnlen(const char* str, c3p1::size_t maxlen)
+{
+	if (str == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strnlen(const str, maxlen) : str is nullptr.");
+	}
+
+	// count characters until the first null-terminal or maxlen
+	c3p1::size_t i = 0;
+	while (*str != '\0')
+	{
+		if (i < maxlen)
 		{
 			i++;
 			str++;
 		}
-		return i;
 	}
-	else
-	{
-		// throw exception
-		throw exception("Exception @c3p1::strlen(const str) : str is nullptr.");
-	}
+
+	return i;
 }
 
 int c3p1::string::strcmp(const char* first, const char* second)
@@ -360,7 +379,7 @@ char* c3p1::string::strrchr(const char* str, char searchedchar)
 	return nullptr;
 }
 
-c3p1::size_t c3p1::string::strspn(const char* str, const char* accepted)
+c3p1::size_t c3p1::string::strspn(const char* str, const char* charset)
 {
 	// check str value
 	if (str == nullptr)
@@ -370,7 +389,7 @@ c3p1::size_t c3p1::string::strspn(const char* str, const char* accepted)
 
 	// count length of the first substring only made with accepted characters
 	c3p1::size_t lstr = strlen(str);
-	c3p1::size_t lacc = strlen(accepted);
+	c3p1::size_t lcs = strlen(charset);
 	c3p1::size_t count = 0;
 
 	// read str from first character to the first unaccepted character or to the null-terminal and keep the count
@@ -379,9 +398,9 @@ c3p1::size_t c3p1::string::strspn(const char* str, const char* accepted)
 		// track count variation
 		c3p1::size_t c = count;
 
-		for (c3p1::size_t j = 0; j < lacc; j++)
+		for (c3p1::size_t j = 0; j < lcs; j++)
 		{
-			if (str[i] == accepted[j])
+			if (str[i] == charset[j])
 			{
 				count++;
 			}
@@ -398,7 +417,7 @@ c3p1::size_t c3p1::string::strspn(const char* str, const char* accepted)
 	return count;
 }
 
-c3p1::size_t c3p1::string::strcspn(const char* str, const char* rejected)
+c3p1::size_t c3p1::string::strcspn(const char* str, const char* charset)
 {
 	// check str value
 	if (str == nullptr)
@@ -408,7 +427,7 @@ c3p1::size_t c3p1::string::strcspn(const char* str, const char* rejected)
 
 	// count length of the first substring only made with accepted characters
 	c3p1::size_t lstr = strlen(str);
-	c3p1::size_t lrej = strlen(rejected);
+	c3p1::size_t lcs = strlen(charset);
 	c3p1::size_t count = 0;
 
 	// read str from first character to the first unaccepted character or to the null-terminal and keep the count
@@ -417,9 +436,9 @@ c3p1::size_t c3p1::string::strcspn(const char* str, const char* rejected)
 		// track count variation
 		c3p1::size_t c = count;
 
-		for (c3p1::size_t j = 0; j < lrej; j++)
+		for (c3p1::size_t j = 0; j < lcs; j++)
 		{
-			if (str[i] != rejected[j])
+			if (str[i] != charset[j])
 			{
 				count++;
 			}
@@ -434,6 +453,45 @@ c3p1::size_t c3p1::string::strcspn(const char* str, const char* rejected)
 
 	// the whole string is made of accepted characters
 	return count;
+}
+
+char* c3p1::string::strpbrk(const char* str, const char* charset)
+{
+	// check if str and charset are not nullptr
+	if (str == nullptr && charset == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strpbrk(const str, const charset) : str and charset are nullptr.");
+	}
+	if (str == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strpbrk(const str, const charset) : str is nullptr.");
+	}
+	if (charset == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strpbrk(const str, const charset) : charset is nullptr.");
+	}
+
+	// look for any characters from charset in str
+	c3p1::size_t lcs = strlen(charset);
+
+	while (*str != '\0')
+	{
+		// compare the character at the address str to charset
+		for (c3p1::size_t i = 0; i < lcs; i++)
+		{
+			if (*str == charset[i])
+			{
+				// found it, returns address
+				return const_cast<char*>(str);
+			}
+		}
+
+		// move to next character
+		str++;
+	}
+
+	// characters not found
+	return nullptr;
 }
 
 void* c3p1::string::memcpy(void* dest, const void* src, c3p1::size_t size)

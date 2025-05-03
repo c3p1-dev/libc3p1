@@ -127,8 +127,13 @@ namespace c3p1
 
 		// strlen(const str) returns str length
 		// (+) manages exceptions fur nullptr value for str,
-		// (!) could lead to undefined behavior if append is not a null-terminated string!
-		static c3p1::size_t strlen(const char* str);
+		// (!) could lead to undefined behavior if str is not a null-terminated string!
+		static size_t strlen(const char* str);
+
+		// strnlen(const str, maxlen) returns length if inferior to maxlen, or maxlen
+		// (+) manages exceptions fur nullptr value for str,
+		// (!) could lead to undefined behavior if str is not a null-terminated string shorter than maxlen!
+		static size_t strnlen(const char* str, size_t maxlen);
 
 		// strcmp(const first, const second) compares first and second
 		// (+) manages exceptions for nullptr value for first and/or second,
@@ -180,21 +185,29 @@ namespace c3p1
 		// (!) could lead to undefined behavior if str is not a null-terminated string!
 		static char* strrchr(const char* str, char c);
 
-		// strspn(const str, const accepted) compares str character to character with accepted list
-		// (+) manages exception for nullptr value for str and accepted,
+		// strspn(const str, const charset) compares str character to character with (accepted) charset
+		// (+) manages exception for nullptr value for str and charset,
 		// (+) returns the length of the first sub-string only made of accepted characters,
 		// (!) could lead to undefined behavior if str and/or accepted are not null-terminated string!
-		static size_t strspn(const char* str, const char* accepted);
+		static size_t strspn(const char* str, const char* charset);
 
-		// strcspn(const str, const accepted) compares each character of str to the rejected list
-		// (+) manages exception for nullptr value for str and rejected,
+		// strcspn(const str, const charset) compares each character of str to the (rejected) charset
+		// (+) manages exception for nullptr value for str and charset,
 		// (+) returns the length of the first sub-string that excludes all the rejected characters,
 		// (!) could lead to undefined behavior if str and/or accepted are not null-terminated string!
-		static size_t strcspn(const char* str, const char* rejected);
+		static size_t strcspn(const char* str, const char* charset);
+
+		// strpbrk(const str, const charset) locates the first occurence of any character in charset
+		// (+) manages exception for nullptr value for str and charset,
+		// (+) return the address of the first occurrence of any character in charset,
+		// (!) could lead to undefined behavior if str and/or charset are not null-terminated strings!
+		static char* strpbrk(const char* str, const char* charset);
 
 		// TODO to fully implemente libc string.h :
-		// static const char* strpbrk(const char* str, const char* searched_chars);
+		// static char strcasecmp(const char* first, const char* second);
+		// static char strncasecmp(const char* first, const char* second, size_t size);
 		// static const char* strstr(const char* fullstring, const char* substring);
+		// static const char* strnstr(const char* fullstring, const char* substring, size_t size); 
 		// static char* strtok(char* strc, const char* delimiters);
 
 		// WONT be implemented (locale management is to complex for this project) :
