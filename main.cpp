@@ -58,12 +58,13 @@ void memory_func_tests()
 
     // memcmp
     {
-        char a[] = { 1, 2, 3 };
-        char b[] = { 1, 2, 3 };
-        char c[] = { 1, 2, 4 };
-        run("memcmp equal", string::memcmp(a, b, 3) == 0);
-        run("memcmp less", string::memcmp(a, c, 3) < 0);
-        run("memcmp greater", string::memcmp(c, a, 3) > 0);
+        unsigned char a[4] = { 1, 2, 3, 0 };
+        unsigned char b[4] = { 1, 2, 3, 0 };
+        unsigned char c[4] = { 1, 2, 4, 0 };
+
+        run("memcmp equal", string::memcmp((const char*)a, (const char*)b, 3) == 0);
+        run("memcmp less", string::memcmp((const char*)a, (const char*)c, 3) < 0);
+        run("memcmp greater", string::memcmp((const char*)c, (const char*)a, 3) > 0);
     }
 
     // memset
