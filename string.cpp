@@ -220,28 +220,17 @@ int c3p1::string::memcmp(const void* first, const void* second, c3p1::size_t siz
 	const unsigned char* wp = static_cast<const unsigned char*>(first);
 	const unsigned char* ws = static_cast<const unsigned char*>(second);
 
-	// compare byte to byte the n first bytes
+	// compare byte to byte the first `size` bytes
 	for (c3p1::size_t i = 0; i < size; i++)
 	{
-		if (wp[i] == ws[i])
+		if (wp[i] != ws[i])
 		{
-			// bytes are equals, reading the next ones
-			wp++;
-			ws++;
-		}
-		else if (wp[i] < ws[i])
-		{
-			// first is inferior to second
-			return -1;
-		}
-		else
-		{
-			// first is superior to second
-			return +1;
+			// return the difference of the first unequal byte
+			return wp[i] - ws[i];
 		}
 	}
 
-	// memblocs are equals
+	// The memory blocks are equal
 	return 0;
 }
 
