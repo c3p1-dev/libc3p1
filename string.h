@@ -52,35 +52,49 @@ namespace c3p1
 		// local implementation of string.h libc
 
 		// memcpy(dst, const src, size) copies n=size bytes from src to dst
-		// (+) manages exceptions for nullptr value for dst and/or src,
-		// (-) does not manage overlap between dst and src,
-		// (+) returns dst pointer,
+		// (+) returns original dst pointer,
+		// (+) manages exception for nullptr value for dst and/or src,
+		// (!) src and dst must not overlap, it's an undefined behavior!
 		// (!) could lead to undefined behavior by buffer overflow!
 		static void* memcpy(void* restrict dst, const void* restrict src, size_t size);
 
-		// memccpy(dest, const src, searchedbyte, size) copies n=size bytes from src to dest until searchedbyte is read
+		// mempcpy(dest, const src, searchedbyte, size) copies n=size bytes from src to dst
+		// (+) returns last written byte address,
 		// (+) manages exception for nullptr value for dest and/or src,
-		// (-) does not manage overlap between src and dest,
-		// (+) returns dest address,
-		// (!) could lead to undefined behavior if n is superior to dest and/or src size!
-		static void* memccpy(void* restrict dest, const void* restrict src, unsigned char searchedbyte, size_t size);
-
-		// memmove(dest, const src, size) copies n=size bytes from src to dest
-		// (+) manages exceptions for nullptr value for dest and/or src,
-		// (+) manages overlap betweetn dest and src by copying src in a buffer first,
-		// (+) manages exception if memory allocation fails for the buffer,
-		// (+) returns dest address,
+		// (!) src and dst must not overlap, it's an undefined behavior!
 		// (!) could lead to undefined behavior by buffer overflow!
-		static void* memmove(void* dest, const void* src, size_t size);
+		static void* mempcpy(void* restrict dst, const void* restrict src, size_t size);
 
-		// memset(dest, byteval, size) copies n=size times byteval to dest
-		// (+) manages exceptions for nullptr value for dest and/or src,
+		// memccpy(dest, const src, searched_byte, size) copies n=size bytes from src to dst until searched_byte is read
 		// (+) returns dest address,
+		// (+) manages exception for nullptr value for dst and/or src,
+		// (!) src and dst must not overlap, it's an undefined behavior!
 		// (!) could lead to undefined behavior by buffer overflow!
-		static void* memset(void* dest, unsigned char byteval, size_t size);
+		static void* memccpy(void* restrict dst, const void* restrict src, unsigned char searched_byte, size_t size);
+
+		// memchr(const memory_block, searched_byte, size) searches the first occurence of searched_byte in memory_block
+		// (+) returns address of the first occurence of searched_byte,
+		// (+) returns nullptr if searched_byte is not found.
+		// (+) manages exception for nullptr value for memory_block,
+		// (!) could lead to undefined behavior by buffer overflow!
+		static void* memchr(const void* memory_block, unsigned char searched_byte, size_t size);
+
+		// memrchr(const memory_block, searched_byte, size) searches the first occurence of searched_byte in memory_block from end to start
+		// (+) returns address of the first occurence of searched_byte,
+		// (+) returns nullptr if searched_byte is not found.
+		// (+) manages exception for nullptr value for memoryblock,
+		// (!) could lead to undefined behavior by buffer overflow!
+		static void* memrchr(const void* memory_block, unsigned char searched_byte, size_t size);
+
+		// memmem(const big, big_size, little, little_size) searches the first occurence of little bytes string in big
+		// (+) returns address of the first occurence of little,
+		// (+) returns nullptr if little is not found.
+		// (+) manages exception for nullptr value for big and/or little,
+		// (!) could lead to undefined behavior by buffer overflow!
+		static void* memmem(const void* big, size_t big_size, const void* little, size_t little_size);
 
 		// memcmp(first, const second, size) compares the n=size first bytes of first and second
-		// (+) manage exceptions for nullptr value for first and/or second,
+		// (+) manages exceptions for nullptr value for first and/or second,
 		// (-) does not manage overlap between first and second,
 		// (+) returns 0 if first and second are equals,
 		// (+) returns -1 if first is inferior to second,
@@ -88,12 +102,19 @@ namespace c3p1
 		// (!) could lead undefined behavior if n is superior to first and/or second size!
 		static int memcmp(const void* first, const void* second, size_t size);
 
-		// memchr(const memoryblock, byteval, size) searches the first occurence of byteval in memoryblock
-		// (+) manage exceptions for nullptr value for memoryblock,
-		// (+) returns address of the first occurence of byteval,
-		// (+) returns nullptr if byteval is not found.
-		// (!) could lead to undefined behavior if n is superior to memoryblock size!
-		static void* memchr(const void* memoryblock, unsigned char byte, size_t size);
+		// memmove(dest, const src, size) copies n=size bytes from src to dest
+		// (+) manages exceptions for nullptr value for dest and/or src,
+		// (+) manages overlap betweetn dest and src by copying src in a buffer first,
+		// (+) manages exception if memory allocation fails for the buffer,
+		// (+) returns dest address,
+		// (!) could lead to undefined behavior by buffer overflow!
+		static void* memmove(void* dst, const void* src, size_t size);
+
+		// memset(dest, byteval, size) copies n=size times byteval to dest
+		// (+) manages exceptions for nullptr value for dest and/or src,
+		// (+) returns dest address,
+		// (!) could lead to undefined behavior by buffer overflow!
+		static void* memset(void* dest, unsigned char byteval, size_t size);
 
 		// strcpy(dest, const src) copies src to dest
 		// (+) manages exceptions for nullptr value for dest and/or src,
@@ -101,7 +122,7 @@ namespace c3p1
 		// (+) returns dest address,
 		// (!) could lead to undefined behavior if src is not a null-terminated string!
 		// (!) could lead to undefined behavior by buffer overflow!
-		static char* strcpy(char* dest, const char* src);
+		static char* strcpy(char* restrict dest, const char* restrict src);
 
 		// strncpy(dest, const src, size) copies n=size characters from src to dest
 		// (+) manages exceptions for nullptr value for dest and/or src,

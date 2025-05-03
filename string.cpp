@@ -8,58 +8,269 @@ void* c3p1::string::memcpy(void* restrict dst, const void* restrict src, c3p1::s
 	// check if dst and src are not nullptr
 	if (dst == nullptr && src == nullptr)
 	{
-		throw exception("Exception @c3p1::string::memcpy(dst, const src, size) : dest and src are nullptr.");
+		throw exception("Exception @c3p1::string::memcpy(dst, const src, size): dst and src are nullptr.");
 	}
 	if (dst == nullptr)
 	{
-		throw exception("Exception @c3p1::string::memcpy(dst, const src, size) : dest is nullptr.");
+		throw exception("Exception @c3p1::string::memcpy(dst, const src, size): dst is nullptr.");
 	}
 	if (src == nullptr)
 	{
-		throw exception("Exception @c3p1::string::memcpy(dst, const src, size) : src is nullptr.");
+		throw exception("Exception @c3p1::string::memcpy(dst, const src, size): src is nullptr.");
 	}
 
 	// cast raw pointers to unsigned char pointers and process copying byte a byte
 	unsigned char* currentbyte = static_cast<unsigned char*>(dst);
-	const unsigned char* bytes = static_cast<const unsigned char*>(src);
+	const unsigned char* wp = static_cast<const unsigned char*>(src);
 
 	// copy byte a byte src to dst
 	for (c3p1::size_t i = 0; i < size; i++)
 	{
-		currentbyte[i] = bytes[i];
+		currentbyte[i] = wp[i];
 	}
 
 	return dst;
 }
 
-char* c3p1::string::strcpy(char* dest, const char* src)
-{ 
-	// check that dest and src are not null
-	if (src == nullptr && dest == nullptr)
+void* c3p1::string::mempcpy(void* restrict dst, const void* restrict src, c3p1::size_t size)
+{
+	// check if dst and src are not nullptr
+	if (dst == nullptr && src == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strcpy(dest, const src) : dest and src are nullptr.");
+		throw exception("Exception @c3p1::string::mempcpy(dst, const src, size): dst and src are nullptr.");
 	}
-	if (dest == nullptr)
+	if (dst == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strcpy(dest, const src) : dest is nullptr.");
+		throw exception("Exception @c3p1::string::mempcpy(dst, const src, size): dst is nullptr.");
 	}
 	if (src == nullptr)
 	{
-		throw exception("Exception @c3p1::string::strcpy(dest, const src) : src is nullptr.");
+		throw exception("Exception @c3p1::string::mempcpy(dst, const src, size): src is nullptr.");
+	}
+
+	// cast raw pointers to unsigned char pointers and process copying byte a byte
+	unsigned char* currentbyte = static_cast<unsigned char*>(dst);
+	const unsigned char* wp = static_cast<const unsigned char*>(src);
+	// copy byte a byte src to dst
+	for (c3p1::size_t i = 0; i < size; i++)
+	{
+		*currentbyte++ = wp[i];
+	}
+
+	return static_cast<void*>(currentbyte);
+}
+
+void* c3p1::string::memccpy(void* restrict dst, const void* restrict src, unsigned char searchedbyte, c3p1::size_t size)
+{
+	// check if dst and src are not nullptr  
+	if (dst == nullptr && src == nullptr)
+	{
+		throw exception("Exception @c3p1::string::memccpy(dst, const src, searchedbyte, size): dst and src are nullptr.");
+	}
+	if (dst == nullptr)
+	{
+		throw exception("Exception @c3p1::string::memccpy(dst, const src, searchedbyte, size): dst is nullptr.");
+	}
+	if (src == nullptr)
+	{
+		throw exception("Exception @c3p1::string::memccpy(dst, const src, searchedbyte, size): src is nullptr.");
+	}
+
+	unsigned char* d = static_cast<unsigned char*>(dst);
+	const unsigned char* s = static_cast<const unsigned char*>(src);
+
+	// write byte to byte the bloc src to dst count times or after first occurrence of byte  
+	c3p1::size_t i = 0;
+	do
+	{
+		d[i] = s[i];
+
+		if (d[i] == searchedbyte)
+		{
+			// return address of the byte after the copy of searchedbyte
+			return static_cast<void*>(d + i + 1);
+		}
+
+	} while (++i < size);
+
+	return nullptr;
+}
+
+void* c3p1::string::memchr(const void* memory_block, unsigned char searched_byte, c3p1::size_t size)
+{
+	if (memory_block == nullptr)
+	{
+		throw exception("Exception @c3p1::string::memchr(const memoryblock, searchedbyte, size): memoryblock is nullptr.");
+	}
+
+	// cast raw pointer  
+	unsigned char* current_byte = const_cast<unsigned char*>(static_cast<const unsigned char*>(memory_block));
+
+	// search byteval
+	for (c3p1::size_t i = 0; i < size; i++)
+	{
+		if (*current_byte == searched_byte)
+		{
+			return static_cast<void*>(current_byte);
+		}
+		current_byte++;
+	}
+
+	// searchedbyte not found
+	return nullptr;
+}
+
+void* c3p1::string::memrchr(const void* memoryblock, unsigned char searchedbyte, c3p1::size_t size)
+{
+	if (memoryblock == nullptr)
+	{
+		throw exception("Exception @c3p1::string::memrchr(const memoryblock, searchedbyte, size) : memoryblock is nullptr.");
+	}
+
+	// cast raw pointer and move at the end 
+	unsigned char* currentbyte = const_cast<unsigned char*>(static_cast<const unsigned char*>(memoryblock));
+	currentbyte += size;
+
+	// search byteval from last to first byte
+	for (c3p1::size_t i = 0; i < size; i++)
+	{
+		if (*(currentbyte-i) == searchedbyte)
+		{
+			return static_cast<void*>(currentbyte);
+		}
+		currentbyte--;
+	}
+
+	// searchedbyte not found
+	return nullptr;
+}
+void* c3p1::string::memmem(const void* big, c3p1::size_t big_size, const void* little, c3p1::size_t little_size)
+{
+	// check big and little
+	if (big == nullptr && little == nullptr)
+	{
+		throw exception("Exception @c3p1::string::memmem(const big, big_size, const little, litte_size) : big and little are nullptr.");
+	}
+	if (big == nullptr)
+	{
+		throw exception("Exception @c3p1::string::memmem(const big, big_size, const little, litte_size) : big is nullptr.");
+	}
+	if (little == nullptr)
+	{
+		throw exception("Exception @c3p1::string::memmem(const big, big_size, const little, litte_size) : little is nullptr.");
+	}
+
+	// cast raw pointers
+	unsigned char* wbig = const_cast<unsigned char*>(static_cast<const unsigned char*>(big));
+	unsigned char* wlittle = const_cast<unsigned char*>(static_cast<const unsigned char*>(little));
+
+	unsigned char* start_pos = nullptr;
+	c3p1::size_t count = 0;
+
+	// search for little in big
+	for (c3p1::size_t i = 0; i < big_size; i++)
+	{
+		// keep a count of successive bytes of little found in big
+		if (*(wbig + i) == wlittle[count])
+		{
+			// if its the first byte, keep its address
+			if (i == 0)
+			{
+				start_pos = wbig + i;
+			}
+
+			count++;
+		}
+		else
+		{
+			// reset count and start_pos
+			start_pos = nullptr;
+			count = 0;
+		}
+
+		// stops the whole little string has been found
+		if (count == little_size)
+		{
+			return start_pos;
+		}
+	}
+	// little not found
+	return nullptr;
+}
+
+int c3p1::string::memcmp(const void* first, const void* second, c3p1::size_t size)
+{
+	// check first and second
+	if (first == nullptr && second == nullptr)
+	{
+		throw exception("Exception @c3p1::string::memcmp(first, const second, size) : first and second are nullptr.");
+	}
+	if (first == nullptr)
+	{
+		throw exception("Exception @c3p1::string::memcmp(first, const second, size) : first is nullptr.");
+	}
+	if (second == nullptr)
+	{
+		throw exception("Exception @c3p1::string::memcmp(first, const second, size) : second is nullptr.");
+	}
+
+	// cast pointers to unsigned char* to work with bytes
+	const unsigned char* wp = static_cast<const unsigned char*>(first);
+	const unsigned char* ws = static_cast<const unsigned char*>(second);
+
+	// compare byte to byte the n first bytes
+	for (c3p1::size_t i = 0; i < size; i++)
+	{
+		if (wp[i] == ws[i])
+		{
+			// bytes are equals, reading the next ones
+			wp++;
+			ws++;
+		}
+		else if (wp[i] < ws[i])
+		{
+			// first is inferior to second
+			return -1;
+		}
+		else
+		{
+			// first is superior to second
+			return +1;
+		}
+	}
+
+	// memblocs are equals
+	return 0;
+}
+
+char* c3p1::string::strcpy(char* restrict dst, const char* restrict src)
+{ 
+	// check that dst and src are not null
+	if (src == nullptr && dst == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strcpy(dst, const src) : dst and src are nullptr.");
+	}
+	if (dst == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strcpy(dst, const src) : dst is nullptr.");
+	}
+	if (src == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strcpy(dst, const src) : src is nullptr.");
 	}
 
 	// copy src string to dest
     size_t i = 0;
 	while (*src != '\0')
 	{
-		*(dest++) = *src++;
+		*(dst++) = *src++;
 		i++;
 	}
 	// null-terminate the destination string
-	*dest = '\0';
+	*dst = '\0';
 		
 	// return the address of the start of the string
-	return dest - i;
+	return dst - i;
 }
 
 char* c3p1::string::strncpy(char* dest, const char* src, c3p1::size_t size)
@@ -523,42 +734,6 @@ char* c3p1::string::strpbrk(const char* str, const char* charset)
 	return nullptr;
 }
 
-void* c3p1::string::memccpy(void* dest, const void* src, unsigned char searchedbyte, c3p1::size_t size)  
-{  
-	// check if dest and src are not nullptr  
-	if (dest == nullptr && src == nullptr)  
-	{  
-		throw exception("Exception @c3p1::string::memccpy(dest, const src, searchedbyte, size) : dest and src are nullptr.");  
-	}  
-	if (dest == nullptr)  
-	{  
-		throw exception("Exception @c3p1::string::memccpy(dest, const src, searchedbyte, size) : dest is nullptr.");  
-	}  
-	if (src == nullptr)  
-	{  
-		throw exception("Exception @c3p1::string::memccpy(dest, const src, searchedbyte, size) : src is nullptr.");  
-	}  
-
-	unsigned char* d = static_cast<unsigned char*>(dest);  
-	const unsigned char* s = static_cast<const unsigned char*>(src);  
-
-	// write byte to byte the bloc src to dest count times or after first occurrence of byte  
-	c3p1::size_t i = 0;  
-	do  
-	{  
-		d[i] = s[i];  
-
-		if (d[i] == searchedbyte)  
-		{  
-			// Fix: Return the correct pointer type by adding an offset to the destination pointer  
-			return static_cast<void*>(d + i + 1);  
-		}  
-
-	} while (++i < size);  
-
-	return nullptr;  
-}
-
 void* c3p1::string::memmove(void* dest, const void* src, c3p1::size_t size)
 {
 	// check if dest and src are not nullptr
@@ -611,75 +786,6 @@ void* c3p1::string::memset(void* dest, unsigned char byteval, c3p1::size_t size)
 
 	return dest;
 
-}
-
-int c3p1::string::memcmp(const void* first, const void* second, c3p1::size_t size)
-{
-	// check first and second
-	if (first == nullptr && second == nullptr)
-	{
-		throw exception("Exception @c3p1::string::memcmp(first, const second, size) : first and second are nullptr.");
-	}
-	if (first == nullptr)
-	{
-		throw exception("Exception @c3p1::string::memcmp(first, const second, size) : first is nullptr.");
-	}
-	if (second == nullptr)
-	{
-		throw exception("Exception @c3p1::string::memcmp(first, const second, size) : second is nullptr.");
-	}
-
-	// cast pointers to unsigned char* to work with bytes
-	const unsigned char* pfirst = static_cast<const unsigned char*>(first);
-	const unsigned char* psecond = static_cast<const unsigned char*>(second);
-
-	// compare byte to byte the n first bytes
-	for (c3p1::size_t i = 0; i < size; i++)
-	{
-		if (pfirst[i] == psecond[i])
-		{
-			// bytes are equals, reading the next ones
-			pfirst++;
-			psecond++;
-		}
-		else if (pfirst[i] < psecond[i])
-		{
-			// first is inferior to second
-			return -1;
-		}
-		else
-		{
-			// first is superior to second
-			return +1;
-		}
-	}
-
-	// memblocs are equals
-	return 0;
-}
-
-void* c3p1::string::memchr(const void* memoryblock, unsigned char searchedbyte, c3p1::size_t size)  
-{  
-	if (memoryblock == nullptr)  
-	{  
-		throw exception("Exception @c3p1::string::memchr(const memoryblock, searchedbyte, size) : memoryblock is nullptr.");  
-	}  
-
-	// cast raw pointer  
-	unsigned char* currentbyte = const_cast<unsigned char*>(static_cast<const unsigned char*>(memoryblock));
-
-	// search byteval
-	for (c3p1::size_t i = 0; i < size; i++)
-	{
-		if (*currentbyte == searchedbyte)
-		{
-			return static_cast<void*>(currentbyte);
-		}
-		currentbyte++;
-	}
-
-	// byteval not found
-	return nullptr;
 }
 
 // class string implementation
