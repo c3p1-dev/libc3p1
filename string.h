@@ -193,11 +193,12 @@ namespace c3p1
 		static size_t strcspn(const char* str, const char* rejected);
 
 		// TODO to fully implemente libc string.h :
-		
-		// static int strcoll (const char* first, const char* second);
 		// static const char* strpbrk(const char* str, const char* searched_chars);
 		// static const char* strstr(const char* fullstring, const char* substring);
 		// static char* strtok(char* strc, const char* delimiters);
+
+		// WONT be implemented (locale management is to complex for this project) :
 		// static size_t strxfrm(char* dest, const char* src, size_t size);
+		// static int strcoll (const char* first, const char* second);
 	};
 }
