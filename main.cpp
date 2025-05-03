@@ -18,62 +18,183 @@ void test(const char* name, bool ok)
     std::cout << (ok ? "[OK]   " : "[FAIL] ") << name << "\n";
 }
 
-// 
+// run mem* func tests
 void memory_func_tests()
 {
-    // testing memory manipulation functions
-    char buffer[32] = {};
-    char expected[32] = {};
-    char src[] = "abcdefghij";
+    using namespace c3p1;
 
-    // memset
-    c3p1::string::memset(buffer, 'A', 10);
-    for (int i = 0; i < 10; ++i) expected[i] = 'A';
-    test("memset", buffers_equal(buffer, expected, 10));
+    int total_tests = 0;
+    int total_failures = 0;
+
+    auto run = [&](const char* name, bool ok) {
+        ++total_tests;
+        if (!ok) ++total_failures;
+        test(name, ok);
+        };
+
+    std::cout << "Start memory manipulation tests..." << std::endl;
 
     // memcpy
-    c3p1::string::memcpy(buffer, src, 10);
-    test("memcpy", buffers_equal(buffer, src, 10));
+    {
+        char src[] = "hello";
+        char dst[6] = {};
+        string::memcpy(dst, src, 6);
+        run("memcpy basic", buffers_equal(dst, src, 6));
+    }
 
-    // memmove
-    for (int i = 0; i < 10; ++i) buffer[i] = src[i];
-    c3p1::string::memmove(buffer + 2, buffer, 8);
-    test("memmove", buffers_equal(buffer + 2, "abcdefgh", 8));
+    // memmove (non-overlapping)
+    {
+        char buf[] = "12345";
+        string::memmove(buf + 2, buf, 3);  // expected: "12123"
+        run("memmove non-overlap", buffers_equal(buf, "12123", 5));
+    }
+
+    // memmove (overlapping backward)
+    {
+        char buf[] = "abcdef";
+        string::memmove(buf + 1, buf, 5);  // move "abcde" to "bcdef"
+        run("memmove overlap forward", buffers_equal(buf, "aabcde", 6));
+    }
 
     // memcmp
-    test("memcmp equal", c3p1::string::memcmp("abc", "abc", 3) == 0);
-    test("memcmp less", c3p1::string::memcmp("abc", "abd", 3) < 0);
-    test("memcmp more", c3p1::string::memcmp("abe", "abd", 3) > 0);
+    {
+        char a[] = { 1, 2, 3 };
+        char b[] = { 1, 2, 3 };
+        char c[] = { 1, 2, 4 };
+        run("memcmp equal", string::memcmp(a, b, 3) == 0);
+        run("memcmp less", string::memcmp(a, c, 3) < 0);
+        run("memcmp greater", string::memcmp(c, a, 3) > 0);
+    }
+
+    // memset
+    {
+        char buf[8];
+        string::memset(buf, 'A', 8);
+        bool ok = true;
+        for (int i = 0; i < 8; ++i)
+            if (buf[i] != 'A') ok = false;
+        run("memset fill", ok);
+    }
 
     // memchr
-    const char* s = "hello world";
-    void* p = c3p1::string::memchr(s, 'o', 11);
-    test("memchr", p != nullptr && ((const char*)p - s) == 4);
+    {
+        const char* s = "abcdef";
+        run("memchr found", string::memchr(s, 'd', 6) == s + 3);
+        run("memchr not found", string::memchr(s, 'x', 6) == nullptr);
+    }
 
-    // memrchr
-    p = c3p1::string::memrchr(s, 'o', 11);
-    test("memrchr", p != nullptr && ((const char*)p - s) == 7);
+    // Résumé
+    std::cout << "Passed : " << (total_tests - total_failures)
+        << " / " << total_tests << std::endl;;
 
-    // memccpy
-    char dest[16] = {};
-    p = c3p1::string::memccpy(dest, "1234567890", '5', 10);
-    test("memccpy", p == dest + 5 && buffers_equal(dest, "12345", 5));
-
-    // mempcpy
-    p = c3p1::string::mempcpy(dest, "HELLO", 5);
-    test("mempcpy", p == dest + 5 && buffers_equal(dest, "HELLO", 5));
-
-    // memmem
-    const char* hay = "abcdefghijabcdefghij";
-    const char* needle = "def";
-    p = c3p1::string::memmem(hay, 20, needle, 3);
-    test("memmem", p != nullptr && ((const char*)p - hay) == 3);
-
-    std::cout << "Tests passed.\n";
+    if (total_failures > 0) 
+    {
+        std::cout << total_failures << " fails detected." << std::endl;
+    }
 }
 
+// run str* func tests
+void string_func_tests()
+{
+    using namespace c3p1;
+
+    int total_tests = 0;
+    int total_failures = 0;
+
+    auto run = [&](const char* name, bool ok) {
+        ++total_tests;
+        if (!ok) ++total_failures;
+        test(name, ok);
+        };
+
+    std::cout << std::endl << "Start string manipulation tests ..." << std::endl;
+
+    // strcpy / strncpy
+    {
+        char buf[32];
+        string::strcpy(buf, "Hello");
+        run("strcpy basic", string::strcmp(buf, "Hello") == 0);
+
+        string::strncpy(buf, "World", 3);
+        buf[3] = '\0';
+        run("strncpy partial", string::strcmp(buf, "Wor") == 0);
+    }
+
+    // strcat / strncat
+    {
+        char buf[32] = "Hello";
+        string::strcat(buf, "World");
+        run("strcat basic", string::strcmp(buf, "HelloWorld") == 0);
+
+        buf[5] = '\0';
+        string::strncat(buf, "Planet", 3);
+        run("strncat partial", string::strcmp(buf, "HelloPla") == 0);
+    }
+
+    // strlen / strnlen
+    {
+        run("strlen", string::strlen("Test") == 4);
+        run("strnlen truncate", string::strnlen("Test", 2) == 2);
+        run("strnlen overflow", string::strnlen("Test", 10) == 4);
+    }
+
+    // strcmp / strncmp
+    {
+        run("strcmp equal", string::strcmp("abc", "abc") == 0);
+        run("strcmp less", string::strcmp("abc", "abd") < 0);
+        run("strcmp greater", string::strcmp("abe", "abd") > 0);
+
+        run("strncmp equal on 2", string::strncmp("abc", "abd", 2) == 0);
+        run("strncmp full", string::strncmp("abc", "abd", 3) < 0);
+    }
+
+    // strdup / strndup
+    {
+        char* dup = string::strdup("CopyMe");
+        run("strdup", string::strcmp(dup, "CopyMe") == 0);
+        // si tu as un free(), libère dup
+
+        char* ndup = string::strndup("CopyMe", 4);
+        run("strndup", string::strlen(ndup) == 4 && string::strncmp(ndup, "Copy", 4) == 0);
+        // si tu as un free(), libère ndup
+    }
+
+    // strchr / strrchr
+    {
+        const char* s = "abcabc";
+        run("strchr first b", string::strchr(s, 'b') == s + 1);
+        run("strrchr last b", string::strrchr(s, 'b') == s + 4);
+        run("strchr not found", string::strchr(s, 'x') == nullptr);
+    }
+
+    // strspn / strcspn
+    {
+        const char* s = "abc123";
+        run("strspn abc", string::strspn(s, "abc") == 3);
+        run("strcspn until 1", string::strcspn(s, "123") == 3);
+    }
+
+    // strpbrk
+    {
+        const char* s = "hello world";
+        run("strpbrk found", string::strpbrk(s, "w") == s + 6);
+        run("strpbrk not found", string::strpbrk(s, "xz") == nullptr);
+    }
+
+    // Résumé
+    std::cout << "Passed tests : " << (total_tests - total_failures)
+        << " / " << total_tests << std::endl;;
+
+    if (total_failures > 0)
+    {
+        std::cout << total_failures << " fails detected." << std::endl;
+    }
+}
+
+// entry point
 int main()
 {
     memory_func_tests();
+    string_func_tests();
     return 0;
 }

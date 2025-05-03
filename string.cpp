@@ -428,13 +428,10 @@ c3p1::size_t c3p1::string::strnlen(const char* str, c3p1::size_t maxlen)
 
 	// count characters until the first null-terminal or maxlen
 	c3p1::size_t i = 0;
-	while (*str != '\0')
+	while (*str != '\0' && i < maxlen)
 	{
-		if (i < maxlen)
-		{
-			i++;
-			str++;
-		}
+		i++;
+		str++;
 	}
 
 	return i;
