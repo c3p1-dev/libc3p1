@@ -3,6 +3,35 @@
 
 // local implementation of string.h libc
 
+void* c3p1::string::memcpy(void* restrict dst, const void* restrict src, c3p1::size_t size)
+{
+	// check if dst and src are not nullptr
+	if (dst == nullptr && src == nullptr)
+	{
+		throw exception("Exception @c3p1::string::memcpy(dst, const src, size) : dest and src are nullptr.");
+	}
+	if (dst == nullptr)
+	{
+		throw exception("Exception @c3p1::string::memcpy(dst, const src, size) : dest is nullptr.");
+	}
+	if (src == nullptr)
+	{
+		throw exception("Exception @c3p1::string::memcpy(dst, const src, size) : src is nullptr.");
+	}
+
+	// cast raw pointers to unsigned char pointers and process copying byte a byte
+	unsigned char* currentbyte = static_cast<unsigned char*>(dst);
+	const unsigned char* bytes = static_cast<const unsigned char*>(src);
+
+	// copy byte a byte src to dst
+	for (c3p1::size_t i = 0; i < size; i++)
+	{
+		currentbyte[i] = bytes[i];
+	}
+
+	return dst;
+}
+
 char* c3p1::string::strcpy(char* dest, const char* src)
 { 
 	// check that dest and src are not null
@@ -492,35 +521,6 @@ char* c3p1::string::strpbrk(const char* str, const char* charset)
 
 	// characters not found
 	return nullptr;
-}
-
-void* c3p1::string::memcpy(void* dest, const void* src, c3p1::size_t size)
-{
-	// check if dest and src are not nullptr
-	if (dest == nullptr && src == nullptr)
-	{
-		throw exception("Exception @c3p1::string::memcpy(dest, const src, size) : dest and src are nullptr.");
-	}
-	if (dest == nullptr)
-	{
-		throw exception("Exception @c3p1::string::memcpy(dest, const src, size) : dest is nullptr.");
-	}
-	if (src == nullptr)
-	{
-		throw exception("Exception @c3p1::string::memcpy(dest, const src, size) : src is nullptr.");
-	}
-
-	// cast raw pointers to unsigned char pointers and process copying byte a byte
-	unsigned char* currentbyte = static_cast<unsigned char*>(dest);
-	const unsigned char* bytes = static_cast<const unsigned char*>(src);
-
-	// copy byte a byte src to dest
-	for (c3p1::size_t i = 0; i < size; i++)
-	{
-		currentbyte[i] = bytes[i];
-	}
-
-	return dest;
 }
 
 void* c3p1::string::memccpy(void* dest, const void* src, unsigned char searchedbyte, c3p1::size_t size)  

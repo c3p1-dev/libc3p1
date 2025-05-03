@@ -1,8 +1,12 @@
 // string.h
 // c3p1-dev
 // my libc/string.h implementation encapsulated in a string class
-
 #pragma once
+
+// Visual Studio 2022 does not know restrict
+#ifndef restrict
+	#define restrict __restrict
+#endif
 
 namespace c3p1
 {
@@ -47,19 +51,19 @@ namespace c3p1
 	public:
 		// local implementation of string.h libc
 
-		// memcpy(dest, const src, size) copies n=size bytes from src to dest
-		// (+) manages exceptions for nullptr value for dest and/or src,
-		// (-) does not manage overlap betweetn dest and src,
-		// (+) returns dest address,
+		// memcpy(dst, const src, size) copies n=size bytes from src to dst
+		// (+) manages exceptions for nullptr value for dst and/or src,
+		// (-) does not manage overlap between dst and src,
+		// (+) returns dst pointer,
 		// (!) could lead to undefined behavior by buffer overflow!
-		static void* memcpy(void* dest, const void* src, size_t size);
+		static void* memcpy(void* restrict dst, const void* restrict src, size_t size);
 
 		// memccpy(dest, const src, searchedbyte, size) copies n=size bytes from src to dest until searchedbyte is read
 		// (+) manages exception for nullptr value for dest and/or src,
 		// (-) does not manage overlap between src and dest,
 		// (+) returns dest address,
 		// (!) could lead to undefined behavior if n is superior to dest and/or src size!
-		static void* memccpy(void* dest, const void* src, unsigned char searchedbyte, size_t size);
+		static void* memccpy(void* restrict dest, const void* restrict src, unsigned char searchedbyte, size_t size);
 
 		// memmove(dest, const src, size) copies n=size bytes from src to dest
 		// (+) manages exceptions for nullptr value for dest and/or src,
