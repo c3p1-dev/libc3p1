@@ -4,9 +4,9 @@
 using namespace c3p1;
 
 // Fonction de comparaison manuelle de buffers
-bool buffers_equal(const char* a, const char* b, size_t n)
+bool buffers_equal(const char* a, const char* b, c3p1::size_t n)
 {
-    for (size_t i = 0; i < n; ++i)
+    for (c3p1::size_t i = 0; i < n; ++i)
         if (a[i] != b[i])
             return false;
     return true;
