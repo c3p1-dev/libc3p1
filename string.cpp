@@ -884,7 +884,7 @@ c3p1::string::string(const char* str)
 	}
 	else
 	{
-		// no-exceptions on string constructors
+		// no-exception on string constructors
 		// initialise to empty string
 		m_str = new char;
 

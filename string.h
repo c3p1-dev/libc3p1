@@ -30,7 +30,7 @@ namespace c3p1
 
 		// copy constructor(&copy)
 		// (+) create a new string and copies the value from copy,
-		// (+) manages exceptions for nullptr copy.m_str,
+		// (+) manages exception for nullptr copy.m_str,
 		string(string& copy);
 
 		// destructor
@@ -190,7 +190,7 @@ namespace c3p1
 		// (!) could lead to undefined behavior if second is bigger than first!
 		static int strcasecmp(const char* first, const char* second);
 
-		// strncasecmp(const first, const second) compares first and second
+		// strncasecmp(const first, const second, size) compares first and second n=size first characterr
 		// (+) is not case sensitive,
 		// (+) returns 0 if first and second are equals,
 		// (+) returns -1 if first < second (in lexicographic order),
