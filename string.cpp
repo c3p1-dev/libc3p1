@@ -568,21 +568,24 @@ int c3p1::string::strncasecmp(const char* first, const char* second, c3p1::size_
 	}
 
 	unsigned char c1, c2;
-	while (*first && *second)
+	while (size-- > 0)
 	{
-		c1 = c3p1::string::to_lower_ascii((unsigned char)*first);
-		c2 = c3p1::string::to_lower_ascii((unsigned char)*second);
+		c1 = c3p1::string::to_lower_ascii((unsigned char)*first++);
+		c2 = c3p1::string::to_lower_ascii((unsigned char)*second++);
 
 		if (c1 != c2)
 		{
 			return c1 - c2;
 		}
 
-		first++;
-		second++;
+		// Si on atteint la fin d'une chaîne, on s'arrête
+		if (c1 == '\0')
+		{
+			break;
+		}
 	}
 
-	return c3p1::string::to_lower_ascii((unsigned char)*first) - c3p1::string::to_lower_ascii((unsigned char)*second);
+	return 0;
 }
 
 int c3p1::string::to_lower_ascii(unsigned char c) {

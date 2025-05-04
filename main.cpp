@@ -182,7 +182,18 @@ static void string_func_tests()
         run("strpbrk not found", string::strpbrk(s, "xz") == nullptr);
     }
 
-    // Résumé
+    // strcasecmp / strncasecmp
+    {
+        run("strcasecmp equal", string::strcasecmp("Test", "test") == 0);
+        run("strcasecmp less", string::strcasecmp("abc", "ABD") < 0);
+        run("strcasecmp greater", string::strcasecmp("XYZ", "xya") > 0);
+
+        run("strncasecmp equal prefix", string::strncasecmp("abcdef", "ABCxyz", 3) == 0);
+        run("strncasecmp partial diff", string::strncasecmp("abcdef", "ABCxyz", 4) < 0);
+        run("strncasecmp truncate equal", string::strncasecmp("hello", "HELLOworld", 5) == 0);
+    }
+
+    // report
     std::cout << "Passed tests : " << (total_tests - total_failures)
         << " / " << total_tests << std::endl;;
 
