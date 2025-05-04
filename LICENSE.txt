@@ -1,4 +1,4 @@
-BSD-3 License
+BSD 3-Clause License
 
 Copyright (c) 2025, C3P1 (https://github.com/c3p1-dev/)
 
