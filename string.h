@@ -94,131 +94,131 @@ namespace c3p1
 		static void* memmem(const void* big, size_t big_size, const void* little, size_t little_size);
 
 		// memcmp(first, const second, size) compares the n=size first bytes of first and second
-		// (+) manages exceptions for nullptr value for first and/or second,
-		// (-) does not manage overlap between first and second,
 		// (+) returns 0 if first and second are equals,
-		// (+) returns -1 if first is inferior to second,
-		// (+) returns +1 if first is superior to second,
-		// (!) could lead undefined behavior if n is superior to first and/or second size!
+		// (+) returns <0 if first is inferior to second,
+		// (+) returns >0 if first is superior to second,
+		// (+) manages exception for nullptr value for first and/or second,
+		// (!) big and little must not overlap, its an undefined behavior!
+		// (!) could lead to undefined behavior by buffer overflow!
 		static int memcmp(const void* first, const void* second, size_t size);
 
-		// memmove(dest, const src, size) copies n=size bytes from src to dest
-		// (+) manages exceptions for nullptr value for dest and/or src,
-		// (+) manages overlap betweetn dest and src by copying src in a buffer first,
+		// memmove(dst, const src, size) copies n=size bytes from src to dst
+		// (+) returns dst address,
+		// (+) manages exception for nullptr value for dest and/or src,
 		// (+) manages exception if memory allocation fails for the buffer,
-		// (+) returns dest address,
+		// (+) manages overlap betweetn dest and src by copying src in a buffer first,
 		// (!) could lead to undefined behavior by buffer overflow!
 		static void* memmove(void* dst, const void* src, size_t size);
 
-		// memset(dest, byteval, size) copies n=size times byteval to dest
-		// (+) manages exceptions for nullptr value for dest and/or src,
-		// (+) returns dest address,
+		// memset(dst, byte_val, size) copies n=size times byte_val to dst
+		// (+) returns dst address,
+		// (+) manages exception for nullptr value for dst and/or src,
 		// (!) could lead to undefined behavior by buffer overflow!
-		static void* memset(void* dest, unsigned char byteval, size_t size);
+		static void* memset(void* dst, unsigned char byte_val, size_t size);
 
-		// strcpy(dest, const src) copies src to dest
-		// (+) manages exceptions for nullptr value for dest and/or src,
-		// (-) does not manage overlap between dest and src,
+		// strcpy(dst, const src) copies src to dst
 		// (+) returns dest address,
+		// (+) manages exception for nullptr value for dest and/or src,
+ 		// (!) dst and src must not overlap, its an undefined behavior!
 		// (!) could lead to undefined behavior if src is not a null-terminated string!
 		// (!) could lead to undefined behavior by buffer overflow!
-		static char* strcpy(char* restrict dest, const char* restrict src);
+		static char* strcpy(char* restrict dst, const char* restrict src);
 
-		// strncpy(dest, const src, size) copies n=size characters from src to dest
-		// (+) manages exceptions for nullptr value for dest and/or src,
-		// (-) does not manage overlap between dest and src,
-		// (-) does nothing if n is 0,
-		// (+) returns dest address,
-		// (!) if n < strlen(str), a null-terminal is NOT added at the end of string!
+		// strncpy(dst, const src, size) copies n=size characters from src to dst
+		// (+) returns dst address,
+		// (-) does nothing if n=size is 0,
+		// (+) if n < strlen(str), a null-terminal IS NOT added at the end of string!
 		// (+) if n > strlen(str), '\0' are added after the end of string!
+		// (+) manages exception for nullptr value for dst and/or src,
+		// (!) dst and src must not overlap, its an undefined behavior!
 		// (!) could lead to undefined behavior if src is not a null-terminated string!
 		// (!) could lead to undefined behavior by buffer overflow!
-		static char* strncpy(char* dest, const char* src, size_t size);
+		static char* strncpy(char* restrict dst, const char* restrict src, size_t size);
 
-		// strcat(dest, const append) adds append at the end of dest
-		// (+) manages exceptions for nullptr value for dest and/or append,
-		// (+) returns dest address,
+		// strcat(str, const append) adds append at the end of str
+		// (+) returns str address,
+		// (+) manages exception for nullptr value for str and/or append,
 		// (!) could lead to undefined behavior if dest or append are not a null-terminated string!
 		// (!) could lead to undefined behavior by buffer overflow!
-		static char* strcat(char* dest, const char* append);
+		static char* strcat(char* restrict str, const char* restrict append);
 
-		// strncat(dest, const append, size) adds the n=size first bytes of append at the end of dest
-		// (+) manages exceptions for nullptr value for dest and/or append,
-		// (+) returns dest address,
+		// strncat(str, const append, size) adds the n=size first characters of append at the end of str
+		// (+) returns str address,
 		// (+) returned string is guaranted to be null-terminated,
+		// (+) manages exception for nullptr value for dest and/or append,
 		// (!) could lead to undefined behavior if dest or append are not a null-terminated string!
 		// (!) could lead to undefined behavior by buffer overflow!
-		static char* strncat(char* dest, const char* append, size_t size);
+		static char* strncat(char* restrict dest, const char* restrict append, size_t size);
 
 		// strlen(const str) returns str length
-		// (+) manages exceptions fur nullptr value for str,
+		// (+) manages exception for nullptr value for str,
 		// (!) could lead to undefined behavior if str is not a null-terminated string!
 		static size_t strlen(const char* str);
 
 		// strnlen(const str, maxlen) returns length if inferior to maxlen, or maxlen
-		// (+) manages exceptions fur nullptr value for str,
+		// (+) manages exception for nullptr value for str,
 		// (!) could lead to undefined behavior if str is not a null-terminated string shorter than maxlen!
 		static size_t strnlen(const char* str, size_t maxlen);
 
 		// strcmp(const first, const second) compares first and second
-		// (+) manages exceptions for nullptr value for first and/or second,
 		// (+) is case sensitive,
 		// (+) returns 0 if first and second are equals,
 		// (+) returns -1 if first < second (in lexicographic order),
 		// (+) returns +1 if first > second (in lexicographic order),
+		// (+) manages exception for nullptr value for first and/or second,
 		// (!) could lead to undefined behavior if first and/or second are not null-terminated strings!
 		// (!) could lead to undefined behavior if second is bigger than first!
 		static int strcmp (const char* first, const char* second);
 
-		// strcmp(const first, const second, size) compares the n=size first characters of first and second
-		// (+) manages exceptions for nullptr value for first and/or second,
+		// strncmp(const first, const second, size) compares the n=size first characters of first and second
 		// (+) is case sensitive,
 		// (+) returns 0 if the n first characters of first and second are equals,
 		// (+) returns -1 if the n first characters of first < second (in lexicographic order),
 		// (+) returns +1 if the n first characters of first > second (in lexicographic order),
+		// (+) manages exceptions for nullptr value for first and/or second,
 		// (!) could lead to undefined behavior if first and/or second are not null-terminated strings!
 		// (!) could lead to undefined behavior if n is bigger than first size!
 		static int strncmp(const char* first, const char* second, size_t size);
 
 		// strdup(const src) allocates enough memory for a new chain and copy src to it
+		// (+) returns address of the new string,
 		// (+) manages exception for nullptr value for src,
 		// (+) manages exception for allocation failure,
-		// (+) returns address of the new string,
 		// (!) could lead to undefined behavior if src is not a null-terminated string!
 		// (!) pointer returned must be deleted at the end of its scope!
 		static char* strdup(const char* src);
 
 		// strndup(const src, size) allocates enough memory for a new chain and copy n=size characters from src to it
+		// (+) returns address of the new string,
 		// (+) manages exception for nullptr value for src,
 		// (+) manages exception for allocation failure,
-		// (+) returns address of the new string,
 		// (!) could lead to undefined behavior if src is not a null-terminated string!
 		// (!) pointer returned must be deleted at the end of its scope!
 		static char* strndup(const char* src, size_t size);
 
-		// strchr(const str, searchedchar) searches a character in a string
-		// (+) manages exception for nullptr value for str,
+		// strchr(const str, searched_char) searches a character in a string
 		// (+) returns first the address of the first occurence of searched char,
 		// (+) returns nullptr if searchedchar is not in str,
-		// (!) could lead to undefined behavior if str is not a null-terminated string!
-		static char* strchr(const char* str, char searchedchar);
-
-		// strrchr(const str, searchedchar) searches a character in a string
 		// (+) manages exception for nullptr value for str,
-		// (+) returns first the address of the first occurence of searched char, reading from end to start
-		// (+) returns nullptr if searchedchar is not in str,
 		// (!) could lead to undefined behavior if str is not a null-terminated string!
-		static char* strrchr(const char* str, char c);
+		static char* strchr(const char* str, char searched_char);
+
+		// strrchr(const str, searched_char) searches a character in a string
+		// (+) returns first the address of the first occurence of searched_char, reading from end to start
+		// (+) returns nullptr if searched_char is not in str,
+		// (+) manages exception for nullptr value for str,
+		// (!) could lead to undefined behavior if str is not a null-terminated string!
+		static char* strrchr(const char* str, char searched_char);
 
 		// strspn(const str, const charset) compares str character to character with (accepted) charset
-		// (+) manages exception for nullptr value for str and charset,
 		// (+) returns the length of the first sub-string only made of accepted characters,
+		// (+) manages exception for nullptr value for str and charset,
 		// (!) could lead to undefined behavior if str and/or accepted are not null-terminated string!
 		static size_t strspn(const char* str, const char* charset);
 
 		// strcspn(const str, const charset) compares each character of str to the (rejected) charset
-		// (+) manages exception for nullptr value for str and charset,
 		// (+) returns the length of the first sub-string that excludes all the rejected characters,
+		// (+) manages exception for nullptr value for str and charset,
 		// (!) could lead to undefined behavior if str and/or accepted are not null-terminated string!
 		static size_t strcspn(const char* str, const char* charset);
 

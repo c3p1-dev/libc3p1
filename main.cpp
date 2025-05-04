@@ -4,7 +4,7 @@
 using namespace c3p1;
 
 // Fonction de comparaison manuelle de buffers
-bool buffers_equal(const char* a, const char* b, c3p1::size_t n)
+static bool buffers_equal(const char* a, const char* b, c3p1::size_t n)
 {
     for (c3p1::size_t i = 0; i < n; ++i)
         if (a[i] != b[i])
@@ -13,13 +13,13 @@ bool buffers_equal(const char* a, const char* b, c3p1::size_t n)
 }
 
 // Affiche un message de test
-void test(const char* name, bool ok)
+static void test(const char* name, bool ok)
 {
     std::cout << (ok ? "[OK]   " : "[FAIL] ") << name << "\n";
 }
 
 // run mem* func tests
-void memory_func_tests()
+static void memory_func_tests()
 {
     using namespace c3p1;
 
@@ -95,7 +95,7 @@ void memory_func_tests()
 }
 
 // run str* func tests
-void string_func_tests()
+static void string_func_tests()
 {
     using namespace c3p1;
 
@@ -195,7 +195,9 @@ void string_func_tests()
 // entry point
 int main()
 {
+    // run tests
     memory_func_tests();
     string_func_tests();
+
     return 0;
 }
