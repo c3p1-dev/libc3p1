@@ -58,15 +58,15 @@ namespace c3p1
 		// (!) could lead to undefined behavior by buffer overflow!
 		static void* memcpy(void* restrict dst, const void* restrict src, size_t size);
 
-		// mempcpy(dest, const src, searchedbyte, size) copies n=size bytes from src to dst
+		// mempcpy(dst, const src, searchedbyte, size) copies n=size bytes from src to dst
 		// (+) returns last written byte address,
-		// (+) manages exception for nullptr value for dest and/or src,
+		// (+) manages exception for nullptr value for dst and/or src,
 		// (!) src and dst must not overlap, it's an undefined behavior!
 		// (!) could lead to undefined behavior by buffer overflow!
 		static void* mempcpy(void* restrict dst, const void* restrict src, size_t size);
 
-		// memccpy(dest, const src, searched_byte, size) copies n=size bytes from src to dst until searched_byte is read
-		// (+) returns dest address,
+		// memccpy(dst, const src, searched_byte, size) copies n=size bytes from src to dst until searched_byte is read
+		// (+) returns dst address,
 		// (+) manages exception for nullptr value for dst and/or src,
 		// (!) src and dst must not overlap, it's an undefined behavior!
 		// (!) could lead to undefined behavior by buffer overflow!
@@ -104,9 +104,9 @@ namespace c3p1
 
 		// memmove(dst, const src, size) copies n=size bytes from src to dst
 		// (+) returns dst address,
-		// (+) manages exception for nullptr value for dest and/or src,
+		// (+) manages exception for nullptr value for dst and/or src,
 		// (+) manages exception if memory allocation fails for the buffer,
-		// (+) manages overlap betweetn dest and src by copying src in a buffer first,
+		// (+) manages overlap betweetn dst and src by copying src in a buffer first,
 		// (!) could lead to undefined behavior by buffer overflow!
 		static void* memmove(void* dst, const void* src, size_t size);
 
@@ -117,8 +117,8 @@ namespace c3p1
 		static void* memset(void* dst, unsigned char byte_val, size_t size);
 
 		// strcpy(dst, const src) copies src to dst
-		// (+) returns dest address,
-		// (+) manages exception for nullptr value for dest and/or src,
+		// (+) returns dst address,
+		// (+) manages exception for nullptr value for dst and/or src,
  		// (!) dst and src must not overlap, its an undefined behavior!
 		// (!) could lead to undefined behavior if src is not a null-terminated string!
 		// (!) could lead to undefined behavior by buffer overflow!
@@ -138,17 +138,17 @@ namespace c3p1
 		// strcat(str, const append) adds append at the end of str
 		// (+) returns str address,
 		// (+) manages exception for nullptr value for str and/or append,
-		// (!) could lead to undefined behavior if dest or append are not a null-terminated string!
+		// (!) could lead to undefined behavior if str or append are not a null-terminated string!
 		// (!) could lead to undefined behavior by buffer overflow!
 		static char* strcat(char* restrict str, const char* restrict append);
 
 		// strncat(str, const append, size) adds the n=size first characters of append at the end of str
 		// (+) returns str address,
 		// (+) returned string is guaranted to be null-terminated,
-		// (+) manages exception for nullptr value for dest and/or append,
-		// (!) could lead to undefined behavior if dest or append are not a null-terminated string!
+		// (+) manages exception for nullptr value for str and/or append,
+		// (!) could lead to undefined behavior if str or append are not a null-terminated string!
 		// (!) could lead to undefined behavior by buffer overflow!
-		static char* strncat(char* restrict dest, const char* restrict append, size_t size);
+		static char* strncat(char* restrict str, const char* restrict append, size_t size);
 
 		// strlen(const str) returns str length
 		// (+) manages exception for nullptr value for str,

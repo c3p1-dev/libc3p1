@@ -20,13 +20,13 @@ void* c3p1::string::memcpy(void* restrict dst, const void* restrict src, c3p1::s
 	}
 
 	// cast raw pointers to unsigned char pointers and process copying byte a byte
-	unsigned char* currentbyte = static_cast<unsigned char*>(dst);
+	unsigned char* current_byte = static_cast<unsigned char*>(dst);
 	const unsigned char* wp = static_cast<const unsigned char*>(src);
 
 	// copy byte a byte src to dst
 	for (c3p1::size_t i = 0; i < size; i++)
 	{
-		currentbyte[i] = wp[i];
+		current_byte[i] = wp[i];
 	}
 
 	return dst;
@@ -237,7 +237,7 @@ int c3p1::string::memcmp(const void* first, const void* second, c3p1::size_t siz
 
 void* c3p1::string::memmove(void* dst, const void* src, c3p1::size_t size)
 {
-	// check if dest and src are not nullptr
+	// check if dst and src are not nullptr
 	if (dst == nullptr && src == nullptr)
 	{
 		throw exception("Exception @c3p1::string::memmove(dst, const src, size): dst and src are nullptr.");
@@ -258,7 +258,7 @@ void* c3p1::string::memmove(void* dst, const void* src, c3p1::size_t size)
 		// copy src to buffer
 		memcpy(static_cast<void*>(wp), src, size);
 
-		// copy buffer to dest
+		// copy buffer to dst
 		memcpy(dst, wp, size);
 		delete[] wp;
 
@@ -272,13 +272,13 @@ void* c3p1::string::memmove(void* dst, const void* src, c3p1::size_t size)
 
 void* c3p1::string::memset(void* dst, unsigned char byte_val, c3p1::size_t size)
 {
-	// check dest
+	// check dst
 	if (dst == nullptr)
 	{
 		throw exception("Exception @c3p1::string::memset(dst, byte_val, size) : dst is nullptr.");
 	}
 
-	// copy n byte from dest to dest+n
+	// copy n byte from dst to dst+n -> dst+2n
 	unsigned char* p = static_cast<unsigned char*>(dst);
 	for (c3p1::size_t i = 0; i < size; i++)
 	{
@@ -305,7 +305,7 @@ char* c3p1::string::strcpy(char* restrict dst, const char* restrict src)
 		throw exception("Exception @c3p1::string::strcpy(dst, const src): src is nullptr.");
 	}
 
-	// copy src string to dest
+	// copy src string to dst
     size_t i = 0;
 	while (*src != '\0')
 	{
@@ -321,7 +321,7 @@ char* c3p1::string::strcpy(char* restrict dst, const char* restrict src)
 
 char* c3p1::string::strncpy(char* restrict dst, const char* restrict src, c3p1::size_t size)
 {
-	// check that dest and src are not null
+	// check that dst and src are not null
 	if (src == nullptr && dst == nullptr)
 	{
 		throw exception("Exception @c3p1::string::strncpy(dst, const src, size): dst and src are nullptr.");
