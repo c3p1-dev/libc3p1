@@ -35,5 +35,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Makefile" />
+    <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="LICENSE.txt" />
   </ItemGroup>
 </Project>
