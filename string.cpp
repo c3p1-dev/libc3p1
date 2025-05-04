@@ -471,7 +471,7 @@ c3p1::size_t c3p1::string::strnlen(const char* str, c3p1::size_t maxlen)
 		throw exception("Exception @c3p1::string::strnlen(const str, maxlen): str is nullptr.");
 	}
 
-	// count characters until the first null-terminal or maxlen
+	// count characters until the first null-terminal is read or maxlen
 	c3p1::size_t i = 0;
 	while (*str != '\0' && i < maxlen)
 	{
