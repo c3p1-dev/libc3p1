@@ -180,6 +180,16 @@ namespace c3p1
 		// (!) could lead to undefined behavior if n is bigger than first size!
 		static int strncmp(const char* first, const char* second, size_t size);
 
+		// strcasecmp(const first, const second) compares first and second
+		// (+) is not case sensitive,
+		// (+) returns 0 if first and second are equals,
+		// (+) returns -1 if first < second (in lexicographic order),
+		// (+) returns +1 if first > second (in lexicographic order),
+		// (+) manages exception for nullptr value for first and/or second,
+		// (!) could lead to undefined behavior if first and/or second are not null-terminated strings!
+		// (!) could lead to undefined behavior if second is bigger than first!
+		static int strcasecmp(const char* first, const char* second);
+
 		// strdup(const src) allocates enough memory for a new chain and copy src to it
 		// (+) returns address of the new string,
 		// (+) manages exception for nullptr value for src,
@@ -238,5 +248,9 @@ namespace c3p1
 		// WONT be implemented (locale management is to complex for this project) :
 		// static size_t strxfrm(char* dest, const char* src, size_t size);
 		// static int strcoll (const char* first, const char* second);
+
+	private:
+		// internal functions
+		static int to_lower_ascii(unsigned char c);
 	};
 }

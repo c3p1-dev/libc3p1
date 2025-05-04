@@ -517,6 +517,46 @@ int c3p1::string::strcmp(const char* first, const char* second)
 	return 0;
 }
 
+int c3p1::string::strcasecmp(const char* first, const char* second)
+{
+	// check if first and second are not nullptr
+	if (first == nullptr && second == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strcasecmp(first, const second): first and second are nullptr.");
+	}
+	if (first == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strcasecmp(first, const second): first is nullptr.");
+	}
+	if (second == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strcasecmp(first, const second): second is nullptr.");
+	}
+
+	unsigned char c1, c2;
+	while (*first && *second)
+	{
+		c1 = c3p1::string::to_lower_ascii((unsigned char)*first);
+		c2 = c3p1::string::to_lower_ascii((unsigned char)*second);
+
+		if (c1 != c2)
+		{
+			return c1 - c2;
+		}
+
+		first++;
+		second++;
+	}
+	
+	return c3p1::string::to_lower_ascii((unsigned char)*first) - c3p1::string::to_lower_ascii((unsigned char)*second);
+}
+
+int c3p1::string::to_lower_ascii(unsigned char c) {
+	if (c >= 'A' && c <= 'Z')
+		return c + ('a' - 'A');  // ou simplement +32
+	return c;
+}
+
 int c3p1::string::strncmp(const char* first, const char* second, size_t size)
 {
 	// check if first and second are not nullptr
@@ -780,7 +820,7 @@ c3p1::string::string()
 	// check allocation result
 	if (m_str == nullptr)
 	{
-		throw exception("Exception @c3p1::string::string(void) : memory allocation for the string has failed.");
+		throw exception("Exception @c3p1::string::string(void): memory allocation for the string has failed.");
 	}
 
 	m_memsize = 1;
@@ -799,7 +839,7 @@ c3p1::string::string(const char* str)
 		// check allocation result
 		if (m_str == nullptr)
 		{
-			throw exception("Exception @c3p1::string::string(str) : memory allocation for the string has failed.");
+			throw exception("Exception @c3p1::string::string(str): memory allocation for the string has failed.");
 		}
 
 		// copy str
@@ -814,7 +854,7 @@ c3p1::string::string(const char* str)
 		// check allocation result
 		if (m_str == nullptr)
 		{
-			throw exception("Exception @c3p1::string::string(str) : memory allocation for the string has failed.");
+			throw exception("Exception @c3p1::string::string(str): memory allocation for the string has failed.");
 		}
 
 		m_memsize = 1;
@@ -827,7 +867,7 @@ c3p1::string::string(string& copy)
 	// check copy.m_str pointer
 	if (copy.m_str == nullptr)
 	{
-		throw exception("Exception c3p1::string::string(&copy) : copy.m_str is nullptr.");
+		throw exception("Exception c3p1::string::string(&copy): copy.m_str is nullptr.");
 	}
 
 	if (copy.m_memsize != 0)
@@ -838,7 +878,7 @@ c3p1::string::string(string& copy)
 		// check allocation result
 		if (m_str == nullptr)
 		{
-			throw exception("Exception @c3p1::string::string(&copy) : memory allocation for the string has failed.");
+			throw exception("Exception @c3p1::string::string(&copy): memory allocation for the string has failed.");
 		}
 
 		strcpy(m_str, copy.m_str);
@@ -850,7 +890,7 @@ c3p1::string::string(string& copy)
 		// check allcation result
 		if (m_str == nullptr)
 		{
-			throw exception("Exception @c3p1::string::string(&copy) : memory allocation for the string has failed.");
+			throw exception("Exception @c3p1::string::string(&copy): memory allocation for the string has failed.");
 		}
 
 		m_memsize = 1;
@@ -889,7 +929,7 @@ c3p1::string& c3p1::string::operator=(const char* str)
 			// check allocation result
 			if (m_str == nullptr)
 			{
-				throw exception("Exception @c3p1::string::string(&copy) : memory allocation for the string has failed.");
+				throw exception("Exception @c3p1::string::operator(=) (const str): memory allocation for the string has failed.");
 			}
 		}
 
