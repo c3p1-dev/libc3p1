@@ -190,6 +190,16 @@ namespace c3p1
 		// (!) could lead to undefined behavior if second is bigger than first!
 		static int strcasecmp(const char* first, const char* second);
 
+		// strncasecmp(const first, const second) compares first and second
+		// (+) is not case sensitive,
+		// (+) returns 0 if first and second are equals,
+		// (+) returns -1 if first < second (in lexicographic order),
+		// (+) returns +1 if first > second (in lexicographic order),
+		// (+) manages exception for nullptr value for first and/or second,
+		// (!) could lead to undefined behavior if first and/or second are not null-terminated strings!
+		// (!) could lead to undefined behavior if second is bigger than first!
+		static int strncasecmp(const char* first, const char* second, size_t size);
+
 		// strdup(const src) allocates enough memory for a new chain and copy src to it
 		// (+) returns address of the new string,
 		// (+) manages exception for nullptr value for src,
@@ -239,8 +249,6 @@ namespace c3p1
 		static char* strpbrk(const char* str, const char* charset);
 
 		// TODO to fully implemente libc string.h :
-		// static char strcasecmp(const char* first, const char* second);
-		// static char strncasecmp(const char* first, const char* second, size_t size);
 		// static const char* strstr(const char* fullstring, const char* substring);
 		// static const char* strnstr(const char* fullstring, const char* substring, size_t size); 
 		// static char* strtok(char* strc, const char* delimiters);

@@ -306,7 +306,7 @@ char* c3p1::string::strcpy(char* restrict dst, const char* restrict src)
 	}
 
 	// copy src string to dst
-    size_t i = 0;
+    c3p1::size_t i = 0;
 	while (*src != '\0')
 	{
 		*(dst++) = *src++;
@@ -398,7 +398,7 @@ char* c3p1::string::strcat(char* restrict str, const char* restrict append)
 	return str;
 }
 
-char* c3p1::string::strncat(char* restrict str, const char* restrict append, size_t size)
+char* c3p1::string::strncat(char* restrict str, const char* restrict append, c3p1::size_t size)
 {
 	// check str and append pointers
 	if (str == nullptr && append == nullptr)
@@ -551,13 +551,47 @@ int c3p1::string::strcasecmp(const char* first, const char* second)
 	return c3p1::string::to_lower_ascii((unsigned char)*first) - c3p1::string::to_lower_ascii((unsigned char)*second);
 }
 
+int c3p1::string::strncasecmp(const char* first, const char* second, c3p1::size_t size)
+{
+	// check if first and second are not nullptr
+	if (first == nullptr && second == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strcasecmp(first, const second): first and second are nullptr.");
+	}
+	if (first == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strcasecmp(first, const second): first is nullptr.");
+	}
+	if (second == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strcasecmp(first, const second): second is nullptr.");
+	}
+
+	unsigned char c1, c2;
+	while (*first && *second)
+	{
+		c1 = c3p1::string::to_lower_ascii((unsigned char)*first);
+		c2 = c3p1::string::to_lower_ascii((unsigned char)*second);
+
+		if (c1 != c2)
+		{
+			return c1 - c2;
+		}
+
+		first++;
+		second++;
+	}
+
+	return c3p1::string::to_lower_ascii((unsigned char)*first) - c3p1::string::to_lower_ascii((unsigned char)*second);
+}
+
 int c3p1::string::to_lower_ascii(unsigned char c) {
 	if (c >= 'A' && c <= 'Z')
 		return c + ('a' - 'A');  // ou simplement +32
 	return c;
 }
 
-int c3p1::string::strncmp(const char* first, const char* second, size_t size)
+int c3p1::string::strncmp(const char* first, const char* second, c3p1::size_t size)
 {
 	// check if first and second are not nullptr
 	if (first == nullptr && second == nullptr)
@@ -614,7 +648,7 @@ char* c3p1::string::strdup(const char* src)
 	}
 }
 
-char* c3p1::string::strndup(const char* src, size_t size)
+char* c3p1::string::strndup(const char* src, c3p1::size_t size)
 {
 	// check src value
 	if (src == nullptr)
@@ -917,7 +951,7 @@ c3p1::string& c3p1::string::operator=(const char* str)
 {
 	if (str != nullptr)
 	{
-		size_t len = strlen(str);
+		c3p1::size_t len = strlen(str);
 		// check if memsize is enough
 		if (m_memsize < len + 1)
 		{
