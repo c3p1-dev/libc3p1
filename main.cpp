@@ -250,6 +250,5 @@ int main()
     memory_func_tests();
     string_func_tests();
 
-    // strcasestr
     return 0;
 }
