@@ -342,22 +342,109 @@ char* c3p1::string::strncpy(char* restrict dst, const char* restrict src, c3p1::
 	}
 
 	// copy byte to byte
-	size_t i = 0;
-	while (i < size)
+	char* wp = nullptr;
+	for (c3p1::size_t i = 0; i < size; i++)
 	{
-		if (*(src + i) != '\0')
+		// if still copying
+		if (wp == nullptr)
 		{
-			*(dst + i) = *(src + i);
-			i++;
+			dst[i] = src[i];
 		}
 		else
 		{
-			*(dst + i) = '\0';
-			i++;
+			// src was shorter than size, filling dst with '\0'
+			dst[i] = '\0';
+		}
+
+		// keep the address of the first '\0'
+		if (dst[i] == '\0' && wp == nullptr)
+		{
+			wp = &dst[i];
 		}
 	}
 
 	return dst;
+}
+
+char* c3p1::string::stpcpy(char* restrict dst, const char* restrict src)
+{
+	// check that dst and src are not null
+	if (src == nullptr && dst == nullptr)
+	{
+		throw exception("Exception @c3p1::string::stpcpy(dst, const src): dst and src are nullptr.");
+	}
+	if (dst == nullptr)
+	{
+		throw exception("Exception @c3p1::string::stpcpy(dst, const src): dst is nullptr.");
+	}
+	if (src == nullptr)
+	{
+		throw exception("Exception @c3p1::string::stpcpy(dst, const src): src is nullptr.");
+	}
+
+	// copy src string to dst
+	while (*src != '\0')
+	{
+		*(dst++) = *(src++);
+	}
+	// null-terminate the destination string
+	*dst = '\0';
+
+	// return the address of the start of the string
+	return dst;
+}
+
+char* c3p1::string::stpncpy(char* restrict dst, const char* restrict src, c3p1::size_t size)
+{
+	// check that dst and src are not null
+	if (src == nullptr && dst == nullptr)
+	{
+		throw exception("Exception @c3p1::string::stpncpy(dst, const src, size): dst and src are nullptr.");
+	}
+	if (dst == nullptr)
+	{
+		throw exception("Exception @c3p1::string::stpncpy(dst, const src, size): dst is nullptr.");
+	}
+	if (src == nullptr)
+	{
+		throw exception("Exception @c3p1::string::stpncpy(dst, const src, size): src is nullptr.");
+	}
+
+	// check count
+	if (size == 0)
+	{
+		return dst;
+	}
+
+	// copy byte to byte
+	char* wp = nullptr;
+	for (c3p1::size_t i = 0; i < size; i++)
+	{
+		// if still copying
+		if (wp == nullptr)
+		{
+			dst[i] = src[i];
+		}
+		else
+		{
+			// src was shorter than size, filling dst with '\0'
+			dst[i] = '\0';
+		}
+
+		// keep the address of the first '\0'
+		if (dst[i] == '\0' && wp == nullptr)
+		{
+			wp = &dst[i];
+		}
+	}
+
+	// no null-terminal copied, point to the last written char
+	if (wp == nullptr)
+	{
+		wp = &dst[size-1];
+	}
+
+	return wp;
 }
 
 char* c3p1::string::strcat(char* restrict str, const char* restrict append)

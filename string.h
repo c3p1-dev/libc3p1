@@ -124,7 +124,7 @@ namespace c3p1
 		// (!) could lead to undefined behavior by buffer overflow!
 		static char* strcpy(char* restrict dst, const char* restrict src);
 
-		// strncpy(dst, const src, size) copies n=size characters from src to dst
+		// strncpy(dst, const src, size) copies at most n=size characters from src to dst
 		// (+) returns dst address,
 		// (-) does nothing if n=size is 0,
 		// (+) if n < strlen(str), a null-terminal IS NOT added at the end of string!
@@ -134,6 +134,27 @@ namespace c3p1
 		// (!) could lead to undefined behavior if src is not a null-terminated string!
 		// (!) could lead to undefined behavior by buffer overflow!
 		static char* strncpy(char* restrict dst, const char* restrict src, size_t size);
+
+		// stpcpy(dst, const src) copies src to dst
+		// (+) returns address to dst null-terminal,
+		// (+) manages exception for nullptr value for dst and/or src,
+		// (!) dst and src must not overlap, its an undefined behavior!
+		// (!) could lead to undefined behavior if src is not a null-terminated string!
+		// (!) could lead to undefined behavior by buffer overflow!
+		static char* stpcpy(char* restrict dst, const char* restrict src);
+
+		// stpncpy(dst, const src, size) copies at most n=size characters from src to dst
+		// (+) returns address to dst null-terminal,
+		// (+) returns address to dst[size] if stpncpy does not terminate dest with null-terminal,
+		// (-) does nothing if n=size is 0,
+		// (-) does not add a null-terminal if not present in src[O] to src[size-1],
+		// (+) if n < strlen(str), a null-terminal IS NOT added at the end of string!
+		// (+) if n > strlen(str), '\0' are added after the end of string!q
+		// (+) manages exception for nullptr value for dst and/or src,
+		// (!) dst and src must not overlap, its an undefined behavior!
+		// (!) could lead to undefined behavior if src is not a null-terminated string!
+		// (!) could lead to undefined behavior by buffer overflow!
+		static char* stpncpy(char* restrict dst, const char* restrict src, size_t size);
 
 		// strcat(str, const append) adds append at the end of str
 		// (+) returns str address,
