@@ -13,7 +13,7 @@ OBJS=$(SRCS:.cpp=.o)
 
 # Manage separate targets for test binary and library archive
 MAIN_OBJ=main.o
-LIB_OBJS=$(filter-out $(MAIN_OBJ), $(OBJS))
+LIB_OBJS != echo $(OBJS) | sed 's/$(MAIN_OBJ)//g'
 
 # Default rule
 all: $(OUT) $(LIB)
@@ -24,7 +24,7 @@ all: $(OUT) $(LIB)
 
 # Create library archive
 $(LIB): $(LIB_OBJS)
-	ar rcs $@ $^
+	ar rcs $@ $(LIB_OBJS)
 
 # Create test binary
 $(OUT): $(OBJS)
