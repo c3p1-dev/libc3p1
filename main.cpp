@@ -1,3 +1,8 @@
+// main.cpp
+// Copyright© C3P1 - https://github.com/c3p1-dev/libc3p1
+// BSD3 License - https://github.com/c3p1-dev/libc3p1/blob/master/LICENSE.txt
+// libc3p1 test program
+
 #include <iostream>
 #include "string.h"
 
@@ -121,6 +126,18 @@ static void string_func_tests()
         run("strncpy partial", string::strcmp(buf, "Wor") == 0);
     }
 
+    // stpcpy / stpncpy
+    {
+        char buf[32];
+        char* end = string::stpcpy(buf, "Hello");
+        *end = '\0';
+        run("stpcpy basic", string::strcmp(buf, "Hello") == 0);
+
+        end = string::stpncpy(buf, "World", 3);
+        *end = '\0';
+        run("stpncpy partial", end == buf + 2);
+    }
+
     // strcat / strncat
     {
         char buf[32] = "Hello";
@@ -193,6 +210,29 @@ static void string_func_tests()
         run("strncasecmp truncate equal", string::strncasecmp("hello", "HELLOworld", 5) == 0);
     }
 
+    // strstr
+    {
+        const char* haystack = "Hello World";
+        const char* result = string::strstr(haystack, "World");
+        run("strstr found", result && string::strcmp(result, "World") == 0);
+
+        result = string::strstr(haystack, "planet");
+        run("strstr not found", result == nullptr);
+    }
+
+    // strcasestr
+    {
+        const char* haystack = "Hello World";
+        const char* result = string::strcasestr(haystack, "world");
+        run("strcasestr lowercase needle", result && string::strcmp(result, "World") == 0);
+
+        result = string::strcasestr(haystack, "HELLO");
+        run("strcasestr uppercase needle", result && string::strcmp(result, "Hello World") == 0);
+
+        result = string::strcasestr(haystack, "moon");
+        run("strcasestr not found", result == nullptr);
+    }
+
     // report
     std::cout << "Passed tests : " << (total_tests - total_failures)
         << " / " << total_tests << std::endl;;
@@ -210,5 +250,6 @@ int main()
     memory_func_tests();
     string_func_tests();
 
+    // strcasestr
     return 0;
 }

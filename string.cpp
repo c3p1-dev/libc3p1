@@ -1,3 +1,8 @@
+// string.cpp
+// Copyright© C3P1 - https://github.com/c3p1-dev/libc3p1
+// BSD3 License - https://github.com/c3p1-dev/libc3p1/blob/master/LICENSE.txt
+// my libc/string.h implementation encapsulated in a string class
+
 #include "string.h"
 #include "exception.h"
 
@@ -168,8 +173,8 @@ void* c3p1::string::memmem(const void* big, c3p1::size_t big_size, const void* l
 	}
 
 	// cast raw pointers
-	unsigned char* wb = const_cast<unsigned char*>(static_cast<const unsigned char*>(big));
-	unsigned char* wl = const_cast<unsigned char*>(static_cast<const unsigned char*>(little));
+	const unsigned char* wb = static_cast<const unsigned char*>(big);
+	const unsigned char* wl = static_cast<const unsigned char*>(little);
 
 	// return big if little_size is zero
 	if (little_size == 0)
@@ -184,16 +189,22 @@ void* c3p1::string::memmem(const void* big, c3p1::size_t big_size, const void* l
 	}
 
 	// search byte to byte if big contains little
-	for (c3p1::size_t i = 0; i < big_size; i++)
+	for (c3p1::size_t i = 0; i <= big_size - little_size; i++)
 	{
-		c3p1::size_t j = 0;
-		while (j < little_size && wb[i + j] == wl[j])
+		bool match = true;
+		for (c3p1::size_t j = 0; j < little_size; j++)
 		{
-			j++;
+			if (wb[i + j] != wl[j])
+			{
+				match = false;
+				break;
+			}
 		}
-		if (j == little_size)
+
+		// return address of the first occurence of little in big
+		if (match == true)
 		{
-			return static_cast<void*>(wb + i);
+			return const_cast<void*>(static_cast<const void*>(wb + i));
 		}
 	}
 
@@ -950,8 +961,36 @@ char* c3p1::string::strstr(const char* big, const char* little)
 		throw exception("Exception @c3p1::string::strstr(const big, const little): little is nullptr.");
 	}
 
-	// search the first occurence of big
-	return static_cast<char*>(c3p1::string::memmem(big, c3p1::string::strlen(big) + 1, little, string::strlen(little) + 1));
+	c3p1::size_t big_len = strlen(big);
+	c3p1::size_t little_len = strlen(little);
+
+	if (big_len < little_len)
+	{
+		// little is not found in big if big is shorter than little
+		return nullptr;
+	}
+
+	// search the first occurence of little
+	for (c3p1::size_t i = 0; i <= big_len - little_len; i++)
+	{
+		bool match = true;
+		for (c3p1::size_t j = 0; j < little_len; j++)
+		{
+			if (big[i + j] != little[j])
+			{
+				match = false;
+				break;
+			}
+		}
+
+		if (match == true)
+		{
+			return const_cast<char*>(big + i);
+		}
+	}
+
+	// little not found
+	return nullptr;
 }
 
 char* c3p1::string::strcasestr(const char* big, const char* little)
@@ -970,60 +1009,36 @@ char* c3p1::string::strcasestr(const char* big, const char* little)
 		throw exception("Exception @c3p1::string::strstr(const big, const little): little is nullptr.");
 	}
 
-	// first, transform little and big to lowered  strings
 	c3p1::size_t big_len = c3p1::string::strlen(big);
 	c3p1::size_t little_len = c3p1::string::strlen(little);
 
 	if (big_len < little_len)
 	{
-		// big is shorter than little, little can't be found
+		// little is not found in big if big is shorter than little
 		return nullptr;
 	}
 
-	// cast big and little to volatile pointers
-	char* wb = new char[big_len + 1];
-	char* wl = new char[little_len + 1];
-
-	if (wb == nullptr || wl == nullptr)
+	// search for the first occurence of little - not case sensitive
+	for (c3p1::size_t i = 0; i <= big_len - little_len; i++)
 	{
-		// exception for buffers memory allocation failed
-		throw exception("Exception @c3p1::string::strcasestr(const big, const little): memory allocation for the buffers has failed.");
+		bool match = true;
+		for (c3p1::size_t j = 0; j < little_len; j++)
+		{
+			if (c3p1::string::to_lower_ascii(big[i + j]) != c3p1::string::to_lower_ascii(little[j]))
+			{
+				match = false;
+				break;
+			}
+		}
+
+		if (match == true)
+		{
+			return const_cast<char*>(big + i);
+		}
 	}
 
-	for (c3p1::size_t i = 0; i < big_len; i++)
-	{
-		wb[i] = c3p1::string::to_lower_ascii(big[i]);
-	}
-	wb[big_len] = '\0';
-
-	for (c3p1::size_t i = 0; i < little_len; i++)
-	{
-		wl[i] = c3p1::string::to_lower_ascii(little[i]);
-	}
-	wl[little_len] = '\0';
-
-	// search the first occurence of big
-	char* wr = c3p1::string::strstr(wb, wl);
-
-	if (wr == nullptr)
-	{
-		// delete buffers
-		delete[] wb;
-		delete[] wl;
-		// little not found
-		return nullptr;
-	}
-	else
-	{
-		// get the address of little first occurence
-		size_t offset = static_cast<size_t>(wr - wb);
-		// delete buffers
-		delete[] wb;
-		delete[] wl;
-
-		// return address of the first occurence of little in big
-		return const_cast<char*>(big+offset);
-	}
+	// little not found
+	return nullptr;
 }
 
 // class string implementation
@@ -1059,7 +1074,7 @@ c3p1::string::string(const char* str)
 		}
 
 		// copy str
-		strcpy(m_str, str);
+		c3p1::string::strcpy(m_str, str);
 	}
 	else
 	{
@@ -1097,7 +1112,7 @@ c3p1::string::string(string& copy)
 			throw exception("Exception @c3p1::string::string(&copy): memory allocation for the string has failed.");
 		}
 
-		strcpy(m_str, copy.m_str);
+		c3p1::string::strcpy(m_str, copy.m_str);
 	}
 	else
 	{
@@ -1150,7 +1165,7 @@ c3p1::string& c3p1::string::operator=(const char* str)
 		}
 
 		// copy the string
-		strcpy(m_str, str);
+		c3p1::string::strcpy(m_str, str);
 		return *this;
 	}
 	else

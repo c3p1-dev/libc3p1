@@ -1,9 +1,11 @@
 // string.h
-// c3p1-dev
+// Copyright© C3P1 - https://github.com/c3p1-dev/libc3p1
+// BSD3 License - https://github.com/c3p1-dev/libc3p1/blob/master/LICENSE.txt
 // my libc/string.h implementation encapsulated in a string class
+
 #pragma once
 
-// Visual Studio 2022 does not know restrict
+// for Visual Studio and BSD
 #ifndef restrict
 	#define restrict __restrict
 #endif
