@@ -725,11 +725,11 @@ char* c3p1::string::strdup(const char* src)
 	}
 
 	// allocate memory and copy src
-	char* p = new char[strlen(src) + 1];
+	char* p = new char[c3p1::string::strlen(src) + 1];
 
 	if (p != nullptr)
 	{
-		strcpy(p, src);
+		c3p1::string::strcpy(p, src);
 		return p;
 	}
 	else
@@ -754,10 +754,10 @@ char* c3p1::string::strndup(const char* src, c3p1::size_t size)
 	}
 
 	// if count is equal to strlen(src), copy the string
-	strncpy(p, src, size);
+	c3p1::string::strncpy(p, src, size);
 
 	// add the null terminal if src was longer than count, because strncpy does not
-	if (strlen(src) > size)
+	if (c3p1::string::strlen(src) > size)
 	{
 		p[size] = '\0';
 	}
@@ -773,7 +773,7 @@ char* c3p1::string::strchr(const char* str, char searched_char)
 		throw exception("Exception @c3p1::string::strchr(const str, searched_char): str is nullptr.");
 	}
 
-	c3p1::size_t l = strlen(str);
+	c3p1::size_t l = c3p1::string::strlen(str);
 
 	// reading character to character from the first to the last
 	for (c3p1::size_t i = 0; i < l; i++)
@@ -798,7 +798,7 @@ char* c3p1::string::strrchr(const char* str, char searched_char)
 	}
 
 	// pointing at the end
-	c3p1::size_t l = strlen(str);
+	c3p1::size_t l = c3p1::string::strlen(str);
 	char* wp = const_cast<char*>(str) + l;
 
 	// reading character to character from the last to the first
@@ -828,8 +828,8 @@ c3p1::size_t c3p1::string::strspn(const char* str, const char* charset)
 	}
 
 	// count length of the first substring only made with accepted characters
-	c3p1::size_t lstr = strlen(str);
-	c3p1::size_t lcs = strlen(charset);
+	c3p1::size_t lstr = c3p1::string::strlen(str);
+	c3p1::size_t lcs = c3p1::string::strlen(charset);
 	c3p1::size_t count = 0;
 
 	// read str from first character to the first unaccepted character or to the null-terminal and keep the count
@@ -866,8 +866,8 @@ c3p1::size_t c3p1::string::strcspn(const char* str, const char* charset)
 	}
 
 	// count length of the first substring only made with accepted characters
-	c3p1::size_t lstr = strlen(str);
-	c3p1::size_t lcs = strlen(charset);
+	c3p1::size_t lstr = c3p1::string::strlen(str);
+	c3p1::size_t lcs = c3p1::string::strlen(charset);
 	c3p1::size_t count = 0;
 
 	// read str from first character to the first unaccepted character or to the null-terminal and keep the count
@@ -912,7 +912,7 @@ char* c3p1::string::strpbrk(const char* str, const char* charset)
 	}
 
 	// look for any characters from charset in str
-	c3p1::size_t lcs = strlen(charset);
+	c3p1::size_t lcs = c3p1::string::strlen(charset);
 
 	while (*str != '\0')
 	{
@@ -932,6 +932,98 @@ char* c3p1::string::strpbrk(const char* str, const char* charset)
 
 	// characters not found
 	return nullptr;
+}
+
+char* c3p1::string::strstr(const char* big, const char* little)
+{
+	// check big and first value
+	if (big == nullptr && little == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strstr(const big, const little): big and little are nullptr.");
+	}
+	if (big == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strstr(const big, const little): big is nullptr.");
+	}
+	if (little == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strstr(const big, const little): little is nullptr.");
+	}
+
+	// search the first occurence of big
+	return static_cast<char*>(c3p1::string::memmem(big, c3p1::string::strlen(big) + 1, little, string::strlen(little) + 1));
+}
+
+char* c3p1::string::strcasestr(const char* big, const char* little)
+{
+	// check big and first value
+	if (big == nullptr && little == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strstr(const big, const little): big and little are nullptr.");
+	}
+	if (big == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strstr(const big, const little): big is nullptr.");
+	}
+	if (little == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strstr(const big, const little): little is nullptr.");
+	}
+
+	// first, transform little and big to lowered  strings
+	c3p1::size_t big_len = c3p1::string::strlen(big);
+	c3p1::size_t little_len = c3p1::string::strlen(little);
+
+	if (big_len < little_len)
+	{
+		// big is shorter than little, little can't be found
+		return nullptr;
+	}
+
+	// cast big and little to volatile pointers
+	char* wb = new char[big_len + 1];
+	char* wl = new char[little_len + 1];
+
+	if (wb == nullptr || wl == nullptr)
+	{
+		// exception for buffers memory allocation failed
+		throw exception("Exception @c3p1::string::strcasestr(const big, const little): memory allocation for the buffers has failed.");
+	}
+
+	for (c3p1::size_t i = 0; i < big_len; i++)
+	{
+		wb[i] = c3p1::string::to_lower_ascii(big[i]);
+	}
+	wb[big_len] = '\0';
+
+	for (c3p1::size_t i = 0; i < little_len; i++)
+	{
+		wl[i] = c3p1::string::to_lower_ascii(little[i]);
+	}
+	wl[little_len] = '\0';
+
+	// search the first occurence of big
+	char* wr = c3p1::string::strstr(wb, wl);
+
+	if (wr == nullptr)
+	{
+		// delete buffers
+		delete[] wb;
+		delete[] wl;
+		// little not found
+		return nullptr;
+	}
+	else
+	{
+		// get the address of little first occurence
+		size_t offset = static_cast<size_t>(wr - wb);
+		// delete buffers
+		delete[] wb;
+		delete[] wl;
+
+		// return address of the first occurence of little in big
+		return const_cast<char*>(big+offset);
+	}
 }
 
 // class string implementation
@@ -957,7 +1049,7 @@ c3p1::string::string(const char* str)
 	if (str != nullptr)
 	{
 		// allocate enough memory
-		m_memsize = strlen(str) + 1;
+		m_memsize = c3p1::string::strlen(str) + 1;
 		m_str = new char[m_memsize];
 		
 		// check allocation result
@@ -1034,14 +1126,14 @@ c3p1::string::~string()
 
 c3p1::size_t c3p1::string::length() const
 {
-	return strlen(m_str);
+	return c3p1::string::strlen(m_str);
 }
 
 c3p1::string& c3p1::string::operator=(const char* str)
 {
 	if (str != nullptr)
 	{
-		c3p1::size_t len = strlen(str);
+		c3p1::size_t len = c3p1::string::strlen(str);
 		// check if memsize is enough
 		if (m_memsize < len + 1)
 		{

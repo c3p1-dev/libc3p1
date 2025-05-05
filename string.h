@@ -72,21 +72,21 @@ namespace c3p1
 		// (!) could lead to undefined behavior by buffer overflow!
 		static void* memccpy(void* restrict dst, const void* restrict src, unsigned char searched_byte, size_t size);
 
-		// memchr(const memory_block, searched_byte, size) searches the first occurence of searched_byte in memory_block
+		// memchr(const memory_block, searched_byte, size) locates the first occurence of searched_byte in memory_block
 		// (+) returns address of the first occurence of searched_byte,
 		// (+) returns nullptr if searched_byte is not found.
 		// (+) manages exception for nullptr value for memory_block,
 		// (!) could lead to undefined behavior by buffer overflow!
 		static void* memchr(const void* memory_block, unsigned char searched_byte, size_t size);
 
-		// memrchr(const memory_block, searched_byte, size) searches the first occurence of searched_byte in memory_block from end to start
+		// memrchr(const memory_block, searched_byte, size) locates the first occurence of searched_byte in memory_block from end to start
 		// (+) returns address of the first occurence of searched_byte,
 		// (+) returns nullptr if searched_byte is not found.
 		// (+) manages exception for nullptr value for memoryblock,
 		// (!) could lead to undefined behavior by buffer overflow!
 		static void* memrchr(const void* memory_block, unsigned char searched_byte, size_t size);
 
-		// memmem(const big, big_size, little, little_size) searches the first occurence of little bytes string in big
+		// memmem(const big, big_size, little, little_size) locates the first occurence of little bytes string in big
 		// (+) returns address of the first occurence of little,
 		// (+) returns nullptr if little is not found.
 		// (+) manages exception for nullptr value for big and/or little,
@@ -237,14 +237,14 @@ namespace c3p1
 		// (!) pointer returned must be deleted at the end of its scope!
 		static char* strndup(const char* src, size_t size);
 
-		// strchr(const str, searched_char) searches a character in a string
-		// (+) returns first the address of the first occurence of searched char,
-		// (+) returns nullptr if searchedchar is not in str,
+		// strchr(const str, searched_char) locates a character in a string
+		// (+) returns first the address of the first occurence of searched_char,
+		// (+) returns nullptr if searched_char is not in str,
 		// (+) manages exception for nullptr value for str,
 		// (!) could lead to undefined behavior if str is not a null-terminated string!
 		static char* strchr(const char* str, char searched_char);
 
-		// strrchr(const str, searched_char) searches a character in a string
+		// strrchr(const str, searched_char) locates a character in a string
 		// (+) returns first the address of the first occurence of searched_char, reading from end to start
 		// (+) returns nullptr if searched_char is not in str,
 		// (+) manages exception for nullptr value for str,
@@ -269,8 +269,23 @@ namespace c3p1
 		// (!) could lead to undefined behavior if str and/or charset are not null-terminated strings!
 		static char* strpbrk(const char* str, const char* charset);
 
+		// strstr(const fullstring, const substring locates the first occurence of little in big,
+		// (+) is case sensitive,
+		// (+) returns address of the first occurence of little in big,
+		// (+) returns nullptr if little was not found in big,
+		// (+) manages exception for nullptr value for big and/or little
+		// (!) could lead to undefined behavior if big and/or little are not null-terminated string!
+		static char* strstr(const char* big, const char* little);
+
+		// strcasestr(const fullstring, const substring locates the first occurence of little in big,
+		// (+) is NOT case sensitive,
+		// (+) returns address of the first occurence of little in big,
+		// (+) returns nullptr if little was not found in big,
+		// (+) manages exception for nullptr value for big and/or little
+		// (!) could lead to undefined behavior if big and/or little are not null-terminated string!
+		static char* strcasestr(const char* big, const char* little);
+
 		// TODO to fully implemente libc string.h :
-		// static const char* strstr(const char* fullstring, const char* substring);
 		// static const char* strnstr(const char* fullstring, const char* substring, size_t size); 
 		// static char* strtok(char* strc, const char* delimiters);
 
