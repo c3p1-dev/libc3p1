@@ -304,8 +304,9 @@ namespace c3p1
 		// (!) could lead to undefined behavior if str and/or sep are not null-terminated strings!
 		static char* strtok(char* restrict str, const char* restrict sep);
 
-		// TODO to fully implemente libc string.h :
+		// TODO to fully implement libc string.h :
 		// static char* strsep(char **stringp, const char* delim);
+		// static char* strtok_r(char* str, const char* delim, char** saveptr);
 
 		// WONT be implemented (locale management is to complex for this project) :
 		// static size_t strxfrm(char* dest, const char* src, size_t size);
