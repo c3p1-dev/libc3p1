@@ -1089,6 +1089,56 @@ char* c3p1::string::strnstr(const char* big, const char* little, c3p1::size_t si
 	return nullptr;
 }
 
+char* c3p1::string::strtok(char* restrict str, const char* restrict sep)
+{
+	// position pointer
+	static char* wpos = nullptr;
+
+	// check sep value
+	if (sep == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strtok(str, const sep): sep is nullptr.");
+	}
+
+	if (str != nullptr)
+	{
+		wpos = str;
+	}
+	else if (wpos == nullptr)
+	{
+		// nothing to do
+		return nullptr;
+	}
+
+	// get back to the position
+	char* wpstart = wpos;
+	while (*wpstart && c3p1::string::strchr(sep, *wpstart))
+	{
+		wpstart++;
+	}
+
+	// find token's end
+	char* wpend = wpstart;
+	while (*wpend && !c3p1::string::strchr(sep, *wpend))
+	{
+		wpend++;
+	}
+
+	// format the token and set the position for the next time
+	if (*wpend)
+	{
+		*wpend = '\0';
+		wpos = wpend + 1;
+	}
+	else
+	{
+		// end of string
+		wpos = nullptr;
+	}
+
+	return wpstart;
+}
+
 // class string implementation
 
 c3p1::string::string()

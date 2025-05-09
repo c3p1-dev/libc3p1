@@ -296,8 +296,15 @@ namespace c3p1
 		// (!) could lead to undefined behavior if big and/or little are not null-terminated string!
 		static char* strnstr(const char* big, const char* little, size_t size);
 
+		// strtok(str, const sep) isolates sequential tokens in str separated by at least 1 character from sep
+		// (+) is case sensitive,
+		// (+) the first time strok is called, str must be not null, the static pointer is reset for a new string,
+		// (+) str must be nullptr on the next calls on the same string.
+		// (+) manages exception for nullptr value for sep;
+		// (!) could lead to undefined behavior if str and/or sep are not null-terminated strings!
+		static char* strtok(char* restrict str, const char* restrict sep);
+
 		// TODO to fully implemente libc string.h :
-		// static const char* strnstr(const char* fullstring, const char* substring, size_t size); 
 		// static char* strtok(char* strc, const char* delimiters);
 
 		// WONT be implemented (locale management is to complex for this project) :
