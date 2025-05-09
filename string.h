@@ -271,7 +271,7 @@ namespace c3p1
 		// (!) could lead to undefined behavior if str and/or charset are not null-terminated strings!
 		static char* strpbrk(const char* str, const char* charset);
 
-		// strstr(const fullstring, const substring locates the first occurence of little in big,
+		// strstr(const big, const little) locates the first occurence of little in big,
 		// (+) is case sensitive,
 		// (+) returns address of the first occurence of little in big,
 		// (+) returns nullptr if little was not found in big,
@@ -279,13 +279,22 @@ namespace c3p1
 		// (!) could lead to undefined behavior if big and/or little are not null-terminated string!
 		static char* strstr(const char* big, const char* little);
 
-		// strcasestr(const fullstring, const substring locates the first occurence of little in big,
+		// strcasestr(const big, const little) locates the first occurence of little in big,
 		// (+) is NOT case sensitive,
 		// (+) returns address of the first occurence of little in big,
 		// (+) returns nullptr if little was not found in big,
 		// (+) manages exception for nullptr value for big and/or little
 		// (!) could lead to undefined behavior if big and/or little are not null-terminated string!
 		static char* strcasestr(const char* big, const char* little);
+
+		// strnstr(const big, const little, size_t size) locates the first occurence of n=size bytes first bytes of little in big,
+		// (+) is case sensitive,
+		// (+) returns address of the first occurence of n=size first bytes of little in big,
+		// (+) returns nullptr if the first n=size bytes of little were not found in big,
+		// (+) does not read anything after the first null-terminal in little,
+		// (+) manages exception for nullptr value for big and/or little
+		// (!) could lead to undefined behavior if big and/or little are not null-terminated string!
+		static char* strnstr(const char* big, const char* little, size_t size);
 
 		// TODO to fully implemente libc string.h :
 		// static const char* strnstr(const char* fullstring, const char* substring, size_t size); 

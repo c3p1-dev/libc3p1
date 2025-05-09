@@ -961,8 +961,8 @@ char* c3p1::string::strstr(const char* big, const char* little)
 		throw exception("Exception @c3p1::string::strstr(const big, const little): little is nullptr.");
 	}
 
-	c3p1::size_t big_len = strlen(big);
-	c3p1::size_t little_len = strlen(little);
+	c3p1::size_t big_len = c3p1::string::strlen(big);
+	c3p1::size_t little_len = c3p1::string::strlen(little);
 
 	if (big_len < little_len)
 	{
@@ -1025,6 +1025,54 @@ char* c3p1::string::strcasestr(const char* big, const char* little)
 		for (c3p1::size_t j = 0; j < little_len; j++)
 		{
 			if (c3p1::string::to_lower_ascii(big[i + j]) != c3p1::string::to_lower_ascii(little[j]))
+			{
+				match = false;
+				break;
+			}
+		}
+
+		if (match == true)
+		{
+			return const_cast<char*>(big + i);
+		}
+	}
+
+	// little not found
+	return nullptr;
+}
+
+char* c3p1::string::strnstr(const char* big, const char* little, c3p1::size_t size)
+{
+	// check big and first value
+	if (big == nullptr && little == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strnstr(const big, const little): big and little are nullptr.");
+	}
+	if (big == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strnstr(const big, const little): big is nullptr.");
+	}
+	if (little == nullptr)
+	{
+		throw exception("Exception @c3p1::string::strnstr(const big, const little): little is nullptr.");
+	}
+
+	c3p1::size_t big_len = c3p1::string::strlen(big);
+	c3p1::size_t little_len = c3p1::string::strlen(little) > size ? size : strlen(little);
+
+	if (big_len < little_len)
+	{
+		// little is not found in big if big is shorter than little
+		return nullptr;
+	}
+
+	// search the first occurence of little
+	for (c3p1::size_t i = 0; i <= big_len - little_len; i++)
+	{
+		bool match = true;
+		for (c3p1::size_t j = 0; j < little_len; j++)
+		{
+			if (big[i + j] != little[j])
 			{
 				match = false;
 				break;
