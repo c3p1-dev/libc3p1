@@ -247,18 +247,8 @@ static void string_func_tests()
 int main()
 {
     // run tests
-    //memory_func_tests();
-    //string_func_tests();
-
-    char input[] = "abc,def;ghi";
-    const char* delim = ",;";
-
-    char* token = c3p1::string::strtok(input, delim);
-    while (token != nullptr)
-    {
-        std::cout << "Token : " << token << std::endl;
-        token = c3p1::string::strtok(nullptr, delim);
-    }
+    memory_func_tests();
+    string_func_tests();
 
     return 0;
 }

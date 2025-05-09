@@ -305,7 +305,7 @@ namespace c3p1
 		static char* strtok(char* restrict str, const char* restrict sep);
 
 		// TODO to fully implemente libc string.h :
-		// static char* strtok(char* strc, const char* delimiters);
+		// static char* strsep(char **stringp, const char* delim);
 
 		// WONT be implemented (locale management is to complex for this project) :
 		// static size_t strxfrm(char* dest, const char* src, size_t size);
