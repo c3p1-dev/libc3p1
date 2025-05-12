@@ -304,6 +304,18 @@ namespace c3p1
 		// (!) could lead to undefined behavior if str and/or sep are not null-terminated strings!
 		static char* strtok(char* restrict str, const char* restrict sep);
 
+		// strtok_r(str, const sep, last) isolates sequential tokens in str separated by at least 1 character from sep
+		// (+) reentrant version of strtok, thread safe
+		// (+) is case sensitive,
+		// (+) the first time strok is called, str must be not null, last is initialized on str adress,
+		// (+) str must be nullptr on the next calls on the same string, the lecture will start on last value.
+		// (+) manages exception for nullptr value for sep;
+		// (!) could lead to undefined behavior if str and/or sep are not null-terminated strings!
+		static char* strtok_r(char* str, const char* sep, char** last);
+
+		// strsep(stringp, const delim) : 
+		//static char* strsep(char **stringp, const char* delim);
+
 		// TODO to fully implement libc string.h :
 		// static char* strsep(char **stringp, const char* delim);
 		// static char* strtok_r(char* str, const char* delim, char** saveptr);

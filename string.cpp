@@ -1117,6 +1117,12 @@ char* c3p1::string::strtok(char* restrict str, const char* restrict sep)
 		wpstart++;
 	}
 
+	if (*wpstart == '\0')
+	{
+		wpos = nullptr;
+		return nullptr;
+	}
+
 	// find token's end
 	char* wpend = wpstart;
 	while (*wpend && !c3p1::string::strchr(sep, *wpend))
@@ -1134,6 +1140,65 @@ char* c3p1::string::strtok(char* restrict str, const char* restrict sep)
 	{
 		// end of string
 		wpos = nullptr;
+	}
+
+	return wpstart;
+}
+
+char* c3p1::string::strtok_r(char* str, const char* sep, char** last)
+{
+	// nope, using last
+	// position pointer
+	//static char* wpos = nullptr;
+
+	// check sep value
+	if (sep == nullptr)
+	{
+		throw c3p1::exception("Exception @c3p1::string::strtok_r(str, const sep, last): sep is nullptr.");
+	}
+
+	if (str != nullptr)
+	{
+		*last = str;
+	}
+	else if (*last == nullptr)
+	{
+		// nothing to do
+		return nullptr;
+	}
+
+	// get back to the position
+	char* wpstart = *last;
+
+	// skip leading separators
+	while (*wpstart && c3p1::string::strchr(sep, *wpstart))
+	{
+		wpstart++;
+	}
+
+	if (*wpstart == '\0')
+	{
+		*last = nullptr;
+		return nullptr;
+	}
+
+	// find token's end
+	char* wpend = wpstart;
+	while (*wpend && !c3p1::string::strchr(sep, *wpend))
+	{
+		wpend++;
+	}
+
+	// format the token and set the position for the next time
+	if (*wpend)
+	{
+		*wpend = '\0';
+		*last = wpend + 1;
+	}
+	else
+	{
+		// end of string
+		*last = nullptr;
 	}
 
 	return wpstart;
