@@ -1257,7 +1257,7 @@ c3p1::string::string()
 	// check allocation result
 	if (m_str == nullptr)
 	{
-		throw c3p1::exception("Exception @c3p1::string::string(void): memory allocation for the string has failed.");
+		throw c3p1::exception("Exception @c3p1::string::constructor(void): memory allocation for the string has failed.");
 	}
 
 	m_memsize = 1;
