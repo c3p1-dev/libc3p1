@@ -1204,6 +1204,49 @@ char* c3p1::string::strtok_r(char* str, const char* sep, char** last)
 	return wpstart;
 }
 
+char* c3p1::string::strsep(char** stringp, const char* delim)
+{
+	// check stringp value
+	if (stringp == nullptr || *stringp == nullptr)
+	{
+		return nullptr;
+	}
+
+	// init pointers
+	char* start = *stringp;
+	char* end = start;
+
+	// move to first not delimiter character
+	while (*end && c3p1::string::strchr(delim, *end)) {
+		end++;
+	}
+
+	// string is empty or only made of delimiters
+	if (*end == '\0') {
+		*stringp = nullptr;
+		return nullptr;
+	}
+
+	// token starts with the first not delimiter character
+	start = end;
+
+	// find end of token
+	while (*end && !c3p1::string::strchr(delim, *end)) {
+		end++;
+	}
+
+	// if a delimiter is found, replace it by '\0' to end the token
+	if (*end) {
+		*end = '\0';
+		*stringp = end + 1;  // move to the next token
+	}
+	else {
+		*stringp = nullptr;  // end of string
+	}
+
+	return start;
+}
+
 // class string implementation
 
 c3p1::string::string()

@@ -313,12 +313,18 @@ namespace c3p1
 		// (!) could lead to undefined behavior if str and/or sep are not null-terminated strings!
 		static char* strtok_r(char* str, const char* sep, char** last);
 
-		// strsep(stringp, const delim) : 
-		//static char* strsep(char **stringp, const char* delim);
+		// strsep(stringp, delim) isolates sequential tokens in *stringp separated by at least 1 character from delim
+		// (+) reentrant and thread-safe version of strtok
+		// (+) handles cases where *stringp is initially pointing to a non-null string and manages successive token extraction
+		// (+) modifies *stringp to point to the next token after the current one
+		// (+) if the string is empty or composed only of delimiters, *stringp is set to nullptr
+		// (+) if a token is found, it replaces the delimiter with '\0' and returns the token
+		// (+) works with custom delimiters and is case-sensitive
+		// (+) returns nullptr when no more tokens are found
+		// (!) could lead to undefined behavior if *stringp and/or delim are not null-terminated strings
+		static char* strsep(char **stringp, const char* delim);
 
 		// TODO to fully implement libc string.h :
-		// static char* strsep(char **stringp, const char* delim);
-		// static char* strtok_r(char* str, const char* delim, char** saveptr);
 
 		// WONT be implemented (locale management is to complex for this project) :
 		// static size_t strxfrm(char* dest, const char* src, size_t size);
