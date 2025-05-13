@@ -324,8 +324,6 @@ namespace c3p1
 		// (!) could lead to undefined behavior if *stringp and/or delim are not null-terminated strings
 		static char* strsep(char **stringp, const char* delim);
 
-		// TODO to fully implement libc string.h :
-
 		// WONT be implemented (locale management is to complex for this project) :
 		// static size_t strxfrm(char* dest, const char* src, size_t size);
 		// static int strcoll (const char* first, const char* second);

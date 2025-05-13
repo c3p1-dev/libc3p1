@@ -107,6 +107,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -133,10 +134,12 @@
     <ClCompile Include="exception.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="string.cpp" />
+    <ClCompile Include="uptr.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exception.h" />
     <ClInclude Include="string.h" />
+    <ClInclude Include="uptr.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Makefile" />
