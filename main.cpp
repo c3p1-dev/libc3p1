@@ -5,11 +5,15 @@
 
 #include <iostream>
 #include "string.h"
+#include "uptr.h"
 
-using namespace c3p1;
+using namespace c3p1::ptr;
 
 // entry point
 int main()
 {
+    char* pw = new char;
+    uptr<char> p(pw);
+    *p = 'c';
     return 0;
 }
