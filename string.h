@@ -10,10 +10,20 @@
 	#define restrict __restrict
 #endif
 
+#if defined(__x86_64__) || defined(_M_X64)
+	#define ARCH_64
+#elif defined(__i386__) || defined(_M_IX86)
+	#define ARCH_32
+#endif
+
 namespace c3p1
 {
 	// typedef
+#if defined ARCH_64
 	typedef unsigned long long size_t;
+#elif defined ARCH_32
+	typedef unsigned int size_t;
+#endif
 
 	class string
 	{
@@ -43,6 +53,23 @@ namespace c3p1
 		// length(void) returns the number of characters in the string
 		// (-) does not count the null-terminal.
 		size_t length() const;
+
+		// size(void) returns the number of bytes in memory
+		// (+) does count the null-terminal.
+		size_t size() const;
+
+		// capacity(void) returns the current capacity of the string
+		size_t capacity() const;
+
+		// max_size(void) returns the maximal size of a string object
+		// (+) depends of system arch
+		size_t max_size() const;
+
+		// max_size(void) returns the max size of a string
+		// (+) 2^64-1 on 64 bits systems
+
+		// c_str(void) returns a C-format string
+		const char* c_str();
 
 		// operator= (const str) creates a new string from str
 		// (+) reallocs memory for intern pointer is not large enough,
@@ -343,6 +370,14 @@ namespace c3p1
 		// static int strcoll (const char* first, const char* second);
 
 	private:
+		// internal constants
+#if defined ARCH_64
+		// 64 bits systems
+		const size_t m_max_size = 9223372036854775807; // 2^63 -1
+#elif defined ARCH_32
+		// 32 bit systems
+		const size_t m_max_size = 4294967294; // 2^32 -2
+#endif
 		// internal functions
 		static int to_lower_ascii(unsigned char c);
 	};

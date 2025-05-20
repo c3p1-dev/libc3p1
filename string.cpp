@@ -1350,6 +1350,26 @@ c3p1::size_t c3p1::string::length() const
 	return c3p1::string::strlen(m_str);
 }
 
+c3p1::size_t c3p1::string::size() const
+{
+	return c3p1::string::strlen(m_str) + 1;
+}
+
+c3p1::size_t c3p1::string::capacity() const
+{
+	return m_memsize;
+}
+
+c3p1::size_t c3p1::string::max_size() const
+{
+	return c3p1::string::m_max_size;
+}
+
+const char* c3p1::string::c_str()
+{
+	return m_str;
+}
+
 c3p1::string& c3p1::string::operator=(const char* str)
 {
 	if (str != nullptr)
