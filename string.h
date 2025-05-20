@@ -43,7 +43,7 @@ namespace c3p1
 		// copy constructor(&copy)
 		// (+) create a new string and copies the value from copy,
 		// (+) manages exception for nullptr copy.m_str,
-		string(string& copy);
+		string(const string& copy);
 
 		// destructor
 		~string();
@@ -113,20 +113,23 @@ namespace c3p1
 		const char& back() const;
 
 		// append(const &str) adds str at the end of the string
+		// (+) returns *this
 		string& append(const string& str);
 
 		// append(const str) adds str at the end of the string
+		// (+) returns *this
 		string& append(const char* str);
 
 		// append(const str, size) adds the first n=size characters of str at the end of the string
+		// (+) returns *this
 		string& append(const char* str, size_t size);
 
 		// append(n, c) adds n times c character at the end of the string
+		// (+) returns *this
 		string& append(size_t n, char c);
 
 		/* TODO : IMPLEMENT to match with std::string
 		string& append (const string& str, size_t subpos, size_t sublen);
-		string& append (size_t n, char c);
 		template <class InputIterator>   string& append (InputIterator first, InputIterator last);
 		*/
 
@@ -151,9 +154,25 @@ namespace c3p1
 		const char& operator[] (size_t post) const;
 
 		// friend operators and functions
+
 		// swap(first, second) swaps first and second value
 		// (+) swaps intern pointers and their intern size tracker
 		friend void swap(string& first, string& second);
+
+		// operator+ (const first, const second) concatenates first and second
+		friend string operator+ (const string& first, const string& second);
+		// operator+ (const first, const second) concatenates first and second
+		// (!) second must be a null-terminated string!
+		friend string operator+ (const string& first, const char* second);
+		// operator+ (const first, const second) concatenates first and second
+		// (!) first must be a null-terminated string!
+		friend string operator+ (const char* first, const string& second);
+		// operator+ (const first, second) concatenates first and second
+		// (!) adding null-terminal in the string will lead to undefined behavior!
+		friend string operator+ (const string& first, char second);
+		// operator+ (const first, second) concatenates first and second
+		// (!) adding null-terminal in the string will lead to undefined behavior!
+		friend string operator+ (char first, const string& second);
 
 	// protected members
 	protected:

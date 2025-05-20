@@ -20,18 +20,11 @@ using namespace c3p1::ptr;
 int main()
 {
     c3p1::string s1 = "J'aime le ";
-    c3p1::string s2 = "C++";
-    c3p1::string s3 = " et le C#";
+    c3p1::string s3 = "C++";
 
-    s1.append(s2.c_str());
-    s1.append(s3);
-    s3 = " mais pas le PHP et le Java";
-    s1.append(s3.c_str(), s3.size() - 11);
-    prints1;
-    s1.append(10, '!');
-    prints1;
-    s1.append(10, '\0');
-    prints1;
+    c3p1::string s2;
+    s2 = s1 + s3;
+    prints2;
 
     return 0;
 }

@@ -1279,7 +1279,7 @@ c3p1::string::string(const char* str)
 	}
 }
 
-c3p1::string::string(string& copy)
+c3p1::string::string(const string& copy)
 {
 	if (!copy.empty())
 	{
@@ -1897,4 +1897,13 @@ void c3p1::swap(c3p1::string& first, c3p1::string& second)
 	c3p1::size_t j = first.m_size;
 	first.m_size = second.m_size;
 	second.m_size = j;
+}
+
+c3p1::string c3p1::operator+ (const c3p1::string& first, const c3p1::string& second)
+{
+	c3p1::string buffer = first;
+	buffer.reserve(first.m_size + second.m_size);
+	buffer.append(second);
+
+	return buffer;
 }
