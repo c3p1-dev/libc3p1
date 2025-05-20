@@ -5,6 +5,9 @@
 
 #pragma once
 
+// for streams
+#include <iostream>
+
 // for Visual Studio and BSD
 #ifndef restrict
 	#define restrict __restrict
@@ -44,6 +47,9 @@ namespace c3p1
 		// (+) create a new string and copies the value from copy,
 		// (+) manages exception for nullptr copy.m_str,
 		string(const string& copy);
+
+		// move constructor
+		string(string&& other) noexcept;
 
 		// destructor
 		~string();
@@ -142,7 +148,10 @@ namespace c3p1
 		// operator= (const str) creates a new string from str
 		// (+) reallocs memory if intern pointer is not large enough,
 		// (+) returns *this
-		string& operator= (string str);
+		string& operator= (const string& str);
+
+		// operator= (&&move)
+		string& operator= (string&& other) noexcept;
 
 		// operator= (const c) create a new string from a single copy of c character,
 		// (+) copy c, size becomes 1
@@ -173,6 +182,14 @@ namespace c3p1
 		// operator+ (const first, second) concatenates first and second
 		// (!) adding null-terminal in the string will lead to undefined behavior!
 		friend string operator+ (char first, const string& second);
+
+		// operator ostream <<
+		friend std::ostream& operator<<(std::ostream& os, const string& str);
+		// operator istream >>
+		friend std::istream& operator>>(std::istream& is, string& str);
+		// getline (&istream, &str, delim) extracts characters from istream and stores them into str
+		friend std::istream& getline(std::istream& is, string& str, char delim);
+		friend std::istream& getline(std::istream& is, string& str);
 
 	// protected members
 	protected:

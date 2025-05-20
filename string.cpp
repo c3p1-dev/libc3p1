@@ -1301,6 +1301,15 @@ c3p1::string::string(const string& copy)
 	}
 }
 
+c3p1::string::string(c3p1::string&& other) noexcept
+	: m_str(other.m_str), m_size(other.m_size), m_capacity(other.m_capacity)
+{
+	// reinit source object
+	other.m_str = const_cast<char*>(mc_nullterm);
+	other.m_size = 0;
+	other.m_capacity = 0;
+}
+
 c3p1::string::~string()
 {
 	// use appropriate delete operator
@@ -1548,7 +1557,7 @@ c3p1::string& c3p1::string::operator=(const char* str)
 	return *this;
 }
 
-c3p1::string& c3p1::string::operator=(const c3p1::string str)
+c3p1::string& c3p1::string::operator=(const c3p1::string& str)
 {
 	// check str, then copy it
 	if (!str.empty())
@@ -1616,6 +1625,30 @@ c3p1::string& c3p1::string::operator=(char c)
 			m_str[1] = '\0';
 			m_size = 1;
 		}
+	}
+
+	return *this;
+}
+
+c3p1::string& c3p1::string::operator=(string&& other) noexcept
+{
+	if (this != &other)
+	{
+		// free the buffer if its required
+		if (m_str != mc_nullterm)
+		{
+			delete[] m_str;
+		}
+
+		// move ownship
+		m_str = other.m_str;
+		m_size = other.m_size;
+		m_capacity = other.m_capacity;
+
+		// reset source object
+		other.m_str = const_cast<char*>(mc_nullterm);
+		other.m_size = 0;
+		other.m_capacity = 0;
 	}
 
 	return *this;
@@ -1906,4 +1939,101 @@ c3p1::string c3p1::operator+ (const c3p1::string& first, const c3p1::string& sec
 	buffer.append(second);
 
 	return buffer;
+}
+
+c3p1::string c3p1::operator+ (const c3p1::string& first, const char* second)
+{
+	c3p1::string buffer = first;
+	buffer.reserve(first.m_size + c3p1::string::strlen(second));
+	buffer.append(second);
+
+	return buffer;
+}
+
+c3p1::string c3p1::operator+(const char* first, const c3p1::string& second)
+{
+	c3p1::string buffer = first;
+	buffer.reserve(buffer.m_size + second.m_size);
+	buffer.append(second);
+
+	return buffer;
+}
+
+c3p1::string c3p1::operator+(const c3p1::string& first, char second)
+{
+	c3p1::string buffer = first;
+
+	if (second != '\0')
+	{
+		buffer.reserve(buffer.m_size + 1);
+		buffer.append(1, second);
+	}
+
+	return buffer;
+}
+
+c3p1::string c3p1::operator+(char first, const c3p1::string& second)
+{
+	c3p1::string buffer;
+	if (first != '\0')
+	{
+		buffer = first;
+		buffer.reserve(buffer.m_size + second.m_size);
+		buffer.append(second);
+		return buffer;
+	}
+	else
+	{
+		return second;
+	}
+}
+
+std::ostream& c3p1::operator<<(std::ostream& os, const c3p1::string& str)
+{
+	return os << str.c_str();
+}
+
+std::istream& c3p1::operator>>(std::istream& is, c3p1::string& str)
+{
+	// clear  the current string
+	str.clear();
+
+	char c;
+	while (is.get(c))
+	{
+		if (std::isspace(static_cast<unsigned char>(c)))
+		{
+			break;
+		}
+		str.append(&c, 1);
+	}
+	
+	return is;
+}
+
+std::istream& c3p1::getline(std::istream& is, string& str, char delim)
+{
+	str.clear();
+
+	char c;
+	while (is.get(c))
+	{
+		if (c == delim)
+		{
+			break;
+		}
+		str.append(&c, 1);
+	}
+
+	if (!is && str.empty())
+	{
+		is.setstate(std::ios::failbit);
+	}
+
+	return is;
+}
+
+std::istream& c3p1::getline(std::istream& is, string& str)
+{
+	return getline(is, str, '\n');
 }
