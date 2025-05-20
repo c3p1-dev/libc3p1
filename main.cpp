@@ -32,5 +32,11 @@ int main()
     prints2;
     s2.shrink_to_fit();
     prints2;
+    s2.clear();
+    prints2;
+    s2 = "J'aime le C";
+    prints2;
+    s2.resize(s2.size() + 2, '+');
+    prints2;
     return 0;
 }

@@ -82,6 +82,9 @@ namespace c3p1
 		// clear() erase the string & let it empty
 		void clear();
 
+		// empty() returns true if the string is empty, false otherwise
+		bool empty();
+
 		// shrink_to_fit() shrinks the allocated memory size to the required amount
 		void shrink_to_fit();
 

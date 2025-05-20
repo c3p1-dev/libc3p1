@@ -1356,6 +1356,7 @@ void c3p1::string::resize(c3p1::size_t new_size)
 		{
 			delete[] m_str;
 			m_capacity = 0;
+			m_size = 0;
 		}
 
 		m_str = const_cast<char*>(mc_nullterm);
@@ -1364,6 +1365,7 @@ void c3p1::string::resize(c3p1::size_t new_size)
 	{
 		// cut the string
 		m_str[new_size] = '\0';
+		m_size = new_size;
 	}
 	else if (new_size > m_capacity)
 	{
@@ -1371,16 +1373,26 @@ void c3p1::string::resize(c3p1::size_t new_size)
 		char* wp = new char[new_size + 1];
 		if (wp == nullptr)
 		{
-			throw exception("Exception @c3p1::string::resize(new_size, c): memory allocation for the new string has failed.");
+			throw exception("Exception @c3p1::string::resize(new_size): memory allocation for the new string has failed.");
 		}
 
 		// copy the string to the buffer
 		c3p1::string::strncpy(wp, m_str, m_size);
-		// add '\0' on each byte to fill the buffer
+		// add c on each byte to fill the buffer
 		for (c3p1::size_t i = m_size; i < new_size; i++)
 		{
-			m_str[i] = '\0';
+			wp[i] = '\0';
 		}
+		// add the null terminal
+		wp[new_size] = '\0';
+
+		if (m_capacity != 0)
+		{
+			delete[] m_str;
+		}
+		m_str = wp;
+		m_size = new_size;
+		m_capacity = new_size;
 	}
 }
 
@@ -1392,6 +1404,7 @@ void c3p1::string::resize(c3p1::size_t new_size, char c)
 		{
 			delete[] m_str;
 			m_capacity = 0;
+			m_size = 0;
 		}
 
 		m_str = const_cast<char*>(mc_nullterm);
@@ -1400,6 +1413,7 @@ void c3p1::string::resize(c3p1::size_t new_size, char c)
 	{
 		// cut the string
 		m_str[new_size] = '\0';
+		m_size = new_size;
 	}
 	else if (new_size > m_capacity)
 	{
@@ -1415,8 +1429,18 @@ void c3p1::string::resize(c3p1::size_t new_size, char c)
 		// add c on each byte to fill the buffer
 		for (c3p1::size_t i = m_size; i < new_size; i++)
 		{
-			m_str[i] = c;
+			wp[i] = c;
 		}
+		// add the null terminal
+		wp[new_size] = '\0';
+
+		if (m_capacity != 0)
+		{
+			delete[] m_str;
+		}
+		m_str = wp;
+		m_size = new_size;
+		m_capacity = new_size;
 	}
 }
 
@@ -1463,6 +1487,18 @@ void c3p1::string::clear()
 		m_str = const_cast<char*>(mc_nullterm);
 		m_size = 0;
 		m_capacity = 0;
+	}
+}
+
+bool c3p1::string::empty()
+{
+	if (m_size == 0)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
 	}
 }
 
