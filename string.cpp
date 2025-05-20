@@ -1266,12 +1266,6 @@ c3p1::string::string(const char* str)
 		m_capacity = c3p1::string::strlen(str);
 		m_size = m_capacity;
 		m_str = new char[m_size + 1];
-		
-		// check allocation result
-		if (m_str == nullptr)
-		{
-			throw c3p1::exception("Exception @c3p1::string::string(str): memory allocation for the string has failed.");
-		}
 
 		// copy str
 		c3p1::string::strcpy(m_str, str);
@@ -1360,10 +1354,6 @@ void c3p1::string::resize(c3p1::size_t new_size)
 	{
 		// reallocates memory
 		char* wp = new char[new_size + 1];
-		if (wp == nullptr)
-		{
-			throw exception("Exception @c3p1::string::resize(new_size): memory allocation for the new string has failed.");
-		}
 
 		// copy the string to the buffer
 		c3p1::string::strncpy(wp, m_str, m_size);
@@ -1407,10 +1397,6 @@ void c3p1::string::resize(c3p1::size_t new_size, char c)
 	{
 		// reallocates memory
 		char* wp = new char[new_size + 1];
-		if (wp == nullptr)
-		{
-			throw exception("Exception @c3p1::string::resize(new_size, c): memory allocation for the new string has failed.");
-		}
 
 		// copy the string to the buffer
 		c3p1::string::strncpy(wp, m_str, m_size);
@@ -1442,10 +1428,6 @@ void c3p1::string::reserve(c3p1::size_t new_size)
 	{
 		// allocate memory & check result
 		m_str = new char[new_size + 1];
-		if (m_str == nullptr)
-		{
-			throw exception("Exception @c3p1::string::reserve(new_size): memory allocation for the extension of string has failed.");
-		}
 
 		m_capacity = new_size;
 		m_size = 0;
@@ -1455,10 +1437,7 @@ void c3p1::string::reserve(c3p1::size_t new_size)
 	{
 		// allocate a new bunch of memory
 		char* wp = new char[new_size + 1];
-		if (wp == nullptr)
-		{
-			throw exception("Exception @c3p1::string::reserve(new_size): memory allocation for the extension of string has failed.");
-		}
+
 		// copy string and fill the last bytes with '\0'
 		c3p1::string::strncpy(wp, m_str, new_size);
 		wp[m_size] = '\0'; // & write the last nullterminal
@@ -1512,10 +1491,7 @@ void c3p1::string::shrink_to_fit()
 		{
 			// realloc the required amount of memory
 			char* wp = new char[m_size + 1];
-			if (wp == nullptr)
-			{
-				throw exception("Exception @c3p1::string::shrink_to_fit(): memory allocation for the shrinked string has failed.");
-			}
+
 			// copy m_str to buffer & add null terminal
 			c3p1::string::strncpy(wp, m_str, m_size);
 			wp[m_size] = '\0';
@@ -1554,12 +1530,6 @@ c3p1::string& c3p1::string::operator=(const char* str)
 			m_capacity = str_size;
 			m_size = str_size;
 			m_str = new char[m_size + 1];
-
-			// check allocation result
-			if (m_str == nullptr)
-			{
-				throw c3p1::exception("Exception @c3p1::string::operator(=) (const str): memory allocation for the string has failed.");
-			}
 
 			// copy the string & add the null terminal for C string compatibility
 			c3p1::string::strncpy(m_str, str, str_size);
@@ -1727,6 +1697,113 @@ const char& c3p1::string::back() const
 	{
 		return m_str[m_size - 1];
 	}
+}
+
+c3p1::string& c3p1::string::append(const string& str)
+{
+	// check str
+	if (!str.empty())
+	{
+		if (m_capacity >= str.m_size + m_size) // there's enough memory
+		{
+			// no reallaction
+			c3p1::string::strncat(m_str, str.m_str, str.m_size);
+			// strncat return value is guaranted to be null terminated
+			m_size += str.m_size;
+		}
+		else // there's not enough memory
+		{
+			// reallocate memory
+			char* wp = new char[m_size + str.m_size + 1];
+			c3p1::string::strcpy(wp, m_str);
+			c3p1::string::strncat(wp, str.m_str, str.m_size);
+
+			if (m_capacity != 0)
+			{
+				delete[] m_str;
+			}
+
+			m_str = wp;
+			m_size += str.m_size;
+			m_capacity = m_size;
+		}
+	}
+
+	return *this;
+}
+
+c3p1::string& c3p1::string::append(const char* str)
+{
+	// check str
+	if (str != nullptr)
+	{
+		c3p1::size_t str_len = c3p1::string::strlen(str);
+		if (str_len > 0)
+		{
+			if (m_capacity >= str_len + m_size) // there's enough memory
+			{
+				// no reallocation
+				c3p1::string::strncat(m_str, str, str_len);
+				// strncat return value is guaranted to be null-terminated
+				m_size += str_len;
+			}
+			else // there's not enough memory
+			{
+				// reallocate memory
+				char* wp = new char[m_size + str_len + 1];
+				c3p1::string::strcpy(wp, m_str);
+				c3p1::string::strncat(wp, str, str_len);
+
+				if (m_capacity != 0)
+				{
+					delete[] m_str;
+				}
+
+				m_str = wp;
+				m_size += str_len;
+				m_capacity = m_size;
+			}
+		}
+	}
+
+	return *this;
+}
+
+c3p1::string& c3p1::string::append(const char* str, size_t size)
+{
+	// check str and size value
+	if (str != nullptr && size != 0)
+	{
+		c3p1::size_t str_len = c3p1::string::strlen(str);
+		if (str_len > 0)
+		{
+			if (m_capacity >= str_len + m_size) // there's enough memory
+			{
+				// no reallocation
+				c3p1::string::strncat(m_str, str, str_len);
+				// strncat return value is guaranted to be null-terminated
+				m_size += str_len;
+			}
+			else // there's not enough memory
+			{
+				// reallocate memory
+				char* wp = new char[m_size + size + 1];
+				c3p1::string::strcpy(wp, m_str);
+				c3p1::string::strncat(wp, str, size);
+
+				if (m_capacity != 0)
+				{
+					delete[] m_str;
+				}
+
+				m_str = wp;
+				m_size += size;
+				m_capacity = m_size;
+			}
+		}
+	}
+
+	return *this;
 }
 
 char& c3p1::string::operator[](c3p1::size_t pos)

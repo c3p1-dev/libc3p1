@@ -112,8 +112,23 @@ namespace c3p1
 		// back() gives a char reference to the last character, const version
 		const char& back() const;
 
-		// append(const char* str) adds str at the end of the string
-		// (
+		// append(const &str) adds str at the end of the string
+		string& append(const string& str);
+
+		// append(const str) adds str at the end of the string
+		string& append(const char* str);
+
+		// append(const str, size) adds the first n=size characters of str at the end of the string
+		string& append(const char* str, size_t size);
+
+
+		/* TODO : IMPLEMENT to match with std::string
+		string& append (const string& str, size_t subpos, size_t sublen);
+		string& append (const char* s);
+		string& append (const char* s, size_t n);
+		string& append (size_t n, char c);
+		template <class InputIterator>   string& append (InputIterator first, InputIterator last);
+		*/
 
 		// operator= (const str) copy a C string
 		// (+) reallocs memory for intern pointer is not large enough,
