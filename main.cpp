@@ -21,7 +21,7 @@ int main()
 {
     c3p1::string s1;
     std::cout << "Enter s1 : ";
-    std::cin >> s1;
+    c3p1::getline(std::cin, s1);
     std::cout << "s1 = " << s1 << std::endl;
     prints1;
 

@@ -187,9 +187,6 @@ namespace c3p1
 		friend std::ostream& operator<<(std::ostream& os, const string& str);
 		// operator istream >>
 		friend std::istream& operator>>(std::istream& is, string& str);
-		// getline (&istream, &str, delim) extracts characters from istream and stores them into str
-		friend std::istream& getline(std::istream& is, string& str, char delim);
-		friend std::istream& getline(std::istream& is, string& str);
 
 	// protected members
 	protected:
@@ -490,4 +487,14 @@ namespace c3p1
 		// internal functions
 		static int to_lower_ascii(unsigned char c);
 	};
+
+	// extern overloaded functions
+	 
+	// getline (&istream, &str, delim) extracts characters from istream and stores them into str
+	// (+) copy the first word from is to str, using delim as separator.
+	std::istream& getline(std::istream& is, string& str, char delim);
+
+	// getline (&istream, &str) extracts characters from istream and stores them into str
+	// (+) copy the first word from is to str, using '\n' as separator
+	std::istream& getline(std::istream& is, string& str);
 }
