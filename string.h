@@ -27,15 +27,15 @@ namespace c3p1
 
 	class string
 	{
+	// public members
 	public:
-		// public members
-		// constructors and destructor
+		// constructors and destructors
 
 		// default constructeur
 		// (+) creates a new null-terminated empty string.
 		string();
 
-		// constructor(const str) from str
+		// constructor(const str) from C string
 		// (+) creates a new null-terminated string of strlen(str) characters,
 		// (+) copies str value to the new string.
 		string(const char* str);
@@ -48,14 +48,13 @@ namespace c3p1
 		// destructor
 		~string();
 
-		// public functions and operators
+		// public accessors
 
 		// length(void) returns the number of characters in the string
-		// (-) does not count the null-terminal.
 		size_t length() const;
 
 		// size(void) returns the number of bytes in memory
-		// (+) does count the null-terminal.
+		// (+) length() alias.
 		size_t size() const;
 
 		// capacity(void) returns the current capacity of the string
@@ -65,34 +64,45 @@ namespace c3p1
 		// (+) depends of system arch
 		size_t max_size() const;
 
+		// resize(new_size) resize the string to new_size
+		// (+) if new_size > current size, write '\0' on the unset bytes,
+		// (+) if new_size < current size, cut the string to the new size.
+		void resize(size_t new_size);
+
+		// resize(new_size, c) resize the string to new_size
+		// (+) if new_size > current size, write c on the unset bytes,
+		// (+) if new_size < current size, cut the string to the new size.
+		void resize(size_t new_size, char c);
+
 		// max_size(void) returns the max size of a string
 		// (+) 2^64-1 on 64 bits systems
 
-		// c_str(void) returns a C-format string
+		// c_str(void) returns a const C string
 		const char* c_str();
 
-		// operator= (const str) creates a new string from str
+		// operator= (const str) copy a C string
 		// (+) reallocs memory for intern pointer is not large enough,
 		// (+) returns *this
 		// (!) str must be a null-terminated string!
 		string& operator= (const char* str);
+
 		// operator= (const str) creates a new string from str
-		// (+) reallocs memory for intern pointer is not large enough,
+		// (+) reallocs memory if intern pointer is not large enough,
 		// (+) returns *this
-		// (!) str must be a null-terminated string!
 		string& operator= (string str);
 
 		// friend operators and functions
 		// swap(first, second) swaps first and second value
 		// (+) swaps intern pointers and their intern size tracker
 		friend void swap(string& first, string& second);
-	protected:
-		// protected members
-		char* m_str;
-		size_t m_memsize;
 
-	public:
-		// local implementation of string.h libc
+	// protected members
+	protected:
+		char* m_str;
+		size_t m_capacity;
+
+	// local implementation of string.h libc
+	private:
 
 		// memcpy(dst, const src, size) copies n=size bytes from src to dst
 		// (+) returns original dst pointer,

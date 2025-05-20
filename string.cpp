@@ -1260,7 +1260,7 @@ c3p1::string::string()
 		throw c3p1::exception("Exception @c3p1::string::constructor(void): memory allocation for the string has failed.");
 	}
 
-	m_memsize = 1;
+	m_capacity = 0;
 	*m_str = '\0';
 }
 
@@ -1270,8 +1270,8 @@ c3p1::string::string(const char* str)
 	if (str != nullptr)
 	{
 		// allocate enough memory
-		m_memsize = c3p1::string::strlen(str) + 1;
-		m_str = new char[m_memsize];
+		m_capacity = c3p1::string::strlen(str);
+		m_str = new char[m_capacity + 1];
 		
 		// check allocation result
 		if (m_str == nullptr)
@@ -1294,7 +1294,7 @@ c3p1::string::string(const char* str)
 			throw c3p1::exception("Exception @c3p1::string::string(str): memory allocation for the string has failed.");
 		}
 
-		m_memsize = 1;
+		m_capacity = 0;
 		*m_str = '\0';
 	}
 }
@@ -1307,10 +1307,10 @@ c3p1::string::string(string& copy)
 		throw c3p1::exception("Exception c3p1::string::string(&copy): copy.m_str is nullptr.");
 	}
 
-	if (copy.m_memsize != 0)
+	if (copy.m_capacity != 0)
 	{
-		m_memsize = copy.m_memsize;
-		m_str = new char[m_memsize];
+		m_capacity = copy.m_capacity;
+		m_str = new char[m_capacity] + 1;
 
 		// check allocation result
 		if (m_str == nullptr)
@@ -1330,19 +1330,26 @@ c3p1::string::string(string& copy)
 			throw c3p1::exception("Exception @c3p1::string::string(&copy): memory allocation for the string has failed.");
 		}
 
-		m_memsize = 1;
+		m_capacity = 0;
 		*m_str = '\0';
 	}
 }
 
 c3p1::string::~string()
 {
-	if (m_str != nullptr)
+	// use appropriate delete operator
+	if (m_capacity == 0)
+	{
+		delete m_str;
+	}
+	else
 	{
 		delete[] m_str;
-		m_str = nullptr;
+		m_capacity = 0;
 	}
-	m_memsize = 0;
+
+	m_str = nullptr;
+
 }
 
 c3p1::size_t c3p1::string::length() const
@@ -1352,17 +1359,28 @@ c3p1::size_t c3p1::string::length() const
 
 c3p1::size_t c3p1::string::size() const
 {
-	return c3p1::string::strlen(m_str) + 1;
+	return c3p1::string::length();
 }
 
 c3p1::size_t c3p1::string::capacity() const
 {
-	return m_memsize;
+	return m_capacity;
 }
 
 c3p1::size_t c3p1::string::max_size() const
 {
 	return c3p1::string::m_max_size;
+}
+
+void c3p1::string::resize(c3p1::size_t new_size)
+{
+
+}
+
+void c3p1::string::resize(c3p1::size_t new_size, char c)
+{
+	// allocate a new pointer
+	char* wp = new char[new_size] + 1;
 }
 
 const char* c3p1::string::c_str()
@@ -1376,12 +1394,12 @@ c3p1::string& c3p1::string::operator=(const char* str)
 	{
 		c3p1::size_t len = c3p1::string::strlen(str);
 		// check if memsize is enough
-		if (m_memsize < len + 1)
+		if (m_capacity < len)
 		{
 			// realloc memory
 			delete[] m_str;
-			m_memsize = len + 1;
-			m_str = new char[m_memsize];
+			m_capacity = len;
+			m_str = new char[m_capacity + 1];
 
 			// check allocation result
 			if (m_str == nullptr)
@@ -1404,12 +1422,12 @@ c3p1::string& c3p1::string::operator=(const c3p1::string str)
 	if (str.m_str != nullptr)
 	{
 		c3p1::size_t len = str.length();
-		if (m_memsize < len + 1)
+		if (m_capacity < len)
 		{
 			// realloc memory
 			delete[] m_str;
-			m_memsize = len + 1;
-			m_str = new char[m_memsize];
+			m_capacity = len;
+			m_str = new char[m_capacity + 1];
 
 			// check allocation result
 			if (m_str == nullptr)
@@ -1433,8 +1451,8 @@ void c3p1::swap(c3p1::string& first, c3p1::string& second)
 	first.m_str = second.m_str;
 	second.m_str = wp;
 
-	// swap m_memsize values
-	c3p1::size_t i = first.m_memsize;
-	first.m_memsize = second.m_memsize;
-	second.m_memsize = i;
+	// swap m_capacity values
+	c3p1::size_t i = first.m_capacity;
+	first.m_capacity = second.m_capacity;
+	second.m_capacity = i;
 }
