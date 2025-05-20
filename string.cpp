@@ -1374,9 +1374,47 @@ c3p1::string& c3p1::string::operator=(const char* str)
 		c3p1::string::strcpy(m_str, str);
 		return *this;
 	}
-	else
+
+	return *this;
+}
+
+c3p1::string& c3p1::string::operator=(const c3p1::string str)
+{
+	// check str, then copy it
+	if (str.m_str != nullptr)
 	{
-		// error handling for nullptr
-		return *this;
+		c3p1::size_t len = str.length();
+		if (m_memsize < len + 1)
+		{
+			// realloc memory
+			delete[] m_str;
+			m_memsize = len + 1;
+			m_str = new char[m_memsize];
+
+			// check allocation result
+			if (m_str == nullptr)
+			{
+				throw c3p1::exception("Exception @c3p1::string::operator( = ) (const str) : memory allocation for the string has failed.");
+			}
+		}
+		
+		// copy the string
+		c3p1::string::strcpy(m_str, str.m_str);
 	}
+
+	return *this;
+}
+
+// friend functions and operators
+void c3p1::swap(c3p1::string& first, c3p1::string& second)
+{
+	// swap intern pointers
+	char* wp = first.m_str;
+	first.m_str = second.m_str;
+	second.m_str = wp;
+
+	// swap m_memsize values
+	c3p1::size_t i = first.m_memsize;
+	first.m_memsize = second.m_memsize;
+	second.m_memsize = i;
 }

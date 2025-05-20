@@ -43,8 +43,22 @@ namespace c3p1
 		// length(void) returns the number of characters in the string
 		// (-) does not count the null-terminal.
 		size_t length() const;
-		string& operator = (const char* str);
 
+		// operator= (const str) creates a new string from str
+		// (+) reallocs memory for intern pointer is not large enough,
+		// (+) returns *this
+		// (!) str must be a null-terminated string!
+		string& operator= (const char* str);
+		// operator= (const str) creates a new string from str
+		// (+) reallocs memory for intern pointer is not large enough,
+		// (+) returns *this
+		// (!) str must be a null-terminated string!
+		string& operator= (string str);
+
+		// friend operators and functions
+		// swap(first, second) swaps first and second value
+		// (+) swaps intern pointers and their intern size tracker
+		friend void swap(string& first, string& second);
 	protected:
 		// protected members
 		char* m_str;
