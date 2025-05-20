@@ -64,21 +64,29 @@ namespace c3p1
 		// (+) depends of system arch
 		size_t max_size() const;
 
-		// resize(new_size) resize the string to new_size
+		// resize(new_size) resizes the string to new_size
 		// (+) if new_size > current size, write '\0' on the unset bytes,
 		// (+) if new_size < current size, cut the string to the new size.
 		void resize(size_t new_size);
 
-		// resize(new_size, c) resize the string to new_size
+		// resize(new_size, c) resizes the string to new_size
 		// (+) if new_size > current size, write c on the unset bytes,
 		// (+) if new_size < current size, cut the string to the new size.
 		void resize(size_t new_size, char c);
 
-		// max_size(void) returns the max size of a string
-		// (+) 2^64-1 on 64 bits systems
+		// reserve(new_size) reserves more space in memory for the string
+		// (+) if new_size > capacity, reallocates intern pointer to match with new_size,
+		// (+) if new_size < capacity, has no effect.
+		void reserve(size_t new_size);
+
+		// clear() erase the string & let it empty
+		void clear();
+
+		// shrink_to_fit() shrinks the allocated memory size to the required amount
+		void shrink_to_fit();
 
 		// c_str(void) returns a const C string
-		const char* c_str();
+		const char* c_str() const;
 
 		// operator= (const str) copy a C string
 		// (+) reallocs memory for intern pointer is not large enough,
@@ -98,14 +106,14 @@ namespace c3p1
 
 	// protected members
 	protected:
-		char* m_str;
+		char*  m_str;
 		size_t m_size;
 		size_t m_capacity;
 
 	// internal constants
 	private:
 		// ptr to empty string
-		const char* mc_nullterm = "\0";
+		static inline constexpr const char* mc_nullterm = "\0";
 #if defined ARCH_64
 		// max_size on 64 bits systems
 		const size_t mc_max_size = 9223372036854775807; // 2^63 -1
