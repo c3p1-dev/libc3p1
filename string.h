@@ -29,7 +29,7 @@ namespace c3p1
 	{
 	// public members
 	public:
-		// constructors and destructors
+		// constructors & destructors
 
 		// default constructeur
 		// (+) creates a new null-terminated empty string.
@@ -48,7 +48,7 @@ namespace c3p1
 		// destructor
 		~string();
 
-		// public accessors
+		// public accessors & functions
 
 		// length(void) returns the number of characters in the string
 		size_t length() const;
@@ -111,6 +111,9 @@ namespace c3p1
 
 		// back() gives a char reference to the last character, const version
 		const char& back() const;
+
+		// append(const char* str) adds str at the end of the string
+		// (
 
 		// operator= (const str) copy a C string
 		// (+) reallocs memory for intern pointer is not large enough,

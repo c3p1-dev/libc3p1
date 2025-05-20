@@ -1721,7 +1721,7 @@ const char& c3p1::string::back() const
 {
 	if (empty())
 	{
-		throw exception("Exception @c3p1::string::back() volatile: attempt to write to an empty string.");
+		throw exception("Exception @c3p1::string::back() const: attempt to write to an empty string.");
 	}
 	else
 	{
