@@ -1808,6 +1808,8 @@ c3p1::string& c3p1::string::append(c3p1::size_t n, char c)
 		}
 		m_str = wp;
 	}
+
+	return *this;
 }
 
 c3p1::string& c3p1::string::append(const char* str, size_t size)
