@@ -20,15 +20,13 @@ using namespace c3p1::ptr;
 int main()
 {
     c3p1::string s1 = "Youhou";
-    prints1;
-    const char* ps = "Yaahou, une grande chaine";
-    s1 = ps;
-    prints1;
-    s1 = "Une petite";
-    prints1;
-    c3p1::string s2("La seconde chaine est plus grande que la premiere");
+    c3p1::string s2;
+
+    s2 = 'A';
     prints2;
-    s2.resize(150, '\0');
+    s2 = "Une chaine";
+    prints2;
+    s2 = 'B';
     prints2;
 
 

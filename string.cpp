@@ -1604,11 +1604,6 @@ c3p1::string& c3p1::string::operator=(const c3p1::string str)
 			m_size = str.m_size;
 			m_capacity = m_size;
 			m_str = new char[m_size];
-			// check allocation result
-			if (m_str == nullptr)
-			{
-				throw exception("Exception @c3p1::string::operator(=) (const str): memory allocation for the string had failed.");
-			}
 
 			// copy the string & add the null terminal for C string compatibility
 			c3p1::string::strncpy(m_str, str.m_str, m_size);
@@ -1626,6 +1621,62 @@ c3p1::string& c3p1::string::operator=(const c3p1::string str)
 
 	return *this;
 }
+
+c3p1::string& c3p1::string::operator=(char c)
+{
+	if (m_capacity == 0)
+	{
+		if (c != '\0')
+		{
+			// allocate memory & write c
+			m_size = 1;
+			m_capacity = 1;
+			m_str = new char[m_size + 1];
+			m_str[0] = c;
+			// add the null terminal
+			m_str[1] = '\0';
+		}
+	}
+	else
+	{
+		if (c != '\0')
+		{
+			// write c & add the null terminal
+			m_str[0] = c;
+			m_str[1] = '\0';
+			m_size = 1;
+		}
+	}
+
+	return *this;
+}
+
+char& c3p1::string::at(c3p1::size_t pos)
+{
+	if (empty())
+	{
+		throw exception("Exception @c3p1::string::at(pos) volatile: attempt to write to an empty string.");
+	}
+	else if (pos > size())
+	{
+		throw exception("Exception @c3p1::string::at(pos) volatile: index is out of bounds.");
+	}
+
+	// return a volatile reference to the char at m_str[pos]
+	return m_str[pos];
+}
+
+const char& c3p1::string::at(c3p1::size_t pos) const
+{
+	if (pos > size())
+	{
+		throw exception("Exception @c3p1::string::at(pos) const: index is out of bounds.");
+	}
+
+	// return a const reference to the char at m_str[pos]
+	return m_str[pos];
+}
+
 char& c3p1::string::operator[](c3p1::size_t pos)
 {
 	if (empty())
@@ -1644,10 +1695,10 @@ const char& c3p1::string::operator[](c3p1::size_t pos) const
 {
 	if (pos > size())
 	{
-		throw exception("Exception @c3p1::string::operator[] volatile: index is out of bounds.");
+		throw exception("Exception @c3p1::string::operator[] const: index is out of bounds.");
 	}
 
-	// return a volatile reference to the char at m_str[pos]
+	// return a const reference to the char at m_str[pos]
 	return m_str[pos];
 }
 

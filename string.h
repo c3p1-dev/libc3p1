@@ -94,21 +94,31 @@ namespace c3p1
 		// data(void) returns a const C string
 		const char* data() const;
 
+		// at(pos) gives a char reference to the specified character
+		char& at(size_t pos);
+
+		// at(pos) gives a char reference to the specified character, const version
+		const char& at(size_t pos) const;
+
 		// operator= (const str) copy a C string
 		// (+) reallocs memory for intern pointer is not large enough,
 		// (+) returns *this
 		// (!) str must be a null-terminated string!
 		string& operator= (const char* str);
 
-		// operator[] (pos) gives a char reference to the specified character
-		char& operator[] (size_t pos);
-		// operator[] (pos) gives a char reference to the specified character, const version
-		const char& operator[] (size_t post) const;
-
 		// operator= (const str) creates a new string from str
 		// (+) reallocs memory if intern pointer is not large enough,
 		// (+) returns *this
 		string& operator= (string str);
+
+		// operator= (const c) create a new string from a single copy of c character,
+		// (+) copy c, size becomes 1
+		string& operator= (char c);
+
+		// operator[] (pos) gives a char reference to the specified character
+		char& operator[] (size_t pos);
+		// operator[] (pos) gives a char reference to the specified character, const version
+		const char& operator[] (size_t post) const;
 
 		// friend operators and functions
 		// swap(first, second) swaps first and second value
