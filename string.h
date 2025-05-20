@@ -83,7 +83,7 @@ namespace c3p1
 		void clear();
 
 		// empty() returns true if the string is empty, false otherwise
-		bool empty();
+		bool empty() const;
 
 		// shrink_to_fit() shrinks the allocated memory size to the required amount
 		void shrink_to_fit();
@@ -91,11 +91,19 @@ namespace c3p1
 		// c_str(void) returns a const C string
 		const char* c_str() const;
 
+		// data(void) returns a const C string
+		const char* data() const;
+
 		// operator= (const str) copy a C string
 		// (+) reallocs memory for intern pointer is not large enough,
 		// (+) returns *this
 		// (!) str must be a null-terminated string!
 		string& operator= (const char* str);
+
+		// operator[] (pos) gives a char reference to the specified character
+		char& operator[] (size_t pos);
+		// operator[] (pos) gives a char reference to the specified character, const version
+		const char& operator[] (size_t post) const;
 
 		// operator= (const str) creates a new string from str
 		// (+) reallocs memory if intern pointer is not large enough,

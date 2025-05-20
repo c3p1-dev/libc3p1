@@ -1287,23 +1287,12 @@ c3p1::string::string(const char* str)
 
 c3p1::string::string(string& copy)
 {
-	// check copy.m_str pointer
-	if (copy.m_str == nullptr)
+	if (!copy.empty())
 	{
-		throw c3p1::exception("Exception c3p1::string::string(&copy): copy.m_str is nullptr.");
-	}
-
-	if (copy.m_size != 0)
-	{
+		// copy size and capacity value, then allocate the ptr
 		m_size = copy.m_size;
 		m_capacity = m_size;
-
 		m_str = new char[m_size + 1];
-		// check allocation result
-		if (m_str == nullptr)
-		{
-			throw c3p1::exception("Exception @c3p1::string::string(&copy): memory allocation for the string has failed.");
-		}
 
 		// copy string & add the null-terminal for C string compatibility
 		c3p1::string::strncpy(m_str, copy.m_str, copy.size());
@@ -1329,13 +1318,13 @@ c3p1::string::~string()
 
 c3p1::size_t c3p1::string::length() const
 {
-	return c3p1::string::strlen(m_str);
+	return m_size;
 }
 
 c3p1::size_t c3p1::string::size() const
 {
 	// length() alias
-	return c3p1::string::length();
+	return m_size;
 }
 
 c3p1::size_t c3p1::string::capacity() const
@@ -1391,7 +1380,6 @@ void c3p1::string::resize(c3p1::size_t new_size)
 			delete[] m_str;
 		}
 		m_str = wp;
-		m_size = new_size;
 		m_capacity = new_size;
 	}
 }
@@ -1439,7 +1427,11 @@ void c3p1::string::resize(c3p1::size_t new_size, char c)
 			delete[] m_str;
 		}
 		m_str = wp;
-		m_size = new_size;
+		// set proper size if c is '\0', does count it
+		if (c != '\0')
+		{
+			m_size = new_size;
+		}
 		m_capacity = new_size;
 	}
 }
@@ -1490,16 +1482,9 @@ void c3p1::string::clear()
 	}
 }
 
-bool c3p1::string::empty()
+bool c3p1::string::empty() const
 {
-	if (m_size == 0)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	return m_size == 0;
 }
 
 const char* c3p1::string::c_str() const
@@ -1507,11 +1492,17 @@ const char* c3p1::string::c_str() const
 	return m_str;
 }
 
+const char* c3p1::string::data() const
+{
+	// alias for c_str
+	return m_str;
+}
+
 void c3p1::string::shrink_to_fit()
 {
-	if (m_capacity > m_size)
+	if (m_capacity > size())
 	{
-		if (m_size == 0) // empty string
+		if (this->empty())
 		{
 			delete[] m_str;
 			m_str = const_cast<char*>(mc_nullterm);
@@ -1590,7 +1581,7 @@ c3p1::string& c3p1::string::operator=(const char* str)
 c3p1::string& c3p1::string::operator=(const c3p1::string str)
 {
 	// check str, then copy it
-	if (str.m_str != nullptr)
+	if (!str.empty())
 	{
 		if (str.m_size == 0) // check if str is an empty string
 		{
@@ -1634,6 +1625,30 @@ c3p1::string& c3p1::string::operator=(const c3p1::string str)
 	}
 
 	return *this;
+}
+char& c3p1::string::operator[](c3p1::size_t pos)
+{
+	if (empty())
+	{
+		throw exception("Exception @c3p1::string::operator[] volatile: attempt to write to an empty string.");
+	}
+	else if (pos > size())
+	{
+		throw exception("Exception @c3p1::string::operator[] volatile: index is out of bounds.");
+	}
+
+	// return a volatile reference to the char at m_str[pos]
+	return m_str[pos];
+}
+const char& c3p1::string::operator[](c3p1::size_t pos) const
+{
+	if (pos > size())
+	{
+		throw exception("Exception @c3p1::string::operator[] volatile: index is out of bounds.");
+	}
+
+	// return a volatile reference to the char at m_str[pos]
+	return m_str[pos];
 }
 
 // friend functions and operators

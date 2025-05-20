@@ -28,15 +28,9 @@ int main()
     prints1;
     c3p1::string s2("La seconde chaine est plus grande que la premiere");
     prints2;
-    s2 = s1;
+    s2.resize(150, '\0');
     prints2;
-    s2.shrink_to_fit();
-    prints2;
-    s2.clear();
-    prints2;
-    s2 = "J'aime le C";
-    prints2;
-    s2.resize(s2.size() + 2, '+');
-    prints2;
+
+
     return 0;
 }
