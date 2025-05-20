@@ -28,7 +28,10 @@ int main()
     s3 = " mais pas le PHP et le Java";
     s1.append(s3.c_str(), s3.size() - 11);
     prints1;
-
+    s1.append(10, '!');
+    prints1;
+    s1.append(10, '\0');
+    prints1;
 
     return 0;
 }

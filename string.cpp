@@ -1789,19 +1789,21 @@ c3p1::string& c3p1::string::append(c3p1::size_t n, char c)
 	{
 		// reallocation required
 		char* wp = new char[m_size + n + 1];
-		c3p1::string::strcpy(wp, m_str);
 
+		// copy string & add n times c
+		c3p1::string::strcpy(wp, m_str);
 		for (c3p1::size_t i = m_size; i < m_size + n; i++)
 		{
-			m_str[i] = c;
+			wp[i] = c;
 		}
-		m_str[m_size + n] = '\0';
+		wp[m_size + n] = '\0';
+
+		// change size only if c is not a null-terminal character
+		m_capacity = m_size + n;
 		if (c != '\0')
 		{
 			m_size += n;
 		}
-		m_capacity = m_size + n;
-
 		if (m_capacity != 0)
 		{
 			delete[] m_str;
