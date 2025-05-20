@@ -1251,7 +1251,7 @@ char* c3p1::string::strsep(char** stringp, const char* delim)
 
 c3p1::string::string()
 {
-	// Initialise to empty string
+	// initialise to empty string
 	m_capacity = 0;
 	m_size = 0;
 	m_str = const_cast<char*>(mc_nullterm);
@@ -1350,19 +1350,14 @@ c3p1::size_t c3p1::string::max_size() const
 
 void c3p1::string::resize(c3p1::size_t new_size)
 {
-
-}
-
-void c3p1::string::resize(c3p1::size_t new_size, char c)
-{
-	if (new_size == 0)
+	if (new_size == 0) // point to empty string
 	{
-		// point to empty string
 		if (m_capacity != 0)
 		{
 			delete[] m_str;
 			m_capacity = 0;
 		}
+
 		m_str = const_cast<char*>(mc_nullterm);
 	}
 	else if (new_size < m_capacity)
@@ -1372,7 +1367,56 @@ void c3p1::string::resize(c3p1::size_t new_size, char c)
 	}
 	else if (new_size > m_capacity)
 	{
-		// allocate a 
+		// reallocates memory
+		char* wp = new char[new_size + 1];
+		if (wp == nullptr)
+		{
+			throw exception("Exception @c3p1::string::resize(new_size, c): memory allocation for the new string has failed.");
+		}
+
+		// copy the string to the buffer
+		c3p1::string::strncpy(wp, m_str, m_size);
+		// add '\0' on each byte to fill the buffer
+		for (c3p1::size_t i = m_size; i < new_size; i++)
+		{
+			m_str[i] = '\0';
+		}
+	}
+}
+
+void c3p1::string::resize(c3p1::size_t new_size, char c)
+{
+	if (new_size == 0) // point to empty string
+	{
+		if (m_capacity != 0)
+		{
+			delete[] m_str;
+			m_capacity = 0;
+		}
+
+		m_str = const_cast<char*>(mc_nullterm);
+	}
+	else if (new_size < m_capacity)
+	{
+		// cut the string
+		m_str[new_size] = '\0';
+	}
+	else if (new_size > m_capacity)
+	{
+		// reallocates memory
+		char* wp = new char[new_size + 1];
+		if (wp == nullptr)
+		{
+			throw exception("Exception @c3p1::string::resize(new_size, c): memory allocation for the new string has failed.");
+		}
+
+		// copy the string to the buffer
+		c3p1::string::strncpy(wp, m_str, m_size);
+		// add c on each byte to fill the buffer
+		for (c3p1::size_t i = m_size; i < new_size; i++)
+		{
+			m_str[i] = c;
+		}
 	}
 }
 
