@@ -100,6 +100,12 @@ namespace c3p1
 		// at(pos) gives a char reference to the specified character, const version
 		const char& at(size_t pos) const;
 
+		// front() gives a char reference the the first character
+		char& front();
+
+		// front() gives a char reference the the first character, const version
+		const char& front() const;
+
 		// operator= (const str) copy a C string
 		// (+) reallocs memory for intern pointer is not large enough,
 		// (+) returns *this

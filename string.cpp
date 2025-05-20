@@ -1668,13 +1668,41 @@ char& c3p1::string::at(c3p1::size_t pos)
 
 const char& c3p1::string::at(c3p1::size_t pos) const
 {
-	if (pos > size())
+	if (empty())
+	{
+		throw exception("Exception @c3p1::string::at(pos) const: attempt to read from an empty string.");
+	}
+	else if (pos > size())
 	{
 		throw exception("Exception @c3p1::string::at(pos) const: index is out of bounds.");
 	}
 
 	// return a const reference to the char at m_str[pos]
 	return m_str[pos];
+}
+
+char& c3p1::string::front()
+{
+	if (empty())
+	{
+		throw exception("Exception @c3p1::string::front() volatile: attempt to write to an empty string.");
+	}
+	else
+	{
+		return m_str[0];
+	}
+}
+
+const char& c3p1::string::front() const
+{
+	if (empty())
+	{
+		throw exception("Exception @c3p1::string::front() volatile: attempt to read from an empty string.");
+	}
+	else
+	{
+		return m_str[0];
+	}
 }
 
 char& c3p1::string::operator[](c3p1::size_t pos)
@@ -1693,7 +1721,11 @@ char& c3p1::string::operator[](c3p1::size_t pos)
 }
 const char& c3p1::string::operator[](c3p1::size_t pos) const
 {
-	if (pos > size())
+	if (empty())
+	{
+		throw exception("Exception @c3p1::string::operator[] const: attempt to read from an empty string.");
+	}
+	else if (pos > size())
 	{
 		throw exception("Exception @c3p1::string::operator[] const: index is out of bounds.");
 	}
