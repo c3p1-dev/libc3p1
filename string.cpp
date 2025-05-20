@@ -1252,16 +1252,9 @@ char* c3p1::string::strsep(char** stringp, const char* delim)
 c3p1::string::string()
 {
 	// Initialise to empty string
-	m_str = new char;
-
-	// check allocation result
-	if (m_str == nullptr)
-	{
-		throw c3p1::exception("Exception @c3p1::string::constructor(void): memory allocation for the string has failed.");
-	}
-
 	m_capacity = 0;
-	*m_str = '\0';
+	m_size = 0;
+	m_str = const_cast<char*>(mc_nullterm);
 }
 
 c3p1::string::string(const char* str)
@@ -1271,7 +1264,8 @@ c3p1::string::string(const char* str)
 	{
 		// allocate enough memory
 		m_capacity = c3p1::string::strlen(str);
-		m_str = new char[m_capacity + 1];
+		m_size = m_capacity;
+		m_str = new char[m_size + 1];
 		
 		// check allocation result
 		if (m_str == nullptr)
@@ -1284,18 +1278,10 @@ c3p1::string::string(const char* str)
 	}
 	else
 	{
-		// no-exception on string constructors
 		// initialise to empty string
-		m_str = new char;
-
-		// check allocation result
-		if (m_str == nullptr)
-		{
-			throw c3p1::exception("Exception @c3p1::string::string(str): memory allocation for the string has failed.");
-		}
-
 		m_capacity = 0;
-		*m_str = '\0';
+		m_size = 0;
+		m_str = const_cast<char*>(mc_nullterm);
 	}
 }
 
@@ -1307,49 +1293,38 @@ c3p1::string::string(string& copy)
 		throw c3p1::exception("Exception c3p1::string::string(&copy): copy.m_str is nullptr.");
 	}
 
-	if (copy.m_capacity != 0)
+	if (copy.m_size != 0)
 	{
-		m_capacity = copy.m_capacity;
-		m_str = new char[m_capacity] + 1;
+		m_size = copy.m_size;
+		m_capacity = m_size;
 
+		m_str = new char[m_size + 1];
 		// check allocation result
 		if (m_str == nullptr)
 		{
 			throw c3p1::exception("Exception @c3p1::string::string(&copy): memory allocation for the string has failed.");
 		}
 
-		c3p1::string::strcpy(m_str, copy.m_str);
+		// copy string and add the null-terminal for C string compatibility
+		c3p1::string::strncpy(m_str, copy.m_str, copy.size());
+		m_str[m_size] = '\0';
 	}
 	else
 	{
-		m_str = new char;
-
-		// check allcation result
-		if (m_str == nullptr)
-		{
-			throw c3p1::exception("Exception @c3p1::string::string(&copy): memory allocation for the string has failed.");
-		}
-
+		// initialise to empty string
 		m_capacity = 0;
-		*m_str = '\0';
+		m_size = 0;
+		m_str = const_cast<char*>(mc_nullterm);
 	}
 }
 
 c3p1::string::~string()
 {
 	// use appropriate delete operator
-	if (m_capacity == 0)
-	{
-		delete m_str;
-	}
-	else
+	if (m_capacity != 0)
 	{
 		delete[] m_str;
-		m_capacity = 0;
 	}
-
-	m_str = nullptr;
-
 }
 
 c3p1::size_t c3p1::string::length() const
@@ -1359,6 +1334,7 @@ c3p1::size_t c3p1::string::length() const
 
 c3p1::size_t c3p1::string::size() const
 {
+	// length() alias
 	return c3p1::string::length();
 }
 
@@ -1369,7 +1345,7 @@ c3p1::size_t c3p1::string::capacity() const
 
 c3p1::size_t c3p1::string::max_size() const
 {
-	return c3p1::string::m_max_size;
+	return c3p1::string::mc_max_size;
 }
 
 void c3p1::string::resize(c3p1::size_t new_size)
@@ -1379,8 +1355,25 @@ void c3p1::string::resize(c3p1::size_t new_size)
 
 void c3p1::string::resize(c3p1::size_t new_size, char c)
 {
-	// allocate a new pointer
-	char* wp = new char[new_size] + 1;
+	if (new_size == 0)
+	{
+		// point to empty string
+		if (m_capacity != 0)
+		{
+			delete[] m_str;
+			m_capacity = 0;
+		}
+		m_str = const_cast<char*>(mc_nullterm);
+	}
+	else if (new_size < m_capacity)
+	{
+		// cut the string
+		m_str[new_size] = '\0';
+	}
+	else if (new_size > m_capacity)
+	{
+		// allocate a 
+	}
 }
 
 const char* c3p1::string::c_str()
@@ -1392,25 +1385,48 @@ c3p1::string& c3p1::string::operator=(const char* str)
 {
 	if (str != nullptr)
 	{
-		c3p1::size_t len = c3p1::string::strlen(str);
-		// check if memsize is enough
-		if (m_capacity < len)
+		c3p1::size_t str_size = c3p1::string::strlen(str);
+
+		if (str_size == 0) // check if str is an empty string
+		{
+			// set up an empty string
+			if (m_capacity != 0)
+			{
+				delete[] m_str;
+			}
+			m_capacity = 0;
+			m_size = 0;
+			m_str = const_cast<char*>(mc_nullterm);
+		}
+		else if (m_capacity < str_size) // capacity is not enough
 		{
 			// realloc memory
-			delete[] m_str;
-			m_capacity = len;
-			m_str = new char[m_capacity + 1];
+			if (m_capacity != 0)
+			{
+				delete[] m_str;
+			}
+			m_capacity = str_size;
+			m_size = str_size;
+			m_str = new char[m_size + 1];
 
 			// check allocation result
 			if (m_str == nullptr)
 			{
 				throw c3p1::exception("Exception @c3p1::string::operator(=) (const str): memory allocation for the string has failed.");
 			}
-		}
 
-		// copy the string
-		c3p1::string::strcpy(m_str, str);
-		return *this;
+			// copy the string and add the null terminal for C string compatibility
+			c3p1::string::strncpy(m_str, str, str_size);
+			m_str[m_size] = '\0';
+		}
+		else if (m_capacity >= str_size) // capacity is enough
+		{
+			// no allocation required
+			// copy the string and add the null terminal for C string compatibility
+			m_size = str_size;
+			c3p1::string::strncpy(m_str, str, str_size);
+			m_str[m_size] = '\0';
+		}
 	}
 
 	return *this;
@@ -1421,23 +1437,45 @@ c3p1::string& c3p1::string::operator=(const c3p1::string str)
 	// check str, then copy it
 	if (str.m_str != nullptr)
 	{
-		c3p1::size_t len = str.length();
-		if (m_capacity < len)
+		if (str.m_size == 0) // check if str is an empty string
+		{
+			// set up an empty string
+			if (m_capacity != 0)
+			{
+				delete[] m_str;
+			}
+			m_str = const_cast<char*>(mc_nullterm);
+			m_size = 0;
+			m_capacity = 0;
+		}
+		else if (m_capacity < str.m_size) // capacity is not enough
 		{
 			// realloc memory
-			delete[] m_str;
-			m_capacity = len;
-			m_str = new char[m_capacity + 1];
-
+			if (m_capacity != 0)
+			{
+				delete[] m_str;
+			}
+			m_size = str.m_size;
+			m_capacity = m_size;
+			m_str = new char[m_size];
 			// check allocation result
 			if (m_str == nullptr)
 			{
-				throw c3p1::exception("Exception @c3p1::string::operator( = ) (const str) : memory allocation for the string has failed.");
+				throw exception("Exception @c3p1::string::operator(=) (const str): memory allocation for the string had failed.");
 			}
+
+			// copy the string and add the null terminal for C string compatibility
+			c3p1::string::strncpy(m_str, str.m_str, m_size);
+			m_str[m_size] = '\0';
 		}
-		
-		// copy the string
-		c3p1::string::strcpy(m_str, str.m_str);
+		else if (m_capacity >= str.m_size) // capacity is enough
+		{
+			// no allocation required
+			// copy the string and add the null terminal for C string compatibility
+			m_size = str.m_size;
+			c3p1::string::strncpy(m_str, str.m_str, m_size);
+			m_str[m_size] = '\0';
+		}
 	}
 
 	return *this;
@@ -1455,4 +1493,9 @@ void c3p1::swap(c3p1::string& first, c3p1::string& second)
 	c3p1::size_t i = first.m_capacity;
 	first.m_capacity = second.m_capacity;
 	second.m_capacity = i;
+
+	// swap m_size values
+	c3p1::size_t j = first.m_size;
+	first.m_size = second.m_size;
+	second.m_size = j;
 }

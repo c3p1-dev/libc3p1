@@ -99,7 +99,20 @@ namespace c3p1
 	// protected members
 	protected:
 		char* m_str;
+		size_t m_size;
 		size_t m_capacity;
+
+	// internal constants
+	private:
+		// ptr to empty string
+		const char* mc_nullterm = "\0";
+#if defined ARCH_64
+		// max_size on 64 bits systems
+		const size_t mc_max_size = 9223372036854775807; // 2^63 -1
+#elif defined ARCH_32
+		// max_size on 32 bit systems
+		const size_t m_max_size = 4294967294; // 2^32 -2
+#endif
 
 	// local implementation of string.h libc
 	private:
@@ -379,15 +392,6 @@ namespace c3p1
 		// static size_t strxfrm(char* dest, const char* src, size_t size);
 		// static int strcoll (const char* first, const char* second);
 
-	private:
-		// internal constants
-#if defined ARCH_64
-		// 64 bits systems
-		const size_t m_max_size = 9223372036854775807; // 2^63 -1
-#elif defined ARCH_32
-		// 32 bit systems
-		const size_t m_max_size = 4294967294; // 2^32 -2
-#endif
 		// internal functions
 		static int to_lower_ascii(unsigned char c);
 	};
