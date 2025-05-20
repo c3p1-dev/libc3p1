@@ -1705,6 +1705,30 @@ const char& c3p1::string::front() const
 	}
 }
 
+char& c3p1::string::back()
+{
+	if (empty())
+	{
+		throw exception("Exception @c3p1::string::back() volatile: attempt to write to an empty string.");
+	}
+	else
+	{
+		return m_str[m_size - 1];
+	}
+}
+
+const char& c3p1::string::back() const
+{
+	if (empty())
+	{
+		throw exception("Exception @c3p1::string::back() volatile: attempt to write to an empty string.");
+	}
+	else
+	{
+		return m_str[m_size - 1];
+	}
+}
+
 char& c3p1::string::operator[](c3p1::size_t pos)
 {
 	if (empty())
