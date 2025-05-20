@@ -1769,6 +1769,47 @@ c3p1::string& c3p1::string::append(const char* str)
 	return *this;
 }
 
+c3p1::string& c3p1::string::append(c3p1::size_t n, char c)
+{
+	// check if string is long enough
+	if (m_capacity >= m_size + n)
+	{
+		// there's enough memory
+		for (c3p1::size_t i = m_size; i < m_size + n; i++)
+		{
+			m_str[i] = c;
+		}
+		m_str[m_size + n] = '\0';
+		if (c != '\0')
+		{
+			m_size += n;
+		}
+	}
+	else
+	{
+		// reallocation required
+		char* wp = new char[m_size + n + 1];
+		c3p1::string::strcpy(wp, m_str);
+
+		for (c3p1::size_t i = m_size; i < m_size + n; i++)
+		{
+			m_str[i] = c;
+		}
+		m_str[m_size + n] = '\0';
+		if (c != '\0')
+		{
+			m_size += n;
+		}
+		m_capacity = m_size + n;
+
+		if (m_capacity != 0)
+		{
+			delete[] m_str;
+		}
+		m_str = wp;
+	}
+}
+
 c3p1::string& c3p1::string::append(const char* str, size_t size)
 {
 	// check str and size value

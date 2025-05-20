@@ -121,11 +121,11 @@ namespace c3p1
 		// append(const str, size) adds the first n=size characters of str at the end of the string
 		string& append(const char* str, size_t size);
 
+		// append(n, c) adds n times c character at the end of the string
+		string& append(size_t n, char c);
 
 		/* TODO : IMPLEMENT to match with std::string
 		string& append (const string& str, size_t subpos, size_t sublen);
-		string& append (const char* s);
-		string& append (const char* s, size_t n);
 		string& append (size_t n, char c);
 		template <class InputIterator>   string& append (InputIterator first, InputIterator last);
 		*/
