@@ -1573,7 +1573,7 @@ c3p1::string& c3p1::string::operator=(const c3p1::string str)
 			}
 			m_size = str.m_size;
 			m_capacity = m_size;
-			m_str = new char[m_size];
+			m_str = new char[m_size + 1];
 
 			// copy the string & add the null terminal for C string compatibility
 			c3p1::string::strncpy(m_str, str.m_str, m_size);
