@@ -19,9 +19,14 @@ using namespace c3p1::ptr;
 // entry point
 int main()
 {
-	c3p1::string s;
-	printstr(s);
-	s = "Test chaine";
-	printstr(s);
-	s.resize(100);
+	c3p1::string sa = "Test";
+	printstr(sa);
+	sa = sa + " de l'operateur +";
+	printstr(sa);
+	sa = sa + " et ca a l'air de marcher";
+	printstr(sa);
+
+	sa = "Toto";
+	sa.shrink_to_fit();
+	printstr(sa);
 }

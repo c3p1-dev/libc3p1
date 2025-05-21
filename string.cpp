@@ -1209,7 +1209,8 @@ constexpr char* c3p1::string::data() noexcept
 
 void c3p1::string::shrink_to_fit()
 {
-	if (m_capacity > this->_compute_capacity(m_size))
+	c3p1::size_t optimal_capacity = this->_compute_capacity(m_size);
+	if (m_capacity >= optimal_capacity)
 	{
 		if (this->empty())
 		{
@@ -1220,7 +1221,7 @@ void c3p1::string::shrink_to_fit()
 		else
 		{
 			// realloc the required amount of memory
-			char* wp = new char[m_size + 1];
+			char* wp = new char[optimal_capacity + 1];
 
 			// copy m_str to buffer & add null terminal
 			c3p1::string::memcpy_noexcept(wp, m_str, m_size);
@@ -1228,7 +1229,7 @@ void c3p1::string::shrink_to_fit()
 
 			delete[] m_str; // capacity already checked
 			m_str = wp;
-			m_capacity = m_size;
+			m_capacity = optimal_capacity;
 		}
 	}
 }
@@ -1587,7 +1588,12 @@ void c3p1::string::_init_emptystring() noexcept
 
 c3p1::size_t c3p1::string::_compute_capacity(c3p1::size_t size) noexcept
 {
-	return size + (size + 9) / 10;
+	size_t optimal_capacity = size + (size + 9) / 10;
+
+	if (optimal_capacity < c3p1::string::_default_capacity)
+		return c3p1::string::_default_capacity;
+	else
+		return optimal_capacity;
 }
 
 // friend functions and operators
