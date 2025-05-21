@@ -37,6 +37,25 @@ void* c3p1::string::memcpy(void* restrict dst, const void* restrict src, c3p1::s
 	return dst;
 }
 
+void* c3p1::string::memcpy_noexcept(void* restrict dst, const void* restrict src, c3p1::size_t size) noexcept
+{
+	// check if dst and src are not nullptr
+	if (dst && src && size)
+	{
+		// cast raw pointers to unsigned char pointers and process copying byte a byte
+		unsigned char* current_byte = static_cast<unsigned char*>(dst);
+		const unsigned char* wp = static_cast<const unsigned char*>(src);
+
+		// copy byte a byte src to dst
+		for (c3p1::size_t i = 0; i < size; i++)
+		{
+			current_byte[i] = wp[i];
+		}
+	}
+
+	return dst;
+}
+
 void* c3p1::string::mempcpy(void* restrict dst, const void* restrict src, c3p1::size_t size)
 {
 	// check if dst and src are not nullptr
@@ -291,7 +310,21 @@ void* c3p1::string::memset(void* dst, unsigned char byte_val, c3p1::size_t size)
 	}
 
 	return dst;
+}
 
+void* c3p1::string::memset_noexcept(void* dst, unsigned char byte_val, c3p1::size_t size) noexcept
+{
+	if (!dst && !size)
+	{
+		// copy n byte from dst to dst+n -> dst+2n
+		unsigned char* p = static_cast<unsigned char*>(dst);
+		for (c3p1::size_t i = 0; i < size; i++)
+		{
+			p[i] = byte_val;
+		}
+	}
+
+	return dst;
 }
 
 char* c3p1::string::strcpy(char* restrict dst, const char* restrict src)
@@ -1231,37 +1264,37 @@ char* c3p1::string::strsep(char** stringp, const char* delim)
 
 // class string implementation
 
-c3p1::string::string()
+c3p1::string::string() noexcept
 {
-	// initialise to empty string
-	m_capacity = 0;
-	m_size = 0;
-	m_str = const_cast<char*>(mc_nullterm);
+	// initialise empty string
+	this->_init_emptystring();
 }
 
-c3p1::string::string(const char* str)
+c3p1::string::string(const char* str) noexcept
 {
 	// check str pointer
 	if (str != nullptr)
 	{
-		// allocate enough memory
-		m_capacity = c3p1::string::strlen(str);
-		m_size = m_capacity;
-		m_str = new char[m_size + 1];
+		c3p1::size_t str_size = this->strlen(str); // str must be null-terminated!
+		c3p1::size_t th_new_capacity = this->_compute_capacity(str_size); // +10%
+
+		m_capacity = th_new_capacity <= this->_default_capacity ?
+			this->_default_capacity : th_new_capacity;
+
+		m_str = new char[m_capacity+1];
+		m_size = str_size;
 
 		// copy str
-		c3p1::string::strcpy(m_str, str);
+		this->memcpy_noexcept(m_str, str, str_size);
 	}
 	else
 	{
 		// initialise to empty string
-		m_capacity = 0;
-		m_size = 0;
-		m_str = const_cast<char*>(mc_nullterm);
+		this->_init_emptystring();
 	}
 }
 
-c3p1::string::string(const string& copy)
+c3p1::string::string(const string& copy) noexcept
 {
 	if (!copy.empty())
 	{
@@ -1270,186 +1303,119 @@ c3p1::string::string(const string& copy)
 		m_capacity = m_size;
 		m_str = new char[m_size + 1];
 
-		// copy string & add the null-terminal for C string compatibility
-		c3p1::string::strncpy(m_str, copy.m_str, copy.size());
-		m_str[m_size] = '\0';
+		// copy string
+		this->memcpy_noexcept(m_str, copy.m_str, copy.m_size);
 	}
 	else
 	{
 		// initialise to empty string
-		m_capacity = 0;
-		m_size = 0;
-		m_str = const_cast<char*>(mc_nullterm);
+		this->_init_emptystring();
 	}
 }
 
 c3p1::string::string(c3p1::string&& other) noexcept
 	: m_str(other.m_str), m_size(other.m_size), m_capacity(other.m_capacity)
 {
+	// TODO : check if that works
 	// reinit source object
-	other.m_str = const_cast<char*>(mc_nullterm);
+	other.m_str = nullptr;
 	other.m_size = 0;
 	other.m_capacity = 0;
 }
 
-c3p1::string::~string()
+c3p1::string::~string() noexcept
 {
-	// use appropriate delete operator
-	if (m_capacity != 0)
-	{
-		delete[] m_str;
-	}
+	this->_delete_safe();
 }
 
-c3p1::size_t c3p1::string::length() const
+c3p1::size_t c3p1::string::length() const noexcept
 {
 	return m_size;
 }
 
-c3p1::size_t c3p1::string::size() const
+c3p1::size_t c3p1::string::size() const noexcept
 {
 	// length() alias
 	return m_size;
 }
 
-c3p1::size_t c3p1::string::capacity() const
+c3p1::size_t c3p1::string::capacity() const noexcept
 {
 	return m_capacity;
 }
 
-c3p1::size_t c3p1::string::max_size() const
+c3p1::size_t c3p1::string::max_size() const noexcept
 {
-	return c3p1::string::mc_max_size;
+	return c3p1::string::_max_size;
 }
 
-void c3p1::string::resize(c3p1::size_t new_size)
+void c3p1::string::resize(c3p1::size_t new_size) noexcept
 {
-	if (new_size == 0) // point to empty string
-	{
-		if (m_capacity != 0)
-		{
-			delete[] m_str;
-			m_capacity = 0;
-			m_size = 0;
-		}
+	this->resize(new_size, '\0');
+}
 
-		m_str = const_cast<char*>(mc_nullterm);
-	}
-	else if (new_size < m_capacity)
+void c3p1::string::resize(c3p1::size_t new_size, char c) noexcept
+{
+	if (new_size == 0)	// this becomes empty
 	{
-		// cut the string
-		m_str[new_size] = '\0';
+		this->_delete_safe();
+		this->_init_emptystring();
+		return;
+	}
+
+	c3p1::size_t th_new_capacity;
+	if (new_size >= this->_max_size)
+		th_new_capacity = this->_max_size;
+	else
+		th_new_capacity = new_size + (new_size + 9) / 10;
+
+	if (th_new_capacity > m_capacity)
+	{
+		// reallocation required
+		char* wp = new char[th_new_capacity];
+
+		if (!this->empty())
+		{
+			// copy m_str to wp
+			this->memcpy_noexcept(wp, m_str, m_size);
+		}
+		// if new_size > m_size, write c to fill the buffer
+		if (new_size > m_size)
+			this->memset_noexcept(wp + m_size, c, new_size - m_size);
+
+		this->_delete_safe();
+		m_str = wp;
+		m_capacity = th_new_capacity;
 		m_size = new_size;
 	}
-	else if (new_size > m_capacity)
+	else
 	{
-		// reallocates memory
-		char* wp = new char[new_size + 1];
-
-		// copy the string to the buffer
-		c3p1::string::strncpy(wp, m_str, m_size);
-		// add c on each byte to fill the buffer
-		for (c3p1::size_t i = m_size; i < new_size; i++)
-		{
-			wp[i] = '\0';
-		}
-		// add the null terminal
-		wp[new_size] = '\0';
-
-		if (m_capacity != 0)
-		{
-			delete[] m_str;
-		}
-		m_str = wp;
-		m_capacity = new_size;
-	}
-}
-
-void c3p1::string::resize(c3p1::size_t new_size, char c)
-{
-	if (new_size == 0) // point to empty string
-	{
-		if (m_capacity != 0)
-		{
-			delete[] m_str;
-			m_capacity = 0;
-			m_size = 0;
-		}
-
-		m_str = const_cast<char*>(mc_nullterm);
-	}
-	else if (new_size < m_capacity)
-	{
-		// cut the string
-		m_str[new_size] = '\0';
 		m_size = new_size;
 	}
-	else if (new_size > m_capacity)
-	{
-		// reallocates memory
-		char* wp = new char[new_size + 1];
-
-		// copy the string to the buffer
-		c3p1::string::strncpy(wp, m_str, m_size);
-		// add c on each byte to fill the buffer
-		for (c3p1::size_t i = m_size; i < new_size; i++)
-		{
-			wp[i] = c;
-		}
-		// add the null terminal
-		wp[new_size] = '\0';
-
-		if (m_capacity != 0)
-		{
-			delete[] m_str;
-		}
-		m_str = wp;
-		// set proper size if c is '\0', does count it
-		if (c != '\0')
-		{
-			m_size = new_size;
-		}
-		m_capacity = new_size;
-	}
 }
 
-void c3p1::string::reserve(c3p1::size_t new_size)
+void c3p1::string::reserve(c3p1::size_t new_size) noexcept
 {
-	if (m_capacity == 0) // this is empty
+	c3p1::size_t th_new_capacity = new_size + (new_size + 9) / 10;
+	if (m_capacity < th_new_capacity)
 	{
-		// allocate memory & check result
-		m_str = new char[new_size + 1];
+		// reallocation required
+		char* wp = new char[th_new_capacity];
+		// copy string
+		c3p1::size_t current_size = m_size;
+		this->memcpy_noexcept(wp, m_str, m_size);
 
-		m_capacity = new_size;
-		m_size = 0;
-		*m_str = '\0';
-	}
-	else if (new_size > m_capacity)
-	{
-		// allocate a new bunch of memory
-		char* wp = new char[new_size + 1];
-
-		// copy string and fill the last bytes with '\0'
-		c3p1::string::strncpy(wp, m_str, new_size);
-		wp[m_size] = '\0'; // & write the last nullterminal
-
-		// delete current ptr (capacity already checked)
-		delete[] m_str;
+		this->_delete_safe();
 		m_str = wp;
-		m_capacity = new_size;
-		// m_size = m_size; // should not have changed
+		m_capacity = th_new_capacity;
+		m_size = current_size;
 	}
 }
 
 void c3p1::string::clear()
 {
-	if (m_capacity != 0)
-	{
-		delete[] m_str;
-		m_str = const_cast<char*>(mc_nullterm);
-		m_size = 0;
-		m_capacity = 0;
-	}
+	this->_delete_safe();
+	this->_init_emptystring();
 }
 
 bool c3p1::string::empty() const
@@ -1457,14 +1423,24 @@ bool c3p1::string::empty() const
 	return m_size == 0;
 }
 
-const char* c3p1::string::c_str() const
+constexpr const char* c3p1::string::c_str() const noexcept
 {
+	// assure that there's a null-terminal
+	m_str[m_size] = '\0';
 	return m_str;
 }
 
-const char* c3p1::string::data() const
+constexpr const char* c3p1::string::data() const noexcept
 {
-	// alias for c_str
+	// assure that there's a null-terminal
+	m_str[m_size] = '\0';
+	return m_str;
+}
+
+constexpr char* c3p1::string::data() noexcept
+{
+	// does not assure a null-terminated string
+	m_str[m_size] = '\0';
 	return m_str;
 }
 
@@ -1475,7 +1451,7 @@ void c3p1::string::shrink_to_fit()
 		if (this->empty())
 		{
 			delete[] m_str;
-			m_str = const_cast<char*>(mc_nullterm);
+			//m_str = const_cast<char*>(mc_nullterm);
 			m_capacity = 0;
 		}
 		else
@@ -1509,7 +1485,7 @@ c3p1::string& c3p1::string::operator=(const char* str)
 			}
 			m_capacity = 0;
 			m_size = 0;
-			m_str = const_cast<char*>(mc_nullterm);
+			//m_str = const_cast<char*>(mc_nullterm);
 		}
 		else if (m_capacity < str_size) // capacity is not enough
 		{
@@ -1551,7 +1527,7 @@ c3p1::string& c3p1::string::operator=(const c3p1::string& str)
 			{
 				delete[] m_str;
 			}
-			m_str = const_cast<char*>(mc_nullterm);
+			//m_str = const_cast<char*>(mc_nullterm);
 			m_size = 0;
 			m_capacity = 0;
 		}
@@ -1617,10 +1593,10 @@ c3p1::string& c3p1::string::operator=(string&& other) noexcept
 	if (this != &other)
 	{
 		// free the buffer if its required
-		if (m_str != mc_nullterm)
+		/*if (m_str != mc_nullterm)
 		{
 			delete[] m_str;
-		}
+		}*/
 
 		// move ownship
 		m_str = other.m_str;
@@ -1628,7 +1604,7 @@ c3p1::string& c3p1::string::operator=(string&& other) noexcept
 		m_capacity = other.m_capacity;
 
 		// reset source object
-		other.m_str = const_cast<char*>(mc_nullterm);
+		//other.m_str = const_cast<char*>(mc_nullterm);
 		other.m_size = 0;
 		other.m_capacity = 0;
 	}
@@ -1894,6 +1870,30 @@ const char& c3p1::string::operator[](c3p1::size_t pos) const
 
 	// return a const reference to the char at m_str[pos]
 	return m_str[pos];
+}
+
+// internal functions
+void c3p1::string::_init_emptystring() noexcept
+{
+	// does not manage existing ptr !
+	m_capacity = c3p1::string::_default_capacity;
+	m_str = new char[m_capacity + 1];
+	m_size = 0;
+}
+
+void c3p1::string::_delete_safe() noexcept
+{
+	if (m_capacity > 0)
+	{
+		delete[] m_str;
+	}
+	m_capacity = 0;
+	m_size = 0;
+}
+
+c3p1::size_t c3p1::string::_compute_capacity(c3p1::size_t size) noexcept
+{
+	return size + (size + 9) / 10;
 }
 
 // friend functions and operators

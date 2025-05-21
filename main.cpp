@@ -20,10 +20,6 @@ using namespace c3p1::ptr;
 int main()
 {
 	std::string s;
+	s.reserve(100);
 	printstr(s);
-	s.resize(10);
-	s.shrink_to_fit();
-	printstr(s);
-	s.at(3) = 'c';
-	std::cout << s;
 }

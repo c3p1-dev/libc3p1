@@ -43,54 +43,54 @@ namespace c3p1
 
 		// default constructeur
 		// (+) creates a new null-terminated empty string.
-		string();
+		string() noexcept;
 
 		// constructor(const str) from C string
 		// (+) creates a new null-terminated string of strlen(str) characters,
 		// (+) copies str value to the new string.
-		string(const char* str);
+		string(const char* str) noexcept;
 
 		// copy constructor(&copy)
 		// (+) create a new string and copies the value from copy,
 		// (+) manages exception for nullptr copy.m_str,
-		string(const string& copy);
+		string(const string& copy) noexcept;
 
 		// move constructor
 		string(string&& other) noexcept;
 
 		// destructor
-		~string();
+		~string() noexcept;
 
 		// public accessors & functions
 
 		// length(void) returns the number of characters in the string
-		size_t length() const;
+		size_t length() const noexcept;
 
 		// size(void) returns the number of bytes in memory
 		// (+) length() alias.
-		size_t size() const;
+		size_t size() const noexcept;
 
 		// capacity(void) returns the current capacity of the string
-		size_t capacity() const;
+		size_t capacity() const noexcept;
 
 		// max_size(void) returns the maximal size of a string object
 		// (+) depends of system arch
-		size_t max_size() const;
+		size_t max_size() const noexcept;
 
 		// resize(new_size) resizes the string to new_size
 		// (+) if new_size > current size, write '\0' on the unset bytes,
 		// (+) if new_size < current size, cut the string to the new size.
-		void resize(size_t new_size);
+		void resize(size_t new_size) noexcept;
 
 		// resize(new_size, c) resizes the string to new_size
 		// (+) if new_size > current size, write c on the unset bytes,
 		// (+) if new_size < current size, cut the string to the new size.
-		void resize(size_t new_size, char c);
+		void resize(size_t new_size, char c) noexcept;
 
 		// reserve(new_size) reserves more space in memory for the string
 		// (+) if new_size > capacity, reallocates intern pointer to match with new_size,
 		// (+) if new_size < capacity, has no effect.
-		void reserve(size_t new_size);
+		void reserve(size_t new_size) noexcept;
 
 		// clear() erase the string & let it empty
 		void clear();
@@ -102,10 +102,13 @@ namespace c3p1
 		void shrink_to_fit();
 
 		// c_str(void) returns a const C string
-		const char* c_str() const;
+		constexpr const char* c_str() const noexcept;
 
 		// data(void) returns a const C string
-		const char* data() const;
+		constexpr const char* data() const noexcept;
+
+		// data(void) returns a C string
+		constexpr char* data() noexcept;
 
 		// at(pos) gives a char reference to the specified character
 		char& at(size_t pos);
@@ -213,15 +216,22 @@ namespace c3p1
 
 	// internal constants
 	private:
-		// ptr to empty string
-		static inline constexpr const char* mc_nullterm = "\0";
+		static inline constexpr const size_t _default_capacity = 15;	// default size
+		//static inline constexpr const char* mc_nullterm = "\0";			// ptr to empty string
 #if defined ARCH_64
 		// max_size on 64 bits systems
-		static inline constexpr const size_t mc_max_size = 9223372036854775807; // 2^63 -1
+		static inline constexpr const size_t _max_size = 9223372036854775807; // 2^63 -1
 #elif defined ARCH_32
 		// max_size on 32 bit systems
-		static inline constexpr const size_t m_max_size = 4294967294; // 2^32 -2
+		static inline constexpr const size_t _max_size = 4294967294; // 2^32 -2
 #endif
+
+	// internal functions
+	private:
+		void _init_emptystring() noexcept;
+		void _delete_safe() noexcept;
+
+		static size_t _compute_capacity(size_t size) noexcept;
 
 	// local implementation of string.h libc
 	private:
@@ -232,6 +242,12 @@ namespace c3p1
 		// (!) src and dst must not overlap, it's an undefined behavior!
 		// (!) could lead to undefined behavior by buffer overflow!
 		static void* memcpy(void* restrict dst, const void* restrict src, size_t size);
+
+		// memcpy_noexcept(dst, const src, size) copies n=size bytes from src to dst, noexcept version
+		// (+) returns original dst pointer or nullptr if dst and/or src and/or size are null,
+		// (!) src and dst must not overlap, it's an undefined behavior!
+		// (!) could lead to undefined behavior by buffer overflow!
+		static void* memcpy_noexcept(void* restrict dst, const void* restrict src, size_t size) noexcept;
 
 		// mempcpy(dst, const src, searchedbyte, size) copies n=size bytes from src to dst
 		// (+) returns last written byte address,
@@ -290,6 +306,11 @@ namespace c3p1
 		// (+) manages exception for nullptr value for dst and/or src,
 		// (!) could lead to undefined behavior by buffer overflow!
 		static void* memset(void* dst, unsigned char byte_val, size_t size);
+
+		// memset(dst, byte_val, size) copies n=size times byte_val to dst, noexcept version
+		// (+) returns dst address,
+		// (!) could lead to undefined behavior by buffer overflow!
+		static void* memset_noexcept(void* dst, unsigned char byte_val, size_t size) noexcept;
 
 		// strcpy(dst, const src) copies src to dst
 		// (+) returns dst address,
