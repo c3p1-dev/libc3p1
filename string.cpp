@@ -1169,7 +1169,8 @@ void c3p1::string::reserve(c3p1::size_t req_capacity) noexcept
 		// reallocation required
 		char* wp = new char[th_new_capacity+1];
 		// copy string
-		this->memcpy_noexcept(wp, m_str, m_size + 1); // write the null-terminal
+		this->memcpy_noexcept(wp, m_str, m_size);
+		wp[m_size] = '\0';
 
 		// safe
 		delete[] m_str;
@@ -1212,9 +1213,9 @@ void c3p1::string::shrink_to_fit()
 	{
 		if (this->empty())
 		{
+			// if empty, reset it as a fresh empty string with _default_capacity
 			delete[] m_str;
-			//m_str = const_cast<char*>(mc_nullterm);
-			m_capacity = 0;
+			this->_init_emptystring();
 		}
 		else
 		{
@@ -1236,32 +1237,23 @@ c3p1::string& c3p1::string::operator=(const char* str)
 {
 	if (str != nullptr)
 	{
+		// !str must be null-terminated
 		c3p1::size_t str_size = c3p1::string::strlen(str);
 
-		if (str_size == 0) // check if str is an empty string
+		if (str_size == 0)	// if str is empty
 		{
-			// set up an empty string
-			if (m_capacity != 0)
-			{
-				delete[] m_str;
-			}
-			m_capacity = 0;
-			m_size = 0;
-			//m_str = const_cast<char*>(mc_nullterm);
+			delete[] m_str;
+			this->_init_emptystring();
 		}
-		else if (m_capacity < str_size) // capacity is not enough
+		else if (m_capacity < str_size) // else if capacity is not enough
 		{
-			// realloc memory
-			if (m_capacity != 0)
-			{
-				delete[] m_str;
-			}
+			delete[] m_str;
 			m_capacity = str_size;
 			m_size = str_size;
-			m_str = new char[m_size + 1];
+			m_str = new char[m_capacity + 1];
 
 			// copy the string & add the null terminal for C string compatibility
-			c3p1::string::strncpy(m_str, str, str_size);
+			c3p1::string::memcpy_noexcept(m_str, str, str_size);
 			m_str[m_size] = '\0';
 		}
 		else if (m_capacity >= str_size) // capacity is enough
@@ -1269,7 +1261,7 @@ c3p1::string& c3p1::string::operator=(const char* str)
 			// no allocation required
 			// copy the string & add the null terminal for C string compatibility
 			m_size = str_size;
-			c3p1::string::strncpy(m_str, str, str_size);
+			c3p1::string::memcpy_noexcept(m_str, str, str_size);
 			m_str[m_size] = '\0';
 		}
 	}
@@ -1285,27 +1277,18 @@ c3p1::string& c3p1::string::operator=(const c3p1::string& str)
 		if (str.m_size == 0) // check if str is an empty string
 		{
 			// set up an empty string
-			if (m_capacity != 0)
-			{
-				delete[] m_str;
-			}
-			//m_str = const_cast<char*>(mc_nullterm);
-			m_size = 0;
-			m_capacity = 0;
+			delete[] m_str;
+			this->_init_emptystring();
 		}
 		else if (m_capacity < str.m_size) // capacity is not enough
 		{
-			// realloc memory
-			if (m_capacity != 0)
-			{
-				delete[] m_str;
-			}
+			delete[] m_str;
 			m_size = str.m_size;
 			m_capacity = m_size;
-			m_str = new char[m_size + 1];
+			m_str = new char[m_capacity + 1];
 
 			// copy the string & add the null terminal for C string compatibility
-			c3p1::string::strncpy(m_str, str.m_str, m_size);
+			c3p1::string::memcpy_noexcept(m_str, str.m_str, m_size);
 			m_str[m_size] = '\0';
 		}
 		else if (m_capacity >= str.m_size) // capacity is enough
@@ -1313,7 +1296,7 @@ c3p1::string& c3p1::string::operator=(const c3p1::string& str)
 			// no allocation required
 			// copy the string & add the null terminal for C string compatibility
 			m_size = str.m_size;
-			c3p1::string::strncpy(m_str, str.m_str, m_size);
+			c3p1::string::memcpy_noexcept(m_str, str.m_str, m_size);
 			m_str[m_size] = '\0';
 		}
 	}
@@ -1323,28 +1306,23 @@ c3p1::string& c3p1::string::operator=(const c3p1::string& str)
 
 c3p1::string& c3p1::string::operator=(char c)
 {
-	if (m_capacity == 0)
+	if (c != '\0')
 	{
-		if (c != '\0')
+		if (m_capacity == 0) // there's not enough space in string
 		{
-			// allocate memory & write c
-			m_size = 1;
+			delete[] m_str;
+			m_str = new char[2];
 			m_capacity = 1;
-			m_str = new char[m_size + 1];
-			m_str[0] = c;
-			// add the null terminal
-			m_str[1] = '\0';
 		}
+		m_size = 1;
+		m_str[0] = c;
+		m_str[1] = '\0';
 	}
 	else
 	{
-		if (c != '\0')
-		{
-			// write c & add the null terminal
-			m_str[0] = c;
-			m_str[1] = '\0';
-			m_size = 1;
-		}
+		// there's always enough space to just hold a null-terminal
+		m_str[0] = c;
+		m_size = 0;
 	}
 
 	return *this;
@@ -1354,11 +1332,8 @@ c3p1::string& c3p1::string::operator=(string&& other) noexcept
 {
 	if (this != &other)
 	{
-		// free the buffer if its required
-		/*if (m_str != mc_nullterm)
-		{
-			delete[] m_str;
-		}*/
+		// free the buffer
+		delete[] m_str;
 
 		// move ownship
 		m_str = other.m_str;
@@ -1366,9 +1341,7 @@ c3p1::string& c3p1::string::operator=(string&& other) noexcept
 		m_capacity = other.m_capacity;
 
 		// reset source object
-		//other.m_str = const_cast<char*>(mc_nullterm);
-		other.m_size = 0;
-		other.m_capacity = 0;
+		other._init_emptystring();
 	}
 
 	return *this;
@@ -1376,14 +1349,10 @@ c3p1::string& c3p1::string::operator=(string&& other) noexcept
 
 char& c3p1::string::at(c3p1::size_t pos)
 {
-	if (empty())
-	{
+	if (this->empty())
 		throw c3p1::exception("Exception @c3p1::string::at(pos) volatile: attempt to write to an empty string.");
-	}
-	else if (pos > size())
-	{
+	else if (pos > m_size)
 		throw c3p1::exception("Exception @c3p1::string::at(pos) volatile: index is out of bounds.");
-	}
 
 	// return a volatile reference to the char at m_str[pos]
 	return m_str[pos];
@@ -1391,14 +1360,10 @@ char& c3p1::string::at(c3p1::size_t pos)
 
 const char& c3p1::string::at(c3p1::size_t pos) const
 {
-	if (empty())
-	{
+	if (this->empty())
 		throw c3p1::exception("Exception @c3p1::string::at(pos) const: attempt to read from an empty string.");
-	}
-	else if (pos > size())
-	{
+	else if (pos > m_size)
 		throw c3p1::exception("Exception @c3p1::string::at(pos) const: index is out of bounds.");
-	}
 
 	// return a const reference to the char at m_str[pos]
 	return m_str[pos];
@@ -1406,50 +1371,34 @@ const char& c3p1::string::at(c3p1::size_t pos) const
 
 char& c3p1::string::front()
 {
-	if (empty())
-	{
+	if (this->empty())
 		throw c3p1::exception("Exception @c3p1::string::front() volatile: attempt to write to an empty string.");
-	}
 	else
-	{
 		return m_str[0];
-	}
 }
 
 const char& c3p1::string::front() const
 {
-	if (empty())
-	{
+	if (this->empty())
 		throw c3p1::exception("Exception @c3p1::string::front() volatile: attempt to read from an empty string.");
-	}
 	else
-	{
 		return m_str[0];
-	}
 }
 
 char& c3p1::string::back()
 {
-	if (empty())
-	{
+	if (this->empty())
 		throw c3p1::exception("Exception @c3p1::string::back() volatile: attempt to write to an empty string.");
-	}
 	else
-	{
 		return m_str[m_size - 1];
-	}
 }
 
 const char& c3p1::string::back() const
 {
-	if (empty())
-	{
+	if (this->empty())
 		throw c3p1::exception("Exception @c3p1::string::back() const: attempt to write to an empty string.");
-	}
 	else
-	{
 		return m_str[m_size - 1];
-	}
 }
 
 c3p1::string& c3p1::string::append(const string& str)
@@ -1457,28 +1406,27 @@ c3p1::string& c3p1::string::append(const string& str)
 	// check str
 	if (!str.empty())
 	{
-		if (m_capacity >= str.m_size + m_size) // there's enough memory
+		if (m_capacity >= this->_compute_capacity(str.m_size + m_size)) // there's enough memory
 		{
-			// no reallaction
-			c3p1::string::strncat(m_str, str.m_str, str.m_size);
-			// strncat return value is guaranted to be null terminated
+			// no realloction
+			c3p1::string::memcpy_noexcept(m_str + m_size, str.m_str, str.m_size);
 			m_size += str.m_size;
+			m_str[m_size] = '\0';
 		}
 		else // there's not enough memory
 		{
 			// reallocate memory
-			char* wp = new char[m_size + str.m_size + 1];
-			c3p1::string::strcpy(wp, m_str);
-			c3p1::string::strncat(wp, str.m_str, str.m_size);
+			c3p1::size_t th_new_capacity = this->_compute_capacity(m_size + str.m_size);
+			char* wp = new char[th_new_capacity + 1];
+			c3p1::string::memcpy_noexcept(wp, m_str, m_size);
+			c3p1::string::memcpy_noexcept(wp + m_size, str.m_str, str.m_size);
+			wp[m_size + str.m_size] = '\0';
 
-			if (m_capacity != 0)
-			{
-				delete[] m_str;
-			}
+			delete[] m_str;
 
 			m_str = wp;
 			m_size += str.m_size;
-			m_capacity = m_size;
+			m_capacity = th_new_capacity;
 		}
 	}
 
@@ -1488,33 +1436,81 @@ c3p1::string& c3p1::string::append(const string& str)
 c3p1::string& c3p1::string::append(const char* str)
 {
 	// check str
-	if (str != nullptr)
+	if (str)
 	{
+		// !str must be nullterminated !
 		c3p1::size_t str_len = c3p1::string::strlen(str);
 		if (str_len > 0)
 		{
-			if (m_capacity >= str_len + m_size) // there's enough memory
+			if (m_capacity >= this->_compute_capacity(str_len + m_size)) // there's enough memory
 			{
-				// no reallocation
-				c3p1::string::strncat(m_str, str, str_len);
-				// strncat return value is guaranted to be null-terminated
+				// no realloction
+				c3p1::string::memcpy_noexcept(m_str + m_size, str, str_len);
 				m_size += str_len;
+				m_str[m_size] = '\0';
 			}
 			else // there's not enough memory
 			{
 				// reallocate memory
-				char* wp = new char[m_size + str_len + 1];
-				c3p1::string::strcpy(wp, m_str);
-				c3p1::string::strncat(wp, str, str_len);
+				c3p1::size_t th_new_capacity = this->_compute_capacity(m_size + str_len);
+				char* wp = new char[th_new_capacity + 1];
+				c3p1::string::memcpy_noexcept(wp, m_str, m_size);
+				c3p1::string::memcpy_noexcept(wp + m_size, str, str_len);
+				wp[m_size + str_len] = '\0';
 
-				if (m_capacity != 0)
-				{
-					delete[] m_str;
-				}
+				delete[] m_str;
 
 				m_str = wp;
 				m_size += str_len;
-				m_capacity = m_size;
+				m_capacity = th_new_capacity;
+			}
+		}
+	}
+
+	return *this;
+}
+
+c3p1::string& c3p1::string::append(const char* str, size_t size)
+{
+	// check str
+	if (str && size > 0)
+	{
+		// !str must be nullterminated !
+		c3p1::size_t str_len = c3p1::string::strlen(str);
+		if (str_len > 0)
+		{
+			c3p1::size_t th_new_capacity, to_copy;
+			if (size <= str_len)
+			{
+				th_new_capacity = this->_compute_capacity(size + m_size);
+				to_copy = size;
+			}
+			else
+			{
+				th_new_capacity = this->_compute_capacity(str_len + m_size);
+				to_copy = str_len;
+			}
+
+			if (m_capacity >= th_new_capacity) // there's enough memory
+			{
+				// no realloction
+				c3p1::string::memcpy_noexcept(m_str + m_size, str, to_copy);
+				m_size += to_copy;
+				m_str[m_size] = '\0';
+				// m_capacity has not changed
+			}
+			else // there's not enough memory
+			{
+				// reallocation
+				char* wp = new char[th_new_capacity + 1];
+				c3p1::string::memcpy_noexcept(wp, m_str, m_size);
+				c3p1::string::memcpy_noexcept(wp + m_size, str, to_copy);
+				wp[m_size + to_copy] = '\0';
+
+				delete[] m_str;
+				m_str = wp;
+				m_size = m_size + to_copy;
+				m_capacity = th_new_capacity;
 			}
 		}
 	}
@@ -1524,82 +1520,31 @@ c3p1::string& c3p1::string::append(const char* str)
 
 c3p1::string& c3p1::string::append(c3p1::size_t n, char c)
 {
+	c3p1::size_t th_new_capacity = this->_compute_capacity(m_size + n);
 	// check if string is long enough
-	if (m_capacity >= m_size + n)
+	if (m_capacity >= th_new_capacity)
 	{
 		// there's enough memory
 		for (c3p1::size_t i = m_size; i < m_size + n; i++)
-		{
 			m_str[i] = c;
-		}
+
 		m_str[m_size + n] = '\0';
-		if (c != '\0')
-		{
-			m_size += n;
-		}
+		m_size += n;
 	}
 	else
 	{
 		// reallocation required
-		char* wp = new char[m_size + n + 1];
+		char* wp = new char[th_new_capacity + 1];
 
 		// copy string & add n times c
-		c3p1::string::strcpy(wp, m_str);
-		for (c3p1::size_t i = m_size; i < m_size + n; i++)
-		{
-			wp[i] = c;
-		}
+		c3p1::string::memcpy_noexcept(wp, m_str, m_size);
+		c3p1::string::memset_noexcept(wp + m_size, c, n);
 		wp[m_size + n] = '\0';
 
-		// change size only if c is not a null-terminal character
-		c3p1::size_t final_capacity = m_size + n;
-		if (c != '\0')
-		{
-			m_size += n;
-		}
-		if (m_capacity != 0)
-		{
-			delete[] m_str;
-		}
+		delete[] m_str;
 		m_str = wp;
-		m_capacity = final_capacity;
-	}
-
-	return *this;
-}
-
-c3p1::string& c3p1::string::append(const char* str, size_t size)
-{
-	// check str and size value
-	if (str != nullptr && size != 0)
-	{
-		c3p1::size_t str_len = c3p1::string::strlen(str);
-		if (str_len > 0)
-		{
-			if (m_capacity >= str_len + m_size) // there's enough memory
-			{
-				// no reallocation
-				c3p1::string::strncat(m_str, str, str_len);
-				// strncat return value is guaranted to be null-terminated
-				m_size += str_len;
-			}
-			else // there's not enough memory
-			{
-				// reallocate memory
-				char* wp = new char[m_size + size + 1];
-				c3p1::string::strcpy(wp, m_str);
-				c3p1::string::strncat(wp, str, size);
-
-				if (m_capacity != 0)
-				{
-					delete[] m_str;
-				}
-
-				m_str = wp;
-				m_size += size;
-				m_capacity = m_size;
-			}
-		}
+		m_size += n;
+		m_capacity = th_new_capacity;
 	}
 
 	return *this;
@@ -1607,28 +1552,24 @@ c3p1::string& c3p1::string::append(const char* str, size_t size)
 
 char& c3p1::string::operator[](c3p1::size_t pos)
 {
-	if (empty())
-	{
+	if (this->empty())
 		throw c3p1::exception("Exception @c3p1::string::operator[] volatile: attempt to write to an empty string.");
-	}
-	else if (pos > size())
-	{
+	else if (pos > m_size)
 		throw c3p1::exception("Exception @c3p1::string::operator[] volatile: index is out of bounds.");
-	}
+	else if (pos > this->_max_size)
+		throw c3p1::exception("Exception @c3p1::string::operator[] volatile: index is superior than max size.");
 
 	// return a volatile reference to the char at m_str[pos]
 	return m_str[pos];
 }
 const char& c3p1::string::operator[](c3p1::size_t pos) const
 {
-	if (empty())
-	{
+	if (this->empty())
 		throw c3p1::exception("Exception @c3p1::string::operator[] const: attempt to read from an empty string.");
-	}
-	else if (pos > size())
-	{
+	else if (pos > m_size)
 		throw c3p1::exception("Exception @c3p1::string::operator[] const: index is out of bounds.");
-	}
+	else if (pos > this->_max_size)
+		throw c3p1::exception("Exception @c3p1::string::operator[] const: index is superior than max size.");
 
 	// return a const reference to the char at m_str[pos]
 	return m_str[pos];
@@ -1671,7 +1612,6 @@ void c3p1::swap(c3p1::string& first, c3p1::string& second) noexcept
 c3p1::string c3p1::operator+ (const c3p1::string& first, const c3p1::string& second)
 {
 	c3p1::string buffer = first;
-	buffer.reserve(first.m_size + second.m_size);
 	buffer.append(second);
 
 	return buffer;
@@ -1680,7 +1620,6 @@ c3p1::string c3p1::operator+ (const c3p1::string& first, const c3p1::string& sec
 c3p1::string c3p1::operator+ (const c3p1::string& first, const char* second)
 {
 	c3p1::string buffer = first;
-	buffer.reserve(first.m_size + c3p1::string::strlen(second));
 	buffer.append(second);
 
 	return buffer;
@@ -1689,7 +1628,6 @@ c3p1::string c3p1::operator+ (const c3p1::string& first, const char* second)
 c3p1::string c3p1::operator+(const char* first, const c3p1::string& second)
 {
 	c3p1::string buffer = first;
-	buffer.reserve(buffer.m_size + second.m_size);
 	buffer.append(second);
 
 	return buffer;
@@ -1698,12 +1636,7 @@ c3p1::string c3p1::operator+(const char* first, const c3p1::string& second)
 c3p1::string c3p1::operator+(const c3p1::string& first, char second)
 {
 	c3p1::string buffer = first;
-
-	if (second != '\0')
-	{
-		buffer.reserve(buffer.m_size + 1);
-		buffer.append(1, second);
-	}
+	buffer.append(1, second);
 
 	return buffer;
 }
@@ -1711,17 +1644,9 @@ c3p1::string c3p1::operator+(const c3p1::string& first, char second)
 c3p1::string c3p1::operator+(char first, const c3p1::string& second)
 {
 	c3p1::string buffer;
-	if (first != '\0')
-	{
-		buffer = first;
-		buffer.reserve(buffer.m_size + second.m_size);
-		buffer.append(second);
-		return buffer;
-	}
-	else
-	{
-		return second;
-	}
+	buffer.append(1, first).append(second);
+	
+	return buffer;
 }
 
 std::ostream& c3p1::operator<<(std::ostream& os, const c3p1::string& str)
