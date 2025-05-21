@@ -90,10 +90,10 @@ namespace c3p1
 		// reserve(new_size) reserves more space in memory for the string
 		// (+) if new_size > capacity, reallocates intern pointer to match with new_size,
 		// (+) if new_size < capacity, has no effect.
-		void reserve(size_t new_size) noexcept;
+		void reserve(size_t req_capacity) noexcept;
 
 		// clear() erase the string & let it empty
-		void clear();
+		void clear() noexcept;
 
 		// empty() returns true if the string is empty, false otherwise
 		bool empty() const;
@@ -229,7 +229,6 @@ namespace c3p1
 	// internal functions
 	private:
 		void _init_emptystring() noexcept;
-		void _delete_safe() noexcept;
 
 		static size_t _compute_capacity(size_t size) noexcept;
 
