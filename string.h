@@ -169,6 +169,16 @@ namespace c3p1
 		// operator[] (pos) gives a char reference to the specified character, const version
 		const char& operator[] (size_t post) const;
 
+		// operator += (const &str) adds str at the end of string
+		string& operator+= (const string& str);
+
+		// operator += (const str) adds str at the end of string
+		string& operator+= (const char* str);
+
+		// operator += (c) adds a single character c at the end of string
+		// 
+		string& operator+= (const char c);
+
 		// friend operators and functions
 
 		// swap(first, second) swaps first and second value

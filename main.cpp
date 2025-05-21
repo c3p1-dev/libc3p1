@@ -5,11 +5,12 @@
 
 #include <iostream>
 #include "string.h"
+#include "exception.h"
 #include "uptr.h"
 
-void printstr(const c3p1::string& str)
+void printstr(const std::string& str)
 {
-	std::cout << str << std::endl \
+	std::cout << (str.empty() ? "empty string" : str) << std::endl \
 		<< "size: " << str.size() << std::endl
 		<< "capacity: " << str.capacity() << std::endl;
 }
@@ -18,7 +19,11 @@ using namespace c3p1::ptr;
 // entry point
 int main()
 {
-	c3p1::string sa = "une chaine";
-	sa.resize(25);
-	printstr(sa);
+	std::string s;
+	printstr(s);
+	s.resize(10);
+	s.shrink_to_fit();
+	printstr(s);
+	s.at(3) = 'c';
+	std::cout << s;
 }

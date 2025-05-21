@@ -1542,7 +1542,7 @@ c3p1::string& c3p1::string::operator=(const char* str)
 c3p1::string& c3p1::string::operator=(const c3p1::string& str)
 {
 	// check str, then copy it
-	if (!str.empty())
+	if (!str.empty() && &str != this)
 	{
 		if (str.m_size == 0) // check if str is an empty string
 		{
@@ -1814,7 +1814,7 @@ c3p1::string& c3p1::string::append(c3p1::size_t n, char c)
 		wp[m_size + n] = '\0';
 
 		// change size only if c is not a null-terminal character
-		m_capacity = m_size + n;
+		c3p1::size_t final_capacity = m_size + n;
 		if (c != '\0')
 		{
 			m_size += n;
@@ -1824,6 +1824,7 @@ c3p1::string& c3p1::string::append(c3p1::size_t n, char c)
 			delete[] m_str;
 		}
 		m_str = wp;
+		m_capacity = final_capacity;
 	}
 
 	return *this;
