@@ -1354,6 +1354,8 @@ char& c3p1::string::at(c3p1::size_t pos)
 		throw c3p1::exception("Exception @c3p1::string::at(pos) volatile: attempt to write to an empty string.");
 	else if (pos > m_size)
 		throw c3p1::exception("Exception @c3p1::string::at(pos) volatile: index is out of bounds.");
+	else if (pos > this->_max_size)
+		throw c3p1::exception("Exception @c3p1::string::at(pos) volatile: index is superior than max size.");
 
 	// return a volatile reference to the char at m_str[pos]
 	return m_str[pos];
@@ -1365,6 +1367,9 @@ const char& c3p1::string::at(c3p1::size_t pos) const
 		throw c3p1::exception("Exception @c3p1::string::at(pos) const: attempt to read from an empty string.");
 	else if (pos > m_size)
 		throw c3p1::exception("Exception @c3p1::string::at(pos) const: index is out of bounds.");
+	else if (pos > this->_max_size)
+		throw c3p1::exception("Exception @c3p1::string::at(pos) const: index is superior than max size.");
+
 
 	// return a const reference to the char at m_str[pos]
 	return m_str[pos];
