@@ -7,26 +7,18 @@
 #include "string.h"
 #include "uptr.h"
 
-// macro for quick result output
-#define prints1 std::cout << s1.c_str() << std::endl \
-<< "s1.size() = " << s1.size() << std::endl \
-<< "s1.capacity() = " << s1.capacity() << std::endl;
-#define prints2 std::cout << s2.c_str() << std::endl \
-<< "s2.size() = " << s2.size() << std::endl \
-<< "s2.capacity() = " << s2.capacity() << std::endl;
+void printstr(const c3p1::string& str)
+{
+	std::cout << str << std::endl \
+		<< "size: " << str.size() << std::endl
+		<< "capacity: " << str.capacity() << std::endl;
+}
 
 using namespace c3p1::ptr;
 // entry point
 int main()
 {
-    c3p1::string s1;
-    std::cout << "Enter s1 : ";
-    c3p1::getline(std::cin, s1);
-    std::cout << "s1 = " << s1 << std::endl;
-    prints1;
-    c3p1::string s2 = "chaine S2";
-    c3p1::swap(s1, s2);
-    prints1;
-    prints2;
-    return 0;
+	c3p1::string sa = "une chaine";
+	sa.resize(25);
+	printstr(sa);
 }
