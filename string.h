@@ -13,10 +13,17 @@
 	#define restrict __restrict
 #endif
 
+// for size_t typedef / max_size() result
+// amd64 -> max_size() == 9223372036854775807;	// 2^63 -1
+// x86   -> max_size() == 4294967294;			// 2^32 -2
 #if defined(__x86_64__) || defined(_M_X64)
+#ifndef ARCH_64
 	#define ARCH_64
+#endif
 #elif defined(__i386__) || defined(_M_IX86)
+#ifndef ARCH_32
 	#define ARCH_32
+#endif
 #endif
 
 namespace c3p1
@@ -200,10 +207,10 @@ namespace c3p1
 		static inline constexpr const char* mc_nullterm = "\0";
 #if defined ARCH_64
 		// max_size on 64 bits systems
-		const size_t mc_max_size = 9223372036854775807; // 2^63 -1
+		static inline constexpr const size_t mc_max_size = 9223372036854775807; // 2^63 -1
 #elif defined ARCH_32
 		// max_size on 32 bit systems
-		const size_t m_max_size = 4294967294; // 2^32 -2
+		static inline constexpr const size_t m_max_size = 4294967294; // 2^32 -2
 #endif
 
 	// local implementation of string.h libc

@@ -262,23 +262,17 @@ void* c3p1::string::memmove(void* dst, const void* src, c3p1::size_t size)
 		throw c3p1::exception("Exception @c3p1::string::memmove(dst, const src, size): src is nullptr.");
 	}
 
-	// create a n bytes buffer and manage allocation failure
+	// create a n bytes buffer
 	unsigned char* wp = new unsigned char[size];
-	if (wp != nullptr)
-	{
-		// copy src to buffer
-		memcpy(static_cast<void*>(wp), src, size);
 
-		// copy buffer to dst
-		memcpy(dst, wp, size);
-		delete[] wp;
+	// copy src to buffer
+	memcpy(static_cast<void*>(wp), src, size);
 
-		return dst;
-	}
-	else
-	{
-		throw c3p1::exception("Exception @c3p1::string::memmove(dst, const src, size): memory allocation for the buffer has failed.");
-	}
+	// copy buffer to dst
+	memcpy(dst, wp, size);
+	delete[] wp;
+
+	return dst;
 }
 
 void* c3p1::string::memset(void* dst, unsigned char byte_val, c3p1::size_t size)
@@ -738,15 +732,8 @@ char* c3p1::string::strdup(const char* src)
 	// allocate memory and copy src
 	char* p = new char[c3p1::string::strlen(src) + 1];
 
-	if (p != nullptr)
-	{
-		c3p1::string::strcpy(p, src);
-		return p;
-	}
-	else
-	{
-		throw c3p1::exception("Exception @c3p1::string::strdup(const src): memory allocation for the new string has failed.");
-	}
+	c3p1::string::strcpy(p, src);
+	return p;
 }
 
 char* c3p1::string::strndup(const char* src, c3p1::size_t size)
@@ -758,11 +745,6 @@ char* c3p1::string::strndup(const char* src, c3p1::size_t size)
 	}
 
 	char* p = new char[size + 1];
-
-	if (p == nullptr)
-	{
-		throw c3p1::exception("Exception @c3p1::string::strndup(const src, size): memory allocation for the new string has failed.");
-	}
 
 	// if count is equal to strlen(src), copy the string
 	c3p1::string::strncpy(p, src, size);
@@ -1658,11 +1640,11 @@ char& c3p1::string::at(c3p1::size_t pos)
 {
 	if (empty())
 	{
-		throw exception("Exception @c3p1::string::at(pos) volatile: attempt to write to an empty string.");
+		throw c3p1::exception("Exception @c3p1::string::at(pos) volatile: attempt to write to an empty string.");
 	}
 	else if (pos > size())
 	{
-		throw exception("Exception @c3p1::string::at(pos) volatile: index is out of bounds.");
+		throw c3p1::exception("Exception @c3p1::string::at(pos) volatile: index is out of bounds.");
 	}
 
 	// return a volatile reference to the char at m_str[pos]
@@ -1673,11 +1655,11 @@ const char& c3p1::string::at(c3p1::size_t pos) const
 {
 	if (empty())
 	{
-		throw exception("Exception @c3p1::string::at(pos) const: attempt to read from an empty string.");
+		throw c3p1::exception("Exception @c3p1::string::at(pos) const: attempt to read from an empty string.");
 	}
 	else if (pos > size())
 	{
-		throw exception("Exception @c3p1::string::at(pos) const: index is out of bounds.");
+		throw c3p1::exception("Exception @c3p1::string::at(pos) const: index is out of bounds.");
 	}
 
 	// return a const reference to the char at m_str[pos]
@@ -1688,7 +1670,7 @@ char& c3p1::string::front()
 {
 	if (empty())
 	{
-		throw exception("Exception @c3p1::string::front() volatile: attempt to write to an empty string.");
+		throw c3p1::exception("Exception @c3p1::string::front() volatile: attempt to write to an empty string.");
 	}
 	else
 	{
@@ -1700,7 +1682,7 @@ const char& c3p1::string::front() const
 {
 	if (empty())
 	{
-		throw exception("Exception @c3p1::string::front() volatile: attempt to read from an empty string.");
+		throw c3p1::exception("Exception @c3p1::string::front() volatile: attempt to read from an empty string.");
 	}
 	else
 	{
@@ -1712,7 +1694,7 @@ char& c3p1::string::back()
 {
 	if (empty())
 	{
-		throw exception("Exception @c3p1::string::back() volatile: attempt to write to an empty string.");
+		throw c3p1::exception("Exception @c3p1::string::back() volatile: attempt to write to an empty string.");
 	}
 	else
 	{
@@ -1724,7 +1706,7 @@ const char& c3p1::string::back() const
 {
 	if (empty())
 	{
-		throw exception("Exception @c3p1::string::back() const: attempt to write to an empty string.");
+		throw c3p1::exception("Exception @c3p1::string::back() const: attempt to write to an empty string.");
 	}
 	else
 	{
@@ -1888,11 +1870,11 @@ char& c3p1::string::operator[](c3p1::size_t pos)
 {
 	if (empty())
 	{
-		throw exception("Exception @c3p1::string::operator[] volatile: attempt to write to an empty string.");
+		throw c3p1::exception("Exception @c3p1::string::operator[] volatile: attempt to write to an empty string.");
 	}
 	else if (pos > size())
 	{
-		throw exception("Exception @c3p1::string::operator[] volatile: index is out of bounds.");
+		throw c3p1::exception("Exception @c3p1::string::operator[] volatile: index is out of bounds.");
 	}
 
 	// return a volatile reference to the char at m_str[pos]
@@ -1902,11 +1884,11 @@ const char& c3p1::string::operator[](c3p1::size_t pos) const
 {
 	if (empty())
 	{
-		throw exception("Exception @c3p1::string::operator[] const: attempt to read from an empty string.");
+		throw c3p1::exception("Exception @c3p1::string::operator[] const: attempt to read from an empty string.");
 	}
 	else if (pos > size())
 	{
-		throw exception("Exception @c3p1::string::operator[] const: index is out of bounds.");
+		throw c3p1::exception("Exception @c3p1::string::operator[] const: index is out of bounds.");
 	}
 
 	// return a const reference to the char at m_str[pos]
