@@ -3,6 +3,34 @@
 // BSD3 License - https://github.com/c3p1-dev/libc3p1/blob/master/LICENSE.txt
 // my libc/string.h implementation encapsulated in a string class
 
+// TODO
+/*
+* iterators :
+* begin(), rbegin(), cbegin(), crbegin()
+* end(), rend(), cend(), crend()
+* 
+* modifiers :
+* string& append (const string& str, size_t subpos, size_t sublen = _max_size);
+* template <class InputIterator>   string& append (InputIterator first, InputIterator last);
+* assign and overloads
+* insert and overloads
+* erase and overloads
+* replace and overloads
+* 
+* string operations:
+* get_allocator
+* find(), rfind()
+* find_first_of, find_last_of()
+* find_first_not_of(), find_last_not_of()
+* substr()
+* compare()
+* 
+* operators:
+* operators ==, != (friends)
+* operators >, <, >=, <= (friends)
+* 
+*/
+
 #pragma once
 
 // for streams
@@ -145,7 +173,7 @@ namespace c3p1
 		string& append(size_t n, char c);
 
 		/* TODO : IMPLEMENT to match with std::string
-		string& append (const string& str, size_t subpos, size_t sublen);
+		string& append (const string& str, size_t subpos, size_t sublen = _max_size);
 		template <class InputIterator>   string& append (InputIterator first, InputIterator last);
 		*/
 
