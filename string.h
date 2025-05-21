@@ -247,7 +247,47 @@ namespace c3p1
 		// (!) adding null-terminal in the string will lead to undefined behavior!
 		friend string operator+ (char first, const string& second);
 
-		// operator== (const 
+		// operator== (const &first, const &second) returns true if first and second are equal
+		friend bool operator== (const string& first, const string& second) noexcept;
+		// operator== (const &first, const &second) returns true if first and second are equal
+		friend bool operator== (const string& first, const char* second);
+		// operator== (const &first, const &second) returns true if first and second are equal
+		friend bool operator== (const char* first, const string& second);
+
+		// operator!= (const &first, const &second) returns true if first and second are different
+		friend bool operator!= (const string& first, const string& second) noexcept;
+		// operator!= (const &first, const &second) returns true if first and second are different
+		friend bool operator!= (const string& first, const char* second);
+		// operator!= (const &first, const &second) returns true if first and second are different
+		friend bool operator!= (const char* first, const string& second);
+
+		// operator> (const &first, const &second) returns true if first is superior to second
+		friend bool operator> (const string& first, const string& second) noexcept;
+		// operator> (const &first, const &second) returns true if first is superior to second
+		friend bool operator> (const string& first, const char* second);
+		// operator> (const &first, const &second) returns true if first is superior to second
+		friend bool operator> (const char* first, const string& second);
+
+		// operator>= (const &first, const &second) returns true if first is superior or equal to second
+		friend bool operator>= (const string& first, const string& second) noexcept;
+		// operator>= (const &first, const &second) returns true if first is superior or equal to second
+		friend bool operator>= (const string& first, const char* second);
+		// operator>= (const &first, const &second) returns true if first is superior or equal to second
+		friend bool operator>= (const char* first, const string& second);
+
+		// operator< (const &first, const &second) returns true if first is inferior to second
+		friend bool operator< (const string& first, const string& second) noexcept;
+		// operator< (const &first, const &second) returns true if first is inferior to second
+		friend bool operator< (const string& first, const char* second);
+		// operator< (const &first, const &second) returns true if first is inferior to second
+		friend bool operator< (const char* first, const string& second);
+
+		// operator<= (const &first, const &second) returns true if first is inferior or equal to second
+		friend bool operator<= (const string& first, const string& second) noexcept;
+		// operator<= (const &first, const &second) returns true if first is inferior or equal to second
+		friend bool operator<= (const string& first, const char* second);
+		// operator<= (const &first, const &second) returns true if first is inferior or equal to second
+		friend bool operator<= (const char* first, const string& second);
 
 		// operator ostream <<
 		friend std::ostream& operator<<(std::ostream& os, const string& str);
@@ -613,6 +653,48 @@ namespace c3p1
 	// operator+ (const first, second) concatenates first and second
 	// (!) adding null-terminal in the string will lead to undefined behavior!
 	string operator+ (char first, const string& second);
+
+	// operator== (const &first, const &second) returns true if first and second are equal
+	bool operator== (const string& first, const string& second) noexcept;
+	// operator== (const &first, const &second) returns true if first and second are equal
+	bool operator== (const string& first, const char* second);
+	// operator== (const &first, const &second) returns true if first and second are equal
+	bool operator== (const char* first, const string& second);
+
+	// operator!= (const &first, const &second) returns true if first and second are different
+	bool operator!= (const string& first, const string& second) noexcept;
+	// operator!= (const &first, const &second) returns true if first and second are different
+	bool operator!= (const string& first, const char* second);
+	// operator!= (const &first, const &second) returns true if first and second are different
+	bool operator!= (const char* first, const string& second);
+
+	// operator> (const &first, const &second) returns true if first is superior to second
+	bool operator> (const string& first, const string& second) noexcept;
+	// operator> (const &first, const &second) returns true if first is superior to second
+	bool operator> (const string& first, const char* second);
+	// operator> (const &first, const &second) returns true if first is superior to second
+	bool operator> (const char* first, const string& second);
+
+	// operator>= (const &first, const &second) returns true if first is superior or equal to second
+	bool operator>= (const string& first, const string& second) noexcept;
+	// operator>= (const &first, const &second) returns true if first is superior or equal to second
+	bool operator>= (const string& first, const char* second);
+	// operator>= (const &first, const &second) returns true if first is superior or equal to second
+	bool operator>= (const char* first, const string& second);
+
+	// operator< (const &first, const &second) returns true if first is inferior to second
+	bool operator< (const string& first, const string& second) noexcept;
+	// operator< (const &first, const &second) returns true if first is inferior to second
+	bool operator< (const string& first, const char* second);
+	// operator< (const &first, const &second) returns true if first is inferior to second
+	bool operator< (const char* first, const string& second);
+
+	// operator<= (const &first, const &second) returns true if first is inferior or equal to second
+	bool operator<= (const string& first, const string& second) noexcept;
+	// operator<= (const &first, const &second) returns true if first is inferior or equal to second
+	bool operator<= (const string& first, const char* second);
+	// operator<= (const &first, const &second) returns true if first is inferior or equal to second
+	bool operator<= (const char* first, const string& second);
 
 	// operator ostream <<
 	std::ostream& operator<<(std::ostream& os, const string& str);

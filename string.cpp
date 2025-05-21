@@ -1871,6 +1871,150 @@ c3p1::string c3p1::operator+(char first, const c3p1::string& second)
 	return buffer;
 }
 
+// operator== (const &first, const &second) returns true if first and second are equal
+bool c3p1::operator== (const string& first, const string& second) noexcept
+{
+	return first.compare(second) == 0;
+}
+// operator== (const &first, const &second) returns true if first and second are equal
+bool c3p1::operator== (const string& first, const char* second)
+{
+	if (second == nullptr)
+		throw c3p1::exception("Exception @c3p1::operator== (const &first, const second): second is nullptr.");
+
+	// second must be a null-terminated string!
+	return first.compare(second) == 0;
+}
+// operator== (const &first, const &second) returns true if first and second are equal
+bool c3p1::operator== (const char* first, const string& second)
+{
+	if (first == nullptr)
+		throw c3p1::exception("Exception @c3p1::operator== (const first, const &second): first is nullptr.");
+
+	// first must be a null-terminated string!
+	return second.compare(first) == 0;
+}
+
+// operator!= (const &first, const &second) returns true if first and second are different
+bool c3p1::operator!= (const string& first, const string& second) noexcept
+{
+	return first.compare(second) != 0;
+}
+// operator!= (const &first, const &second) returns true if first and second are different
+bool c3p1::operator!= (const string& first, const char* second)
+{
+	if (second == nullptr)
+		throw c3p1::exception("Exception @c3p1::operator!= (const &first, const second): second is nullptr.");
+
+	// second must be a null-terminated string!
+	return first.compare(second) != 0;
+}
+// operator!= (const &first, const &second) returns true if first and second are different
+bool c3p1::operator!= (const char* first, const string& second)
+{
+	if (first == nullptr)
+		throw c3p1::exception("Exception @c3p1::operator!= (const first, const &second): first is nullptr.");
+
+	// first must be a null-terminated string!
+	return second.compare(first) != 0;
+}
+
+// operator> (const &first, const &second) returns true if first is superior to second
+bool c3p1::operator> (const string& first, const string& second) noexcept
+{
+	return first.compare(second) > 0;
+}
+// operator> (const &first, const &second) returns true if first is superior to second
+bool c3p1::operator> (const string& first, const char* second)
+{
+	if (second == nullptr)
+		throw c3p1::exception("Exception @c3p1::operator> (const &first, const second): second is nullptr.");
+
+	// second must be a null-terminated string!
+	return first.compare(second) > 0;
+}
+// operator> (const &first, const &second) returns true if first is superior to second
+bool c3p1::operator> (const char* first, const string& second)
+{
+	if (first == nullptr)
+		throw c3p1::exception("Exception @c3p1::operator> (const first, const &second): first is nullptr.");
+
+	// first must be a null-terminated string!
+	return second.compare(first) > 0;
+}
+
+// operator>= (const &first, const &second) returns true if first is superior or equal to second
+bool c3p1::operator>= (const string& first, const string& second) noexcept
+{
+	return first.compare(second) >= 0;
+}
+// operator>= (const &first, const &second) returns true if first is superior or equal to second
+bool c3p1::operator>= (const string& first, const char* second)
+{
+	if (second == nullptr)
+		throw c3p1::exception("Exception @c3p1::operator>= (const &first, const second): second is nullptr.");
+
+	// second must be a null-terminated string!
+	return first.compare(second) >= 0;
+}
+// operator>= (const &first, const &second) returns true if first is superior or equal to second
+bool c3p1::operator>= (const char* first, const string& second)
+{
+	if (first == nullptr)
+		throw c3p1::exception("Exception @c3p1::operator>= (const first, const &second): first is nullptr.");
+
+	// first must be a null-terminated string!
+	return second.compare(first) >= 0;
+}
+
+// operator< (const &first, const &second) returns true if first is inferior to second
+bool c3p1::operator< (const string& first, const string& second) noexcept
+{
+	return first.compare(second) < 0;
+}
+// operator< (const &first, const &second) returns true if first is inferior to second
+bool c3p1::operator< (const string& first, const char* second)
+{
+	if (second == nullptr)
+		throw c3p1::exception("Exception @c3p1::operator< (const &first, const second): second is nullptr.");
+
+	// second must be a null-terminated string!
+	return first.compare(second) < 0;
+}
+// operator< (const &first, const &second) returns true if first is inferior to second
+bool c3p1::operator< (const char* first, const string& second)
+{
+	if (first == nullptr)
+		throw c3p1::exception("Exception @c3p1::operator< (const first, const &second): first is nullptr.");
+
+	// first must be a null-terminated string!
+	return second.compare(first) < 0;
+}
+
+// operator<= (const &first, const &second) returns true if first is inferior or equal to second
+bool c3p1::operator<= (const string& first, const string& second) noexcept
+{
+	return first.compare(second) <= 0;
+}
+// operator<= (const &first, const &second) returns true if first is inferior or equal to second
+bool c3p1::operator<= (const string& first, const char* second)
+{
+	if (second == nullptr)
+		throw c3p1::exception("Exception @c3p1::operator<= (const &first, const second): second is nullptr.");
+
+	// second must be a null-terminated string!
+	return first.compare(second) < 0;
+}
+// operator<= (const &first, const &second) returns true if first is inferior or equal to second
+bool c3p1::operator<= (const char* first, const string& second)
+{
+	if (first == nullptr)
+		throw c3p1::exception("Exception @c3p1::operator<= (const first, const &second): first is nullptr.");
+
+	// first must be a null-terminated string!
+	return second.compare(first) < 0;
+}
+
 std::ostream& c3p1::operator<<(std::ostream& os, const c3p1::string& str)
 {
 	return os << str.c_str();
