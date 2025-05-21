@@ -8,7 +8,7 @@
 #include "exception.h"
 #include "uptr.h"
 
-void printstr(const std::string& str)
+void printstr(const c3p1::string& str)
 {
 	std::cout << (str.empty() ? "empty string" : str) << std::endl \
 		<< "size: " << str.size() << std::endl
@@ -19,7 +19,8 @@ using namespace c3p1::ptr;
 // entry point
 int main()
 {
-	std::string s;
+	c3p1::string s;
+	printstr(s);
 	s.reserve(100);
 	printstr(s);
 }
