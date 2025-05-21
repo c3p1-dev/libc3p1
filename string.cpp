@@ -2003,7 +2003,7 @@ bool c3p1::operator<= (const string& first, const char* second)
 		throw c3p1::exception("Exception @c3p1::operator<= (const &first, const second): second is nullptr.");
 
 	// second must be a null-terminated string!
-	return first.compare(second) < 0;
+	return first.compare(second) <= 0;
 }
 // operator<= (const &first, const &second) returns true if first is inferior or equal to second
 bool c3p1::operator<= (const char* first, const string& second)
@@ -2012,7 +2012,7 @@ bool c3p1::operator<= (const char* first, const string& second)
 		throw c3p1::exception("Exception @c3p1::operator<= (const first, const &second): first is nullptr.");
 
 	// first must be a null-terminated string!
-	return second.compare(first) < 0;
+	return second.compare(first) <= 0;
 }
 
 std::ostream& c3p1::operator<<(std::ostream& os, const c3p1::string& str)
