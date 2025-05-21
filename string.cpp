@@ -1914,7 +1914,7 @@ const char& c3p1::string::operator[](c3p1::size_t pos) const
 }
 
 // friend functions and operators
-void c3p1::swap(c3p1::string& first, c3p1::string& second)
+void c3p1::swap(c3p1::string& first, c3p1::string& second) noexcept
 {
 	// swap intern pointers
 	char* wp = first.m_str;

@@ -166,7 +166,7 @@ namespace c3p1
 
 		// swap(first, second) swaps first and second value
 		// (+) swaps intern pointers and their intern size tracker
-		friend void swap(string& first, string& second);
+		friend void swap(string& first, string& second) noexcept;
 
 		// operator+ (const first, const second) concatenates first and second
 		friend string operator+ (const string& first, const string& second);
@@ -497,4 +497,8 @@ namespace c3p1
 	// getline (&istream, &str) extracts characters from istream and stores them into str
 	// (+) copy the first word from is to str, using '\n' as separator
 	std::istream& getline(std::istream& is, string& str);
+
+	// swap(first, second) swaps first and second value
+	// (+) swaps intern pointers and their intern size tracker
+	void swap(string& first, string& second) noexcept;
 }

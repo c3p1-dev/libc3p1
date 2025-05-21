@@ -24,5 +24,9 @@ int main()
     c3p1::getline(std::cin, s1);
     std::cout << "s1 = " << s1 << std::endl;
     prints1;
+    c3p1::string s2 = "chaine S2";
+    c3p1::swap(s1, s2);
+    prints1;
+    prints2;
     return 0;
 }
