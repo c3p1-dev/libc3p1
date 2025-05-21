@@ -19,14 +19,9 @@ using namespace c3p1::ptr;
 // entry point
 int main()
 {
-	c3p1::string sa = "Test";
+	std::cout << "sizeof(c3p1::string) = " << sizeof(c3p1::string) << std::endl;
+	c3p1::string sa;
+	sa.reserve(100);
 	printstr(sa);
-	sa = sa + " de l'operateur +";
-	printstr(sa);
-	sa = sa + " et ca a l'air de marcher";
-	printstr(sa);
-
-	sa = "Toto";
-	sa.shrink_to_fit();
-	printstr(sa);
+	std::cout << "sizeof(c3p1::string) = " << sizeof(sa) << std::endl;
 }

@@ -254,7 +254,7 @@ namespace c3p1
 	// internal constants
 	private:
 		static inline constexpr const size_t _default_capacity = 15;	// default size
-		//static inline constexpr const char* mc_nullterm = "\0";			// ptr to empty string
+
 #if defined ARCH_64
 		// max_size on 64 bits systems
 		static inline constexpr const size_t _max_size = 9223372036854775807; // 2^63 -1
