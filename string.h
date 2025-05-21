@@ -542,15 +542,19 @@ namespace c3p1
 
 	// operator+ (const first, const second) concatenates first and second
 	string operator+ (const string& first, const string& second);
+
 	// operator+ (const first, const second) concatenates first and second
 	// (!) second must be a null-terminated string!
 	string operator+ (const string& first, const char* second);
+
 	// operator+ (const first, const second) concatenates first and second
 	// (!) first must be a null-terminated string!
 	string operator+ (const char* first, const string& second);
+
 	// operator+ (const first, second) concatenates first and second
 	// (!) adding null-terminal in the string will lead to undefined behavior!
 	string operator+ (const string& first, char second);
+
 	// operator+ (const first, second) concatenates first and second
 	// (!) adding null-terminal in the string will lead to undefined behavior!
 	string operator+ (char first, const string& second);

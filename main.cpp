@@ -21,6 +21,7 @@ int main()
 {
 	c3p1::string s;
 	printstr(s);
-	s.reserve(100);
+	s = "Test chaine";
 	printstr(s);
+	s.resize(100);
 }

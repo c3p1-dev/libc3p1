@@ -314,7 +314,7 @@ void* c3p1::string::memset(void* dst, unsigned char byte_val, c3p1::size_t size)
 
 void* c3p1::string::memset_noexcept(void* dst, unsigned char byte_val, c3p1::size_t size) noexcept
 {
-	if (!dst && !size)
+	if (dst && size)
 	{
 		// copy n byte from dst to dst+n -> dst+2n
 		unsigned char* p = static_cast<unsigned char*>(dst);
@@ -1285,7 +1285,7 @@ c3p1::string::string(const char* str) noexcept
 		m_size = str_size;
 
 		// copy str
-		this->memcpy_noexcept(m_str, str, str_size);
+		this->memcpy_noexcept(m_str, str, str_size + 1); // include null-terminal
 	}
 	else
 	{
@@ -1304,7 +1304,7 @@ c3p1::string::string(const string& copy) noexcept
 		m_str = new char[m_size + 1];
 
 		// copy string
-		this->memcpy_noexcept(m_str, copy.m_str, copy.m_size);
+		this->memcpy_noexcept(m_str, copy.m_str, copy.m_size + 1); // include null-terminal
 	}
 	else
 	{
@@ -1316,11 +1316,7 @@ c3p1::string::string(const string& copy) noexcept
 c3p1::string::string(c3p1::string&& other) noexcept
 	: m_str(other.m_str), m_size(other.m_size), m_capacity(other.m_capacity)
 {
-	// TODO : check if that works
-	// reinit source object
-	other.m_str = nullptr;
-	other.m_size = 0;
-	other.m_capacity = 0;
+	this->_init_emptystring();
 }
 
 c3p1::string::~string() noexcept
@@ -1363,25 +1359,24 @@ void c3p1::string::resize(c3p1::size_t new_size, char c) noexcept
 		return;
 	}
 
-	c3p1::size_t th_new_capacity;
-	if (new_size >= this->_max_size)
-		th_new_capacity = this->_max_size;
-	else
-		th_new_capacity = new_size + (new_size + 9) / 10;
+	c3p1::size_t th_new_capacity = (new_size >= this->_max_size) ? 
+		this->_max_size : this->_compute_capacity(new_size);
 
 	if (th_new_capacity > m_capacity)
 	{
 		// reallocation required
-		char* wp = new char[th_new_capacity];
+		char* wp = new char[th_new_capacity + 1];
 
+		// copy m_str to wp if its not empty
 		if (!this->empty())
-		{
-			// copy m_str to wp
 			this->memcpy_noexcept(wp, m_str, m_size);
-		}
+
 		// if new_size > m_size, write c to fill the buffer
 		if (new_size > m_size)
 			this->memset_noexcept(wp + m_size, c, new_size - m_size);
+
+		// adds the null-terminal on the last byte
+		wp[th_new_capacity] = '\0';
 
 		this->_delete_safe();
 		m_str = wp;
@@ -1390,6 +1385,10 @@ void c3p1::string::resize(c3p1::size_t new_size, char c) noexcept
 	}
 	else
 	{
+		if (new_size > m_size)
+			this->memset(m_str + m_size, c, new_size - m_size);
+
+		m_str[new_size] = '\0';
 		m_size = new_size;
 	}
 }
@@ -1878,17 +1877,16 @@ void c3p1::string::_init_emptystring() noexcept
 	// does not manage existing ptr !
 	m_capacity = c3p1::string::_default_capacity;
 	m_str = new char[m_capacity + 1];
+	*m_str = '\0';
 	m_size = 0;
 }
 
 void c3p1::string::_delete_safe() noexcept
 {
 	if (m_capacity > 0)
-	{
 		delete[] m_str;
-	}
-	m_capacity = 0;
-	m_size = 0;
+	else
+		delete m_str;
 }
 
 c3p1::size_t c3p1::string::_compute_capacity(c3p1::size_t size) noexcept
