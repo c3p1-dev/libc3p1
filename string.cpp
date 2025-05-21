@@ -1612,6 +1612,9 @@ void c3p1::string::pop_back()
 
 c3p1::size_t c3p1::string::copy(char* dest, size_t size, size_t pos) const
 {
+	if (size == 0)
+		return size;
+
 	if (pos > m_size)
 		throw c3p1::exception("Exception @c3p1::string::copy(dest, size, pos) const: index is out of bounds.");
 
