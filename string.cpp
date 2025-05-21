@@ -217,6 +217,28 @@ int c3p1::string::memcmp(const void* first, const void* second, c3p1::size_t siz
 	return 0;
 }
 
+int c3p1::string::memcmp_noexcept(const void* first, const void* second, c3p1::size_t size) noexcept
+{
+
+	// check first and second
+	if (first == nullptr || second == nullptr)
+		return 2391; // shitty error code for unsafe function
+
+	// cast pointers to unsigned char* to work with bytes
+	const unsigned char* wp = static_cast<const unsigned char*>(first);
+	const unsigned char* ws = static_cast<const unsigned char*>(second);
+
+	// compare byte to byte the first `size` bytes
+	for (c3p1::size_t i = 0; i < size; i++)
+	{
+		if (wp[i] != ws[i])	// return the difference of the first unequal byte
+			return wp[i] - ws[i];
+	}
+
+	// The memory blocks are equal
+	return 0;
+}
+
 void* c3p1::string::memmove(void* dst, const void* src, c3p1::size_t size)
 {
 	// check if dst and src are not nullptr
@@ -1625,6 +1647,149 @@ c3p1::size_t c3p1::string::copy(char* dest, size_t size, size_t pos) const
 	c3p1::string::memcpy_noexcept(dest, m_str + pos, to_copy);
 	// does not null-terminate the string
 	return to_copy;
+}
+
+int c3p1::string::compare(const c3p1::string& str) const noexcept
+{
+	c3p1::size_t cmp_size = (m_size < str.m_size) ? m_size : str.m_size;
+	int result = c3p1::string::memcmp_noexcept(m_str, str.m_str, cmp_size);
+
+	if (result != 0)
+		return result;
+
+	// if the common part is equal, compare lengths
+	if (m_size < str.m_size)
+		return -1;
+	else if (m_size > str.m_size)
+		return 1;
+
+	return 0;
+}
+
+int c3p1::string::compare(size_t pos, size_t size, const string& str) const
+{
+	if (pos > m_size)
+		throw c3p1::exception("Exception @c3p1::string::compare(pos, size, str): index out of bounds.");
+
+	size_t len1 = (pos + size > m_size) ? (m_size - pos) : size;
+	size_t len2 = str.m_size;
+
+	size_t min_len = (len1 < len2) ? len1 : len2;
+
+	int result = c3p1::string::memcmp_noexcept(m_str + pos, str.m_str, min_len);
+	if (result != 0)
+		return result;
+
+	// if the common part is equal, compare lengths
+	if (len1 < len2)
+		return -1;
+	else if (len1 > len2)
+		return 1;
+
+	return 0;
+}
+
+int c3p1::string::compare(size_t pos, size_t size, const string& str, size_t subpos, size_t subsize) const
+{
+	if (pos > m_size)
+		throw c3p1::exception("Exception @c3p1::string::compare(pos, size, const str, subpos, subsize) const: pos out of bounds.");
+	if (subpos > str.m_size)
+		throw c3p1::exception("Exception @c3p1::string::compare(pos, size, const str, subpos, subsize) const: subpos out of bounds.");
+
+	// compute effective length to avoir buffer overflow
+	size_t len1 = (pos + size > m_size) ? (m_size - pos) : size;
+	size_t len2 = (subpos + subsize > str.m_size) ? (str.m_size - subpos) : subsize;
+
+	size_t min_len = (len1 < len2) ? len1 : len2;
+
+	int result = c3p1::string::memcmp_noexcept(m_str + pos, str.m_str + subpos, min_len);
+	if (result != 0)
+		return result;
+
+	// if the common part is equal, compare lengths
+	if (len1 < len2)
+		return -1;
+	else if (len1 > len2)
+		return 1;
+
+	return 0;
+}
+
+int c3p1::string::compare(const char* str) const
+{
+	if (!str)
+		throw c3p1::exception("Exception @c3p1::string::compare(const str) const: null pointer argument.");
+
+	c3p1::size_t str_len = c3p1::string::strlen(str);
+	c3p1::size_t cmp_size = (m_size < str_len) ? m_size : str_len;
+
+	int result = c3p1::string::memcmp_noexcept(m_str, str, cmp_size);
+	if (result != 0)
+		return result;
+
+	// if the common part is equal, compare lengths
+	if (m_size < str_len)
+		return -1;
+	else if (m_size > str_len)
+		return 1;
+
+	return 0;
+}
+
+int c3p1::string::compare(size_t pos, size_t size, const char* str) const
+{
+	if (!str)
+		throw c3p1::exception("Exception @c3p1::string::compare(pos, size, const char* str) const: null pointer argument.");
+
+	if (pos > m_size)
+		throw c3p1::exception("Exception @c3p1::string::compare(pos, size, const char* str) const: index out of bounds.");
+
+	c3p1::size_t str_len = c3p1::string::strlen(str);
+	c3p1::size_t len1 = (pos + size > m_size) ? (m_size - pos) : size;
+	c3p1::size_t len2 = str_len;
+
+	c3p1::size_t min_len = (len1 < len2) ? len1 : len2;
+
+	int result = c3p1::string::memcmp_noexcept(m_str + pos, str, min_len);
+	if (result != 0)
+		return result;
+
+	// if the common part is equal, compare lengths
+	if (len1 < len2)
+		return -1;
+	else if (len1 > len2)
+		return 1;
+
+	return 0;
+}
+
+int c3p1::string::compare(size_t pos, size_t size, const char* str, size_t n) const
+{
+	if (!str)
+		throw c3p1::exception("Exception @c3p1::string::compare(pos, size, str, n) const: null pointer argument.");
+
+	if (pos > m_size)
+		throw c3p1::exception("Exception @c3p1::string::compare(pos, size, str, n) const: index out of bounds.");
+
+	// compute the size to compare
+	c3p1::size_t len1 = (pos + size > m_size) ? (m_size - pos) : size;
+
+	c3p1::size_t str_len = c3p1::string::strlen(str);
+	c3p1::size_t len2 = (n < str_len) ? n : str_len;
+
+	c3p1::size_t min_len = (len1 < len2) ? len1 : len2;
+
+	int result = c3p1::string::memcmp_noexcept(m_str + pos, str, min_len);
+	if (result != 0)
+		return result;
+
+	// if the common part is equal, compare lengths
+	if (len1 < len2)
+		return -1;
+	else if (len1 > len2)
+		return 1;
+
+	return 0;
 }
 
 // internal functions

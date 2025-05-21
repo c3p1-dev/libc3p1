@@ -23,5 +23,11 @@ int main()
 	c3p1::string sa;
 	sa.reserve(100);
 	printstr(sa);
+	
+	sa = "Youpidou"; printstr(sa);
+	sa += " et yiha"; printstr(sa);
+	sa = sa + " et yahou"; printstr(sa);
 	std::cout << "sizeof(c3p1::string) = " << sizeof(sa) << std::endl;
+	sa.shrink_to_fit();
+	printstr(sa);
 }

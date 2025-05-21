@@ -23,7 +23,6 @@
 * find_first_of, find_last_of()
 * find_first_not_of(), find_last_not_of()
 * substr()
-* compare()
 * 
 * operators:
 * operators ==, != (friends)
@@ -219,26 +218,36 @@ namespace c3p1
 		// copy(dest, len, pos) const copies the n next characters from pos to pos+len or end of string to dest
 		size_t copy(char* dest, size_t size, size_t pos = 0) const;
 
+		// compare
+		int compare(const string& str) const noexcept;
+		int compare(size_t pos, size_t size, const string& str) const;
+		int compare(size_t pos, size_t size, const string& str, size_t subpos, size_t subsize = _max_size) const;
+		int compare(const char* str) const;
+		int compare(size_t pos, size_t size, const char* str) const;
+		int compare(size_t pos, size_t size, const char* str, size_t n) const;
+
 		// friend operators and functions
 
 		// swap(first, second) swaps first and second value
 		// (+) swaps intern pointers and their intern size tracker
 		friend void swap(string& first, string& second) noexcept;
 
-		// operator+ (const first, const second) concatenates first and second
+		// operator+ (const &first, const &second) concatenates first and second
 		friend string operator+ (const string& first, const string& second);
-		// operator+ (const first, const second) concatenates first and second
+		// operator+ (const &first, const second) concatenates first and second
 		// (!) second must be a null-terminated string!
 		friend string operator+ (const string& first, const char* second);
-		// operator+ (const first, const second) concatenates first and second
+		// operator+ (const first, const &second) concatenates first and second
 		// (!) first must be a null-terminated string!
 		friend string operator+ (const char* first, const string& second);
-		// operator+ (const first, second) concatenates first and second
+		// operator+ (const &first, second) concatenates first and second
 		// (!) adding null-terminal in the string will lead to undefined behavior!
 		friend string operator+ (const string& first, char second);
-		// operator+ (const first, second) concatenates first and second
+		// operator+ (first, &second) concatenates first and second
 		// (!) adding null-terminal in the string will lead to undefined behavior!
 		friend string operator+ (char first, const string& second);
+
+		// operator== (const 
 
 		// operator ostream <<
 		friend std::ostream& operator<<(std::ostream& os, const string& str);
@@ -328,6 +337,16 @@ namespace c3p1
 		// (!) big and little must not overlap, its an undefined behavior!
 		// (!) could lead to undefined behavior by buffer overflow!
 		static int memcmp(const void* first, const void* second, size_t size);
+
+		// memcmp_noexcept(first, const second, size) compares the n=size first bytes of first and second
+		// (+) returns 0 if first and second are equals,
+		// (+) returns <0 if first is inferior to second,
+		// (+) returns >0 if first is superior to second,
+		// (+) returns 2391 if first and/or second are nullptr.
+		// (!) does not manage properly argument validatation, don't do shitty moves!
+		// (!) big and little must not overlap, its an undefined behavior!
+		// (!) could lead to undefined behavior by buffer overflow!
+		static int memcmp_noexcept(const void* first, const void* second, size_t size) noexcept;
 
 		// memmove(dst, const src, size) copies n=size bytes from src to dst
 		// (+) returns dst address,
