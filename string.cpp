@@ -1556,6 +1556,21 @@ c3p1::string& c3p1::string::append(c3p1::size_t n, char c)
 	return *this;
 }
 
+c3p1::string& c3p1::string::operator+=(const c3p1::string& str)
+{
+	return this->append(str);
+}
+
+c3p1::string& c3p1::string::operator+=(const char* str)
+{
+	return this->append(str);
+}
+
+c3p1::string& c3p1::string::operator+=(char c)
+{
+	return this->append(1,c);
+}
+
 char& c3p1::string::operator[](c3p1::size_t pos)
 {
 	if (this->empty())
@@ -1579,6 +1594,34 @@ const char& c3p1::string::operator[](c3p1::size_t pos) const
 
 	// return a const reference to the char at m_str[pos]
 	return m_str[pos];
+}
+
+void c3p1::string::push_back(char c)
+{
+	this->append(1, c);
+}
+
+void c3p1::string::pop_back()
+{
+	if (m_size > 0)
+	{
+		m_str[m_size - 1] = '\0';
+		m_size--;
+	}
+}
+
+size_t c3p1::string::copy(char* dest, size_t size, size_t pos) const
+{
+	if (pos > m_size)
+		throw c3p1::exception("Exception @c3p1::string::copy(dest, size, pos) const: index is out of bounds.");
+
+	if (dest == nullptr)
+		throw c3p1::exception("Exception @c3p1::string::copy(dest, size, pos) const: dest is nullptr.");
+
+	c3p1::size_t to_copy = (pos + size > m_size) ? (m_size - pos) : size;
+	c3p1::string::memcpy_noexcept(dest, m_str + pos, to_copy);
+	// does not null-terminate the string
+	return to_copy;
 }
 
 // internal functions

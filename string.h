@@ -180,7 +180,16 @@ namespace c3p1
 
 		// operator += (c) adds a single character c at the end of string
 		// 
-		string& operator+= (const char c);
+		string& operator+= (char c);
+
+		// push_back(c) appends character c to the end of the string, increasing its length by one
+		void push_back(char c);
+
+		// pop_back() delete last character, reducing its length by one
+		void pop_back();
+
+		// copy(dest, len, pos) const copies the n next characters from pos to pos+len or end of string to dest
+		size_t copy(char* dest, size_t size, size_t pos = 0) const;
 
 		// friend operators and functions
 
