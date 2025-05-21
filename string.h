@@ -23,11 +23,6 @@
 * find_first_of, find_last_of()
 * find_first_not_of(), find_last_not_of()
 * substr()
-* 
-* operators:
-* operators ==, != (friends)
-* operators >, <, >=, <= (friends)
-* 
 */
 
 #pragma once
