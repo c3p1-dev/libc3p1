@@ -8,7 +8,7 @@
 #include "exception.h"
 #include "uptr.h"
 
-void printstr(const c3p1::string& str)
+static inline void printstr(const c3p1::string& str)
 {
 	std::cout << (str.empty() ? "empty string" : str) << std::endl \
 		<< "size: " << str.size() << std::endl
