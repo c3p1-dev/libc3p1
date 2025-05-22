@@ -1626,10 +1626,7 @@ void c3p1::string::push_back(char c)
 void c3p1::string::pop_back()
 {
 	if (m_size > 0)
-	{
-		m_str[m_size - 1] = '\0';
-		m_size--;
-	}
+		m_str[m_size--] = '\0';
 }
 
 c3p1::size_t c3p1::string::copy(char* dest, size_t size, size_t pos) const
